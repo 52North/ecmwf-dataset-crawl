@@ -100,5 +100,10 @@
 			<artifactId>storm-crawler-core</artifactId>
 			<version>1.8</version>
 		</dependency>
+		<dependency>
+			<groupId>com.digitalpebble.stormcrawler</groupId>
+			<artifactId>storm-crawler-elasticsearch</artifactId>
+			<version>1.8</version>
+		</dependency>
 	</dependencies>
 </project>

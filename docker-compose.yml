@@ -1,10 +1,12 @@
-version: '2'
+version: '2.3'
 
 services:
 
   crawler:
     build:
       context: crawler/
+    depends_on:
+      - elasticsearch
     networks:
       - elk
 
@@ -13,11 +15,18 @@ services:
       context: elasticsearch/
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticdata:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
     networks:
       - elk
 
@@ -53,4 +62,4 @@ networks:
     driver: bridge
 
 volumes:
-  crawltopo:
+  elasticdata:
