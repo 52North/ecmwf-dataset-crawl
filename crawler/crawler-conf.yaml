@@ -36,6 +36,11 @@ config:
   metadata.track.depth: true
 
   # lists the metadata to persist to storage
+  # and the outlinks
+  metadata.transfer:
+   - status_index
+
+  # lists the metadata to persist to storage
   # these are not transfered to the outlinks
   metadata.persist:
    - _redirTo
