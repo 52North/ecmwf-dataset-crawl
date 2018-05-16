@@ -1,21 +1,33 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import TestComponent from '@/components/TestComponent'
+
+import CrawlList from '@/components/CrawlList'
+import NewCrawl from '@/components/NewCrawl'
+import SearchResultList from '@/components/SearchResultList'
 
 Vue.use(Router)
 
+export const routes = [
+  {
+    icon: 'list',
+    path: '/',
+    name: 'Search Results',
+    component: SearchResultList,
+  },
+  {
+    icon: 'folder',
+    path: '/crawls',
+    name: 'Crawls',
+    component: CrawlList,
+  },
+  {
+    icon: 'create_new_folder',
+    path: '/crawls/new',
+    name: 'New Crawl',
+    component: NewCrawl,
+  }
+]
+
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
-    {
-      path: '/test',
-      name: 'Test',
-      component: TestComponent
-    }
-  ]
+  routes
 })
