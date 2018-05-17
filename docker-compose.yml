@@ -2,13 +2,40 @@ version: '2.3'
 
 services:
 
+  proxy:
+    image: abiosoft/caddy:0.11.0-no-stats
+    volumes:
+      - ./proxy/Caddyfile:/etc/Caddyfile
+      - caddycerts:/root/.caddy # cache lets encrypt certs
+      - frontend:/srv/frontend
+      #- ./frontend/dist:/srv/frontend
+    environment:
+      - WEB_DOMAIN=localhost
+      - ACME_AGREE=true
+    ports:
+      - "2015:2015"
+      - "80:80"
+      - "443:443"
+    networks:
+      - front
+    depends_on:
+      - frontend
+      - elasticsearch
+      - kibana
+
+  frontend:
+    build:
+      context: frontend/
+    volumes:
+      - frontend:/dist
+
   crawler:
     build:
       context: crawler/
     depends_on:
       - elasticsearch
     networks:
-      - elk
+      - back
 
   elasticsearch:
     build:
@@ -16,9 +43,9 @@ services:
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - elasticdata:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+    #ports:
+    #  - "9200:9200"
+    #  - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
@@ -28,38 +55,28 @@ services:
       retries: 3
       start_period: 15s
     networks:
-      - elk
-
-  #logstash:
-  #  build:
-  #    context: logstash/
-  #  volumes:
-  #    - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-  #    - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-  #  ports:
-  #    - "5000:5000"
-  #  environment:
-  #    LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-  #  networks:
-  #    - elk
-  #  depends_on:
-  #    - elasticsearch
+      - back
+      - front
 
   kibana:
     build:
       context: kibana/
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
-    ports:
-      - "5601:5601"
+    #ports:
+    #  - "5601:5601"
     networks:
-      - elk
+      - front
     depends_on:
       - elasticsearch
 
 networks:
-  elk:
+  back:
+    driver: bridge
+  front:
     driver: bridge
 
 volumes:
   elasticdata:
+  frontend:
+  caddycerts:

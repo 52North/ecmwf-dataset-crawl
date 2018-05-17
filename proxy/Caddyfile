@@ -1,0 +1,72 @@
+{$WEB_DOMAIN} {
+  root /srv/frontend
+
+  # some security headers
+  header / {
+    X-XSS-Protection "1; mode=block"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+
+    # Instruct browsers to cache everything up to 5 minutes
+    #Cache-Control "public, max-age: 300"
+
+    -Server
+  }
+
+  header /static {
+    Expires "Thu, 31 Dec 2037 23:55:55 GMT"
+    Cache-Control public
+  }
+
+  log / stdout "{remote} - [{when_iso}] \"{method} {host}{uri} {proto}\" {status} {size}"
+  errors stdout
+}
+
+{$WEB_DOMAIN}/api {
+  header / {
+    X-XSS-Protection "1; mode=block"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    -Server
+  }
+
+  proxy / controller:8000/ {
+    transparent
+  }
+
+  log / stdout "{remote} - [{when_iso}] \"{method} {host}{uri} {proto}\" {status} {size}"
+  errors stdout
+}
+
+{$WEB_DOMAIN}/elastic {
+  header / {
+    X-XSS-Protection "1; mode=block"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    -Server
+  }
+
+  proxy / elasticsearch:9200/ {
+    transparent
+  }
+
+  log / stdout "{remote} - [{when_iso}] \"{method} {host}{uri} {proto}\" {status} {size}"
+  errors stdout
+}
+
+{$WEB_DOMAIN}/kibana {
+  header / {
+    X-XSS-Protection "1; mode=block"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    -Server
+  }
+
+  proxy / kibana:5601/ {
+    transparent
+  }
+
+  log / stdout "{remote} - [{when_iso}] \"{method} {host}{uri} {proto}\" {status} {size}"
+  errors stdout
+}
+
