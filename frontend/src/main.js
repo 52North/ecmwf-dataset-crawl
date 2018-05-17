@@ -6,6 +6,8 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
+Vue.filter('datestring', string => new Date(string).toLocaleString())
+
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false
