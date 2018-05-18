@@ -9,11 +9,12 @@ var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
 var serverPort = 9000;
 
+const isDev = process.env.NODE_ENV === 'development'
+
 // swaggerRouter configuration
 var options = {
-  swaggerUi: path.join(__dirname, '/swagger.json'),
   controllers: path.join(__dirname, './controllers'),
-  useStubs: process.env.NODE_ENV === 'development' // Conditionally turn on stubs (mock mode)
+  useStubs: isDev // Conditionally turn on stubs (mock mode)
 };
 
 // The Swagger document (require it, build it programmatically, fetch it from a URL, ...)
@@ -37,8 +38,10 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
   // Start the server
   http.createServer(app).listen(serverPort, function () {
-    console.log('Server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
-    console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
+    if (isDev) {
+      console.log('Server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
+      console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
+    }
   });
 
 });

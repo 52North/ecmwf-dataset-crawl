@@ -30,23 +30,7 @@
     -Server
   }
 
-  proxy / controller:8000/ {
-    transparent
-  }
-
-  log / stdout "{remote} - [{when_iso}] \"{method} {host}{uri} {proto}\" {status} {size}"
-  errors stdout
-}
-
-{$WEB_DOMAIN}/elastic {
-  header / {
-    X-XSS-Protection "1; mode=block"
-    X-Content-Type-Options "nosniff"
-    X-Frame-Options "DENY"
-    -Server
-  }
-
-  proxy / elasticsearch:9200/ {
+  proxy / controller:9000/ {
     transparent
   }
 
