@@ -72,7 +72,7 @@
                 </v-flex>
               </v-layout>
               <v-flex>
-                <v-btn @click="addKeywordGroup">
+                <v-btn @click="addKeywordGroup" color="secondary">
                   <v-icon>add</v-icon>
                   add Keyword Group
                 </v-btn>
@@ -175,7 +175,7 @@
       </v-layout>
 
       <v-layout row justify-center>
-        <v-btn large @click="submit" :disabled="!valid" color="blue">
+        <v-btn large @click="submit" :disabled="!valid" color="accent">
           <v-icon>flight_takeoff</v-icon>&nbsp;&nbsp;&nbsp;&nbsp;launch crawl
         </v-btn>
       </v-layout>

@@ -28,7 +28,7 @@
                 v-for="(lang, j) in crawl.languages"
                 :key="j"
                 label
-                color="light-blue"
+                color="secondary"
               >
                 {{ lang }}
               </v-chip>
@@ -50,7 +50,7 @@
               <v-flex xs5 sm6 md8 xl9>
                 <v-chip
                   label
-                  color="light-blue"
+                  color="secondary"
                   v-for="(keyword, k) in keywordgroup.keywords"
                   :key="k"
                 >
@@ -71,9 +71,9 @@
           </v-card-text>
 
           <v-card-actions justify-end>
-            <v-flex/> <!-- right align  -->
-            <v-btn flat color="gray" v-if="!crawl.completed">stop crawl</v-btn>
-            <v-btn flat color="blue">view results</v-btn>
+            <v-spacer/>
+            <v-btn flat color="secondary" v-if="!crawl.completed">stop crawl</v-btn>
+            <v-btn flat color="accent">view results</v-btn>
             <v-btn flat color="red">delete results</v-btn>
           </v-card-actions>
         </v-card>
@@ -89,7 +89,7 @@
       <v-btn
         fab
         dark
-        color="light-blue"
+        color="secondary"
         fixed
         bottom
         right
