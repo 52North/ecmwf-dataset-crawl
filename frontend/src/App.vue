@@ -14,7 +14,7 @@
             <v-icon large color="primary">blur_circular</v-icon>
           </v-list-tile-action>
           <v-list-tile-content v-if="drawerExpanded">
-            <v-list-tile-title><h2>WeatherCrawl</h2></v-list-tile-title>
+            <v-list-tile-title><h2>{{ title }}</h2></v-list-tile-title>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn icon @click.stop="drawerExpanded = !drawerExpanded">
@@ -63,13 +63,16 @@
 
 <script>
 import { routes } from '@/router'
+
+const title = document.title = 'WeatherCrawl'
+
 export default {
   data () {
     return {
       drawer: true,
       drawerExpanded: true,
       routes,
-      title: 'ECMWF Dataset Webcrawler'
+      title,
     }
   },
   computed: {

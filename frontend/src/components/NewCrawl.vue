@@ -175,7 +175,7 @@
       </v-layout>
 
       <v-layout row justify-center>
-        <v-btn large @click="submit" :disabled="!valid" color="accent">
+        <v-btn large @click="submit" :disabled="!valid" color="primary">
           <v-icon>flight_takeoff</v-icon>&nbsp;&nbsp;&nbsp;&nbsp;launch crawl
         </v-btn>
       </v-layout>

@@ -89,7 +89,7 @@
       <v-btn
         fab
         dark
-        color="secondary"
+        color="primary"
         fixed
         bottom
         right

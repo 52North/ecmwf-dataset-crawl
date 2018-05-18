@@ -5,7 +5,7 @@
     </v-btn>
     <v-card>
       <v-card-title>
-        <span class="headline">Export Results</span>
+        <h3 class="headline">Export Filtered Results</h3>
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md>
@@ -23,6 +23,7 @@
                 v-model="numResults"
                 label="Number of Results"
                 placeholder="all"
+                type="number"
               ></v-text-field>
             </v-flex>
           </v-layout>
@@ -39,8 +40,7 @@
 
 <script>
 export default {
-  props: ['open'],
-
+  props: ['results', 'open'],
   data () {
     return {
       formats: ['CSV'],
@@ -50,6 +50,7 @@ export default {
   },
   methods: {
     submit () {
+      console.log(this.results.length)
       this.open = false
     },
   },

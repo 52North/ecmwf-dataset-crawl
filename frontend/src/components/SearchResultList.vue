@@ -42,14 +42,14 @@
               label="Filter by Crawl"
               placeholder="all"
             />
-            <export-dialog/>
+            <export-dialog :results="results"/>
           </v-toolbar>
         </v-card>
       </v-flex>
     </v-layout>
 
-    <!-- results -->
-    <v-container>
+    <!-- results TODO: extract in separate component, use v-data-iterator for pagination etc? -->
+    <v-container v-if="!!results.length">
       <v-card>
         <v-data-table
           :headers="resultTable"
@@ -84,16 +84,6 @@ const results = [
     }
   },
 ]
-results.push(...results)
-results.push(...results)
-results.push(...results)
-results.push(...results)
-results.push(...results)
-results.push(...results)
-results.push(...results)
-results.push(...results)
-results.push(...results)
-results.push(...results)
 
 const selectedCrawls = []
 const allCrawls = [{
@@ -121,7 +111,7 @@ export default {
   methods: {
     filterResults () {
       this.loading = true
-      console.log(this.filter)
+      this.results.push(results[0])
     },
     cleanCrawlInput () {},
   },
