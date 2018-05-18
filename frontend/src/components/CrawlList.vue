@@ -44,7 +44,7 @@
               </v-flex>
 
               <v-flex xs4 sm3 md2 xl1>
-                <v-checkbox class="translated" v-model="keywordgroup.translate" label="translate" disabled></v-checkbox>
+                <v-checkbox class="translated" v-model="keywordgroup.translate" label="translated" disabled></v-checkbox>
               </v-flex>
 
               <v-flex xs5 sm6 md8 xl9>
