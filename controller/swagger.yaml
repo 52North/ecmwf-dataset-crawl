@@ -1,0 +1,238 @@
+swagger: "2.0"
+info:
+  description: "Definition of the Frontfacing API of the controller component for ecmwf-dataset-crawl. This API is requires no authentication, if required add a proxy for that."
+  version: "0.1.0"
+  title: "ecmwf-dataset-crawl API"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:2015"
+basePath: "/api"
+tags:
+- name: "crawls"
+  description: "Crawl Metadata"
+- name: "results"
+  description: "Crawl Results"
+schemes:
+- "http"
+externalDocs:
+  description: "GitHub"
+  url: "https://github.com/52north/ecmwf-dataset-crawl"
+
+paths:
+  /crawls:
+    get:
+      tags:
+      - "crawls"
+      summary: "Get all Crawls"
+      operationId: "getCrawls"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CrawlResponse"
+        500:
+          description: "Internal Error"
+          
+    put:
+      tags:
+      - "crawls"
+      summary: "Add a new Crawl"
+      operationId: "addCrawl"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/CrawlResponse"
+        422:
+          description: "Malformed Request"
+        500:
+          description: "Internal Error"
+      parameters:
+      - name: 'crawl'
+        in: 'body'
+        required: true
+        schema:
+          $ref: "#/definitions/CrawlRequest"
+
+  /crawls/{crawl-id}:
+    parameters:
+    - name: "crawl-id"
+      in: "path"
+      required: true
+      description: "Crawl ID to operate on"
+      type: "string"
+
+    get:
+      tags:
+      - "crawls"
+      summary: "Get a Crawl"
+      operationId: "getCrawl"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CrawlResponse"
+        404:
+          description: "Crawl not found"
+        500:
+          description: "Internal Error"
+
+    delete:
+      tags:
+      - "crawls"
+      summary: "Stop a Crawl"
+      operationId: "stopCrawl"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Success"
+        500:
+          description: "Internal Error"
+
+  /results:
+    parameters:
+    - name: "crawls"
+      in: "query"
+      required: false
+      description: "Crawl IDs to filter results"
+      type: "string"
+    - name: "query"
+      in: "query"
+      required: false
+      description: "Elastic Search query term to filter results"
+      type: "string"
+
+    get:
+      tags:
+      - "results"
+      summary: "Get crawl results with optional filtering"
+      description: ""
+      operationId: "getResults"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Site"
+        500:
+          description: "Internal Error"
+      externalDocs:
+        description: "Query parameter from Elastic Search"
+        url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
+        
+    delete:
+      tags:
+      - "results"
+      summary: "Deletes crawl results based on filter"
+      description: ""
+      operationId: "deleteResults"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "object"
+            properties:
+              deleted:
+                type: "integer"
+        500:
+          description: "Internal Error"
+      externalDocs:
+        description: "Query parameter from Elastic Search"
+        url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
+
+
+definitions:
+  CrawlRequest:
+    properties:
+      languages:
+        type: "array"
+        minLength: 1
+        items:
+          type: "string" # Language 2-char ISO codes
+      keywordGroups:
+        type: "array"
+        minLength: 1
+        items:
+          type: "object"
+          properties:
+            keywords:
+              type: "array"
+              items:
+                type: "string"
+                minLength: 1
+            translate:
+              type: "boolean"
+
+  CrawlResponse:
+    allOf:
+    - $ref: "#/definitions/CrawlRequest"
+    - properties:
+        id:
+          type: "string"
+          format: "uuid"
+        started:
+          type: "string"
+          format: "date-time"
+        completed:
+          type: "string"
+          format: "date-time"
+        counts:
+          type: "object"
+          properties:
+            seedurls:
+              type: "number"
+            results:
+              type: "number"
+    required:
+    - id
+    - started
+    - counts
+
+  Site:
+    properties:
+      crawl:
+        type: "string"
+        format: "uuid"
+      url:
+        type: "string"
+        format: "uuid"
+      scores:
+        type: "object"
+        properties:
+          dataset:
+            type: "number"
+          dataportal:
+            type: "number"
+      metadata:
+        type: "object"
+        properties:
+          contact:
+            type: "string"
+          
