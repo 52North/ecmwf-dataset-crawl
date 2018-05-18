@@ -9,7 +9,7 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "localhost:2015"
+host: "localhost:9000"
 basePath: "/api"
 tags:
 - name: "crawls"

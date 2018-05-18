@@ -1,11 +1,10 @@
 {
   "name": "ecmwf-dataset-crawl-api",
   "version": "0.1.0",
-  "description": "Definition of the Frontfacing API of the controller component for ecmwf-dataset-crawl. This API is requires no authentication, if required add a proxy for that.",
+  "description": "Controller + API for ecmwf-dataset-crawl",
   "main": "index.js",
   "scripts": {
-	"prestart": "npm install",
-	"start": "node index.js"
+    "start": "node index.js"
   },
   "keywords": [
     "swagger"
@@ -13,8 +12,8 @@
   "license": "Unlicense",
   "private": true,
   "dependencies": {
-    "connect": "^3.2.0",
-    "js-yaml": "^3.3.0",
-    "swagger-tools": "0.10.1"
+    "connect": "~3.6.6",
+    "js-yaml": "~3.11.0",
+    "swagger-tools": "0.10.3"
   }
 }
