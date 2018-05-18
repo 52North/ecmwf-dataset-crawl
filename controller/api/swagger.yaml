@@ -1,6 +1,9 @@
+---
 swagger: "2.0"
 info:
-  description: "Definition of the Frontfacing API of the controller component for ecmwf-dataset-crawl. This API is requires no authentication, if required add a proxy for that."
+  description: "Definition of the Frontfacing API of the controller component for\
+    \ ecmwf-dataset-crawl. This API is requires no authentication, if required add\
+    \ a proxy for that."
   version: "0.1.0"
   title: "ecmwf-dataset-crawl API"
   license:
@@ -15,10 +18,6 @@ tags:
   description: "Crawl Results"
 schemes:
 - "http"
-externalDocs:
-  description: "GitHub"
-  url: "https://github.com/52north/ecmwf-dataset-crawl"
-
 paths:
   /crawls:
     get:
@@ -30,6 +29,7 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters: []
       responses:
         200:
           description: "Success"
@@ -39,7 +39,7 @@ paths:
               $ref: "#/definitions/CrawlResponse"
         500:
           description: "Internal Error"
-          
+      x-swagger-router-controller: "Crawls"
     put:
       tags:
       - "crawls"
@@ -49,6 +49,12 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "crawl"
+        required: true
+        schema:
+          $ref: "#/definitions/CrawlRequest"
       responses:
         201:
           description: "Created"
@@ -58,21 +64,8 @@ paths:
           description: "Malformed Request"
         500:
           description: "Internal Error"
-      parameters:
-      - name: 'crawl'
-        in: 'body'
-        required: true
-        schema:
-          $ref: "#/definitions/CrawlRequest"
-
+      x-swagger-router-controller: "Crawls"
   /crawls/{crawl-id}:
-    parameters:
-    - name: "crawl-id"
-      in: "path"
-      required: true
-      description: "Crawl ID to operate on"
-      type: "string"
-
     get:
       tags:
       - "crawls"
@@ -82,6 +75,12 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - name: "crawl-id"
+        in: "path"
+        description: "Crawl ID to operate on"
+        required: true
+        type: "string"
       responses:
         200:
           description: "Success"
@@ -91,7 +90,7 @@ paths:
           description: "Crawl not found"
         500:
           description: "Internal Error"
-
+      x-swagger-router-controller: "Crawls"
     delete:
       tags:
       - "crawls"
@@ -101,25 +100,19 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - name: "crawl-id"
+        in: "path"
+        description: "Crawl ID to operate on"
+        required: true
+        type: "string"
       responses:
         200:
           description: "Success"
         500:
           description: "Internal Error"
-
+      x-swagger-router-controller: "Crawls"
   /results:
-    parameters:
-    - name: "crawls"
-      in: "query"
-      required: false
-      description: "Crawl IDs to filter results"
-      type: "string"
-    - name: "query"
-      in: "query"
-      required: false
-      description: "Elastic Search query term to filter results"
-      type: "string"
-
     get:
       tags:
       - "results"
@@ -130,6 +123,17 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - name: "crawls"
+        in: "query"
+        description: "Crawl IDs to filter results"
+        required: false
+        type: "string"
+      - name: "query"
+        in: "query"
+        description: "Elastic Search query term to filter results"
+        required: false
+        type: "string"
       responses:
         200:
           description: "Success"
@@ -142,7 +146,7 @@ paths:
       externalDocs:
         description: "Query parameter from Elastic Search"
         url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
-        
+      x-swagger-router-controller: "Results"
     delete:
       tags:
       - "results"
@@ -153,43 +157,52 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - name: "crawls"
+        in: "query"
+        description: "Crawl IDs to filter results"
+        required: false
+        type: "string"
+      - name: "query"
+        in: "query"
+        description: "Elastic Search query term to filter results"
+        required: false
+        type: "string"
       responses:
         200:
           description: "Success"
           schema:
-            type: "object"
-            properties:
-              deleted:
-                type: "integer"
+            $ref: "#/definitions/inline_response_200"
         500:
           description: "Internal Error"
       externalDocs:
         description: "Query parameter from Elastic Search"
         url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
-
-
+      x-swagger-router-controller: "Results"
 definitions:
   CrawlRequest:
     properties:
       languages:
         type: "array"
-        minLength: 1
         items:
-          type: "string" # Language 2-char ISO codes
+          type: "string"
       keywordGroups:
         type: "array"
-        minLength: 1
         items:
-          type: "object"
-          properties:
-            keywords:
-              type: "array"
-              items:
-                type: "string"
-                minLength: 1
-            translate:
-              type: "boolean"
-
+          $ref: "#/definitions/CrawlRequest_keywordGroups"
+    example:
+      languages:
+      - "languages"
+      - "languages"
+      keywordGroups:
+      - keywords:
+        - "keywords"
+        - "keywords"
+        translate: true
+      - keywords:
+        - "keywords"
+        - "keywords"
+        translate: true
   CrawlResponse:
     allOf:
     - $ref: "#/definitions/CrawlRequest"
@@ -204,17 +217,7 @@ definitions:
           type: "string"
           format: "date-time"
         counts:
-          type: "object"
-          properties:
-            seedurls:
-              type: "number"
-            results:
-              type: "number"
-    required:
-    - id
-    - started
-    - counts
-
+          $ref: "#/definitions/CrawlResponse_counts"
   Site:
     properties:
       crawl:
@@ -224,15 +227,58 @@ definitions:
         type: "string"
         format: "uuid"
       scores:
-        type: "object"
-        properties:
-          dataset:
-            type: "number"
-          dataportal:
-            type: "number"
+        $ref: "#/definitions/Site_scores"
       metadata:
-        type: "object"
-        properties:
-          contact:
-            type: "string"
-          
+        $ref: "#/definitions/Site_metadata"
+    example:
+      metadata:
+        contact: "contact"
+      scores:
+        dataportal: 6.02745618307040320615897144307382404804229736328125
+        dataset: 0.80082819046101150206595775671303272247314453125
+      url: "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      crawl: "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  inline_response_200:
+    properties:
+      deleted:
+        type: "integer"
+    example:
+      deleted: 0
+  CrawlRequest_keywordGroups:
+    properties:
+      keywords:
+        type: "array"
+        items:
+          type: "string"
+          minLength: 1
+      translate:
+        type: "boolean"
+    example:
+      keywords:
+      - "keywords"
+      - "keywords"
+      translate: true
+  CrawlResponse_counts:
+    properties:
+      seedurls:
+        type: "number"
+      results:
+        type: "number"
+  Site_scores:
+    properties:
+      dataset:
+        type: "number"
+      dataportal:
+        type: "number"
+    example:
+      dataportal: 6.02745618307040320615897144307382404804229736328125
+      dataset: 0.80082819046101150206595775671303272247314453125
+  Site_metadata:
+    properties:
+      contact:
+        type: "string"
+    example:
+      contact: "contact"
+externalDocs:
+  description: "GitHub"
+  url: "https://github.com/52north/ecmwf-dataset-crawl"
