@@ -44,7 +44,34 @@ exports.getCrawl = function (crawlId) {
 exports.getCrawls = function () {
   return new Promise(function (resolve, reject) {
     var examples = {}
-    examples['application/json'] = [ '', '' ]
+    examples['application/json'] = [
+      {
+        "languages": [
+          "string"
+        ],
+        "keywordGroups": [
+          {
+            "keywords": [
+              "keywords",
+              "keywords"
+            ],
+            "translate": true
+          }
+        ],
+        "domainBlacklist": [
+          "string"
+        ],
+        "domainWhitelist": [
+          "string"
+        ],
+        "id": "string",
+        "started": "2018-05-22T10:27:31.710Z",
+        "completed": "2018-05-22T10:27:31.710Z",
+        "seedUrls": [
+          "string"
+        ]
+      }
+    ]
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]])
     } else {

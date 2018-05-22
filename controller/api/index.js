@@ -21,6 +21,14 @@ var swaggerDoc = jsyaml.safeLoad(spec)
 
 // Initialize the Swagger middleware
 const app = connect()
+
+if (cfg.isDev) {
+  app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    next()
+  })
+}
+
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
   app.use(middleware.swaggerMetadata())

@@ -36,7 +36,7 @@
 
             <!-- keyword groups -->
             <v-layout row align-center
-              v-for="(keywordgroup, j) in crawl.keywordgroups"
+              v-for="(keywordgroup, j) in crawl.keywordGroups"
               :key="j"
             >
               <v-flex sm3 md2 text-sm-right>
@@ -60,12 +60,12 @@
             </v-layout>
 
             <!-- status counters -->
-            <v-layout row align-center v-if="crawl.counts">
+            <v-layout row align-center>
               <v-flex sm3 md2 text-sm-right><b>Seed Pages:</b></v-flex>
-              <v-flex xs3 sm2 md1><v-chip>{{ crawl.counts.seeds }}</v-chip></v-flex>
-              <v-flex>
+              <v-flex xs3 sm2 md1><v-chip>{{ crawl.seedUrls.length }}</v-chip></v-flex>
+              <v-flex v-if="crawl.resultCount">
                 <b>Results:</b>
-                <v-chip>{{ crawl.counts.results }}</v-chip>
+                <v-chip>{{ crawl.resultCount }}</v-chip>
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -103,36 +103,32 @@
 </template>
 
 <script>
-const crawls = [
-  {
-    name: 'TestCrawl',
-    id: 1,
-    languages: ['de', 'en'],
-    keywordgroups: [
-      {
-        translate: false,
-        keywords: ['blonk', 'asdf', 'foo', 'bar'],
-      },
-      {
-        translate: true,
-        keywords: ['dies', 'das'],
-      }
-    ],
-    started: '2018-05-16T14:14:14Z',
-    completed: '2018-05-16T18:18:18Z',
-    counts: {
-      seeds: 100,
-      results: 12400,
-    },
-  }
-]
-crawls.push(...crawls)
-crawls.push(...crawls)
+import { crawlsApi, resultsApi } from '@/api'
+
+const resultCounts = {}
 
 export default {
+  created () {
+    // get all crawls
+    // @TODO: use https://github.com/marketdial/vue-async-properties ??
+    crawlsApi.getCrawls().then(crawls => {
+      // get the result count for each crawl
+      const promises = []
+      crawls.forEach((crawl, i) => {
+        promises.push(
+          resultsApi.getResultCount([crawl.id]).then(res => {
+            crawls[i].resultCount = res.count
+          })
+        )
+      })
+
+      // only insert into data once all resultCounts are there, as the reactive system won't apply otherwise? @HACK
+      Promise.all(promises).then(() => { this.crawls = crawls })
+    })
+  },
   data () {
     return {
-      crawls,
+      crawls: [], // populated via created() hook
     }
   },
   name: 'CrawlList',
