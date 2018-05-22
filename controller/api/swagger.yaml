@@ -171,37 +171,6 @@ paths:
         description: "Query parameter from Elastic Search"
         url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
       x-swagger-router-controller: "Results"
-  /results/counts:
-    get:
-      tags:
-      - "results"
-      summary: "Get count of crawl results with optional filtering"
-      description: ""
-      operationId: "getResultCount"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "crawls"
-        in: "query"
-        description: "Crawl IDs to filter results"
-        required: false
-        type: "string"
-      - name: "query"
-        in: "query"
-        description: "Elastic Search query term to filter results"
-        required: false
-        type: "string"
-      responses:
-        200:
-          description: "Success"
-          schema:
-            type: "integer"
-        500:
-          description: "Internal Error"
-      externalDocs:
-        description: "Query parameter from Elastic Search"
-        url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
-      x-swagger-router-controller: "Results"
     delete:
       tags:
       - "results"
@@ -228,6 +197,37 @@ paths:
           description: "Success"
           schema:
             $ref: "#/definitions/DeleteResponse"
+        500:
+          description: "Internal Error"
+      externalDocs:
+        description: "Query parameter from Elastic Search"
+        url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
+      x-swagger-router-controller: "Results"
+  /results/counts:
+    get:
+      tags:
+      - "results"
+      summary: "Get count of crawl results with optional filtering"
+      description: ""
+      operationId: "getResultCount"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "crawls"
+        in: "query"
+        description: "Crawl IDs to filter results"
+        required: false
+        type: "string"
+      - name: "query"
+        in: "query"
+        description: "Elastic Search query term to filter results"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "integer"
         500:
           description: "Internal Error"
       externalDocs:
