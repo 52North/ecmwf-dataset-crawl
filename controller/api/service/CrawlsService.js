@@ -69,7 +69,8 @@ exports.getCrawls = function () {
         "completed": "2018-05-22T10:27:31.710Z",
         "seedUrls": [
           "string"
-        ]
+        ],
+        "resultCount": 124,
       }
     ]
     if (Object.keys(examples).length > 0) {

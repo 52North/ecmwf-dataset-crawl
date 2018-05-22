@@ -36,8 +36,8 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 {{ route.name }}
-                <v-chip v-if="route.name == 'Crawls' && crawlCount" v-text="crawlCount"/>
-                <v-chip v-if="route.name == 'Search Results' && resultCount" v-text="resultCount"/>
+                <v-chip v-if="route.name == 'Search Results'" v-text="resultCount"/>
+                <v-chip v-if="route.name == 'Crawls'" v-text="crawlCount"/>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -67,7 +67,7 @@
 
 <script>
 import { routes } from '@/router'
-import { crawlsApi, resultsApi } from '@/api'
+import { getCrawls, getTotalResults } from '@/api'
 
 const title = document.title = 'WeatherCrawl'
 
@@ -83,9 +83,12 @@ export default {
   computed: {
     route () { return this.$route },
   },
-  asyncComputed: {
-    crawlCount () { return crawlsApi.getCrawls().then(res => res.length) },
-    resultCount () { return resultsApi.getResultCount().then(res => res.count) },
+  asyncData: {
+    crawlCount: {
+      get: getCrawls,
+      transform: res => res.length,
+    },
+    resultCount: getTotalResults,
   },
   name: 'App'
 }
@@ -104,7 +107,6 @@ export default {
 }
 
 .mobile-drawer {
-  /* position: absolute; */
   top: 0;
   left: 0;
 }

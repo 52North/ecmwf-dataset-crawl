@@ -33,9 +33,7 @@ exports.deleteResults = function (crawls, query) {
 exports.getResultCount = function (crawls, query) {
   return new Promise(function (resolve, reject) {
     var examples = {}
-    examples['application/json'] = {
-      count: 1234
-    }
+    examples['application/json'] = '1234' // writeJson treats integers weirdly. :/
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]])
     } else {

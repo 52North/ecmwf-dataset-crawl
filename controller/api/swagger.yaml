@@ -289,6 +289,8 @@ definitions:
           type: "array"
           items:
             type: "string"
+        resultCount:
+          type: "integer"
   Site:
     properties:
       crawl:

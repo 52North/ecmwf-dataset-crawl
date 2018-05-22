@@ -15,9 +15,8 @@
               v-model="filter"
               placeholder="Filter Results"
               append-icon="search"
-              :loading="loading"
-              @input="filterResults"
-              :append-icon-cb="filterResults"
+              :loading="results$loading || results$pending"
+              :append-icon-cb="results$now"
               hide-details
               single-line
               clearable
@@ -38,7 +37,7 @@
               deletable-chips
               v-model="selectedCrawls"
               :items="allCrawls"
-              @blur="crawls = cleanCrawlInput(crawls)"
+              @blur="selectedCrawls = cleanCrawlInput(selectedCrawls)"
               label="Filter by Crawl"
               placeholder="all"
             />
@@ -58,7 +57,7 @@
           class="elevation-3"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ props.item.domain }}</td>
+            <td>{{ props.item.url | domain }}</td>
             <td class="text-xs-right">{{ props.item.scores.dataset }}</td>
             <td class="text-xs-right">{{ props.item.scores.dataportal }}</td>
             <td>{{ props.item.metadata.contact }}</td>
@@ -71,19 +70,8 @@
 
 <script>
 import ExportDialog from '@/components/ExportDialog'
-
-const results = [
-  {
-    domain: 'example.com',
-    scores: {
-      dataset: 2.31,
-      dataportal: 0.13,
-    },
-    metadata: {
-      contact: 'Agentur fuer Datacrawling'
-    }
-  },
-]
+import { getResults } from '@/api'
+import { arrayOfWords } from '@/utils'
 
 const selectedCrawls = []
 const allCrawls = [{
@@ -94,7 +82,6 @@ const allCrawls = [{
 export default {
   data () {
     return {
-      results,
       selectedCrawls,
       allCrawls,
       filter: '',
@@ -104,16 +91,24 @@ export default {
         { text: 'Dataportal Score', value: 'scores.dataportal', align: 'right' },
         { text: 'Contact', value: 'metadata.contact', sortable: false },
       ],
-      loading: false,
       searchExpanded: false,
     }
   },
+  asyncComputed: {
+    results: {
+      get () {
+        const params = {
+          crawls: this.selectedCrawls,
+          query: this.filter,
+        }
+        return getResults(params)
+      },
+      watch: 'filter',
+      default: [],
+    }
+  },
   methods: {
-    filterResults () {
-      this.loading = true
-      this.results.push(results[0])
-    },
-    cleanCrawlInput () {},
+    cleanCrawlInput: arrayOfWords,
   },
   components: {
     'export-dialog': ExportDialog,

@@ -185,6 +185,8 @@
 </template>
 
 <script>
+import { arrayOfWords } from '@/utils'
+
 export default {
   data () {
     return {
@@ -216,11 +218,7 @@ export default {
     }
   },
   methods: {
-    cleanKeywordInput (keywords) {
-      // make shure each item contains a single word and not empty strings
-      const cleaned = keywords.map(v => v.trim().split(' '))
-      return [].concat(...cleaned).filter(v => !!v)
-    },
+    cleanKeywordInput: arrayOfWords,
     addKeywordGroup () {
       this.keywordGroups.push({
         keywords: [],

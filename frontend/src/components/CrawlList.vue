@@ -63,7 +63,7 @@
             <v-layout row align-center>
               <v-flex sm3 md2 text-sm-right><b>Seed Pages:</b></v-flex>
               <v-flex xs3 sm2 md1><v-chip>{{ crawl.seedUrls.length }}</v-chip></v-flex>
-              <v-flex v-if="crawl.resultCount">
+              <v-flex>
                 <b>Results:</b>
                 <v-chip>{{ crawl.resultCount }}</v-chip>
               </v-flex>
@@ -103,33 +103,11 @@
 </template>
 
 <script>
-import { crawlsApi, resultsApi } from '@/api'
-
-const resultCounts = {}
+import { getCrawls } from '@/api'
 
 export default {
-  created () {
-    // get all crawls
-    // @TODO: use https://github.com/marketdial/vue-async-properties ??
-    crawlsApi.getCrawls().then(crawls => {
-      // get the result count for each crawl
-      const promises = []
-      crawls.forEach((crawl, i) => {
-        promises.push(
-          resultsApi.getResultCount([crawl.id]).then(res => {
-            crawls[i].resultCount = res.count
-          })
-        )
-      })
-
-      // only insert into data once all resultCounts are there, as the reactive system won't apply otherwise? @HACK
-      Promise.all(promises).then(() => { this.crawls = crawls })
-    })
-  },
-  data () {
-    return {
-      crawls: [], // populated via created() hook
-    }
+  asyncData: {
+    crawls: getCrawls
   },
   name: 'CrawlList',
 }
