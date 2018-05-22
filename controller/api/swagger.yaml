@@ -2,7 +2,7 @@
 swagger: "2.0"
 info:
   description: "Definition of the Frontfacing API of the controller component for\
-    \ ecmwf-dataset-crawl. This API is requires no authentication, if required add\
+    \ ecmwf-dataset-crawl. This API is requires no authentication. If required, add\
     \ a proxy for that."
   version: "0.1.0"
   title: "ecmwf-dataset-crawl API"
@@ -134,6 +134,30 @@ paths:
         description: "Elastic Search query term to filter results"
         required: false
         type: "string"
+      - name: "maxResults"
+        in: "query"
+        description: "The amount of results to return"
+        required: false
+        type: "integer"
+        default: 250
+      - name: "page"
+        in: "query"
+        description: "To page through the results"
+        required: false
+        type: "integer"
+        default: 0
+      - name: "format"
+        in: "query"
+        description: "Format in which results are returned"
+        required: false
+        type: "string"
+        enum:
+        - "CSV"
+      - name: "download"
+        in: "query"
+        description: "Whether to send an attachment header"
+        required: false
+        type: "boolean"
       responses:
         200:
           description: "Success"
@@ -141,6 +165,37 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Site"
+        500:
+          description: "Internal Error"
+      externalDocs:
+        description: "Query parameter from Elastic Search"
+        url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
+      x-swagger-router-controller: "Results"
+  /results/counts:
+    get:
+      tags:
+      - "results"
+      summary: "Get count of crawl results with optional filtering"
+      description: ""
+      operationId: "getResultCount"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "crawls"
+        in: "query"
+        description: "Crawl IDs to filter results"
+        required: false
+        type: "string"
+      - name: "query"
+        in: "query"
+        description: "Elastic Search query term to filter results"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "integer"
         500:
           description: "Internal Error"
       externalDocs:
@@ -172,7 +227,7 @@ paths:
         200:
           description: "Success"
           schema:
-            $ref: "#/definitions/inline_response_200"
+            $ref: "#/definitions/DeleteResponse"
         500:
           description: "Internal Error"
       externalDocs:
@@ -190,7 +245,21 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/CrawlRequest_keywordGroups"
+      domainBlacklist:
+        type: "array"
+        items:
+          type: "string"
+      domainWhitelist:
+        type: "array"
+        items:
+          type: "string"
     example:
+      domainWhitelist:
+      - "domainWhitelist"
+      - "domainWhitelist"
+      domainBlacklist:
+      - "domainBlacklist"
+      - "domainBlacklist"
       languages:
       - "languages"
       - "languages"
@@ -216,8 +285,10 @@ definitions:
         completed:
           type: "string"
           format: "date-time"
-        counts:
-          $ref: "#/definitions/CrawlResponse_counts"
+        seedUrls:
+          type: "array"
+          items:
+            type: "string"
   Site:
     properties:
       crawl:
@@ -225,7 +296,6 @@ definitions:
         format: "uuid"
       url:
         type: "string"
-        format: "uuid"
       scores:
         $ref: "#/definitions/Site_scores"
       metadata:
@@ -236,9 +306,9 @@ definitions:
       scores:
         dataportal: 6.02745618307040320615897144307382404804229736328125
         dataset: 0.80082819046101150206595775671303272247314453125
-      url: "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      url: "https://example.com/foobar"
       crawl: "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
-  inline_response_200:
+  DeleteResponse:
     properties:
       deleted:
         type: "integer"
@@ -258,12 +328,6 @@ definitions:
       - "keywords"
       - "keywords"
       translate: true
-  CrawlResponse_counts:
-    properties:
-      seedurls:
-        type: "number"
-      results:
-        type: "number"
   Site_scores:
     properties:
       dataset:
