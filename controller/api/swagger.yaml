@@ -65,6 +65,16 @@ paths:
         500:
           description: "Internal Error"
       x-swagger-router-controller: "Crawls"
+    options:
+      tags:
+      - "crawls"
+      summary: "Only defined to handle preflight CORS requests"
+      operationId: "handlePreflight"
+      responses:
+        200:
+          description: "Success"
+      x-swagger-router-controller: "Crawls"
+      
   /crawls/{crawl-id}:
     get:
       tags:
@@ -152,7 +162,7 @@ paths:
         required: false
         type: "string"
         enum:
-        - "CSV"
+        - "csv"
       - name: "download"
         in: "query"
         description: "Whether to send an attachment header"
@@ -203,6 +213,16 @@ paths:
         description: "Query parameter from Elastic Search"
         url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
       x-swagger-router-controller: "Results"
+    options:
+      tags:
+      - "results"
+      summary: "Only defined to handle preflight CORS requests"
+      operationId: "handlePreflight"
+      responses:
+        200:
+          description: "Success"
+      x-swagger-router-controller: "Results"
+      
   /results/counts:
     get:
       tags:
@@ -234,13 +254,45 @@ paths:
         description: "Query parameter from Elastic Search"
         url: "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html"
       x-swagger-router-controller: "Results"
+  /capabilities/languages:
+    get:
+      tags:
+      - "capabilities"
+      summary: "Returns all available language codes for translation"
+      operationId: "getLanguages"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Language"
+        500:
+          description: "Internal Error"
+      x-swagger-router-controller: "Capabilities"
+      
 definitions:
   CrawlRequest:
     properties:
+      name:
+        type: "string"
+      crawlOptions:
+        type: "object"
+        properties:
+          recursion:
+            type: "integer"
+          seedUrlsPerKeywordGroup:
+            type: "integer"
       languages:
         type: "array"
         items:
           type: "string"
+      commonKeywords:
+        type: "array"
+        items:
+          $ref: "#/definitions/CrawlRequest_keywordGroups"
       keywordGroups:
         type: "array"
         items:
@@ -296,6 +348,8 @@ definitions:
       crawl:
         type: "string"
         format: "uuid"
+      title:
+        type: "string"
       url:
         type: "string"
       scores:
@@ -345,6 +399,14 @@ definitions:
         type: "string"
     example:
       contact: "contact"
+  Language:
+    properties:
+      code:
+        type: "string"
+      name:
+        type: "string"
+      outline:
+        type: "object"
 externalDocs:
   description: "GitHub"
   url: "https://github.com/52north/ecmwf-dataset-crawl"

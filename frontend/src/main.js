@@ -8,20 +8,17 @@ import 'vuetify/dist/vuetify.min.css'
 
 import App from './App'
 import router from './router'
+import { hostname } from './utils'
 
 Vue.filter('datestring', string => new Date(string).toLocaleString())
-Vue.filter('domain', url => {
-  const tmp = document.createElement('a')
-  tmp.href = url
-  return tmp.hostname
-})
+Vue.filter('domain', hostname)
 
 Vue.use(AsyncProperties, { transform: null })
 Vue.use(Vuetify, {
   theme: {
     primary: colors.red.darken2,
-    secondary: colors.blueGrey.lighten2,
-    accent: colors.blue.darken1,
+    secondary: colors.blueGrey.lighten4,
+    accent: colors.blueGrey.lighten1,
   }
 })
 

@@ -13,6 +13,13 @@ export const routes = [
     path: '/',
     name: 'Search Results',
     component: SearchResultList,
+    props (route) {
+      const crawls = route.query.crawls || ''
+      return {
+        crawls: crawls === '' ? [] : crawls.split(','),
+        query: route.query.q,
+      }
+    },
   },
   {
     icon: 'folder',
@@ -29,5 +36,5 @@ export const routes = [
 ]
 
 export default new Router({
-  routes
+  routes,
 })

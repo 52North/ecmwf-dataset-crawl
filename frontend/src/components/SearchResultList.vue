@@ -12,7 +12,7 @@
           <v-toolbar card prominent>
             <v-text-field
               autofocus
-              v-model="filter"
+              v-model="query"
               placeholder="Filter Results"
               append-icon="search"
               :loading="results$loading || results$pending"
@@ -35,13 +35,15 @@
               tags
               chips
               deletable-chips
-              v-model="selectedCrawls"
+              v-model="crawls"
               :items="allCrawls"
-              @blur="selectedCrawls = cleanCrawlInput(selectedCrawls)"
+              item-text="name"
+              item-value="id"
+              @blur="onCrawlsUpdate"
               label="Filter by Crawl"
               placeholder="all"
             />
-            <export-dialog :results="results"/>
+            <export-dialog :crawls="crawls" :query="query"/>
           </v-toolbar>
         </v-card>
       </v-flex>
@@ -53,14 +55,27 @@
         <v-data-table
           :headers="resultTable"
           :items="results"
+          item-key="url"
           hide-actions
           class="elevation-3"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ props.item.url | domain }}</td>
-            <td class="text-xs-right">{{ props.item.scores.dataset }}</td>
-            <td class="text-xs-right">{{ props.item.scores.dataportal }}</td>
-            <td>{{ props.item.metadata.contact }}</td>
+            <tr @click="props.expanded = !props.expanded">
+              <td>{{ props.item.title.substring(0, 50) }}</td>
+              <td>{{ props.item.url | domain }}</td>
+              <td class="text-xs-right">{{ props.item.scores.dataset }}</td>
+              <td class="text-xs-right">{{ props.item.scores.dataportal }}</td>
+            </tr>
+          </template>
+          <template slot="expand" slot-scope="props">
+            <v-card dense color="secondary">
+              <v-card-text>
+                <v-subheader>Contact</v-subheader>
+                <v-container>
+                  {{ props.item.metadata.contact }}
+                </v-container>
+              </v-card-text>
+            </v-card>
           </template>
         </v-data-table>
       </v-card>
@@ -70,45 +85,58 @@
 
 <script>
 import ExportDialog from '@/components/ExportDialog'
-import { getResults } from '@/api'
+import { getResults, getCrawls } from '@/api'
 import { arrayOfWords } from '@/utils'
 
-const selectedCrawls = []
-const allCrawls = [{
-  text: 'Test Crawl',
-  value: 1,
-}]
-
 export default {
+  props: {
+    query: { default: () => [] },
+    crawls: { default: () => [] },
+  },
   data () {
     return {
-      selectedCrawls,
-      allCrawls,
-      filter: '',
+      allCrawls: [],
       resultTable: [
+        { text: 'Title', value: 'title', align: 'left' },
         { text: 'Domain', value: 'domain', align: 'left' },
         { text: 'Dataset Score', value: 'scores.dataset', align: 'right' },
         { text: 'Dataportal Score', value: 'scores.dataportal', align: 'right' },
-        { text: 'Contact', value: 'metadata.contact', sortable: false },
       ],
-      searchExpanded: false,
+      // pagination: {
+      //   sortBy: 'domain',
+      // },
+      searchExpanded: true,
     }
+  },
+  asyncData: {
+    allCrawls: getCrawls,
   },
   asyncComputed: {
     results: {
       get () {
         const params = {
-          crawls: this.selectedCrawls,
-          query: this.filter,
+          crawls: this.crawls,
+          query: this.query,
         }
+        this.updateUrl()
         return getResults(params)
       },
-      watch: 'filter',
+      watch: 'query',
+      watchClosely: 'crawls',
       default: [],
     }
   },
   methods: {
-    cleanCrawlInput: arrayOfWords,
+    updateUrl () {
+      this.$router.replace({
+        query: { crawls: this.crawls.join(','), q: this.query },
+      })
+    },
+    onCrawlsUpdate () {
+      this.crawls = arrayOfWords(this.crawls)
+      this.updateUrl()
+      // this.results$now()
+    }
   },
   components: {
     'export-dialog': ExportDialog,

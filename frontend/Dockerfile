@@ -4,7 +4,7 @@ WORKDIR /usr/src
 COPY yarn.lock package.json ./
 RUN yarn
 COPY . .
-ENV API_URL
+ENV API_URL /api
 RUN yarn build
 
 FROM busybox:latest

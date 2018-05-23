@@ -34,7 +34,7 @@
               <v-icon v-html="route.icon"></v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title class="route-item">
                 {{ route.name }}
                 <v-chip v-if="route.name == 'Search Results'" v-text="resultCount"/>
                 <v-chip v-if="route.name == 'Crawls'" v-text="crawlCount"/>
@@ -95,9 +95,9 @@ export default {
 </script>
 
 <style scoped>
-.list__tile__title {
+.route-item {
   height: auto;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .list__tile__title .chip {

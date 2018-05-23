@@ -13,10 +13,10 @@
     -Server
   }
 
-  header /static {
-    Expires "Thu, 31 Dec 2037 23:55:55 GMT"
-    Cache-Control public
-  }
+  #header /static {
+  #  Expires "Thu, 31 Dec 2037 23:55:55 GMT"
+  #  Cache-Control public
+  #}
 
   log / stdout "{remote} - [{when_iso}] \"{method} {host}{uri} {proto}\" {status} {size}"
   errors stdout

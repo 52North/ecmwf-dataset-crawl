@@ -72,7 +72,7 @@
                 </v-flex>
               </v-layout>
               <v-flex>
-                <v-btn @click="addKeywordGroup" color="secondary">
+                <v-btn @click="addKeywordGroup" color="accent">
                   <v-icon>add</v-icon>
                   add Keyword Group
                 </v-btn>
@@ -94,6 +94,8 @@
                 <v-select
                   multiple
                   :items="availableLanguages"
+                  item-text="name"
+                  item-value="code"
                   v-model="languages"
                 />
               </v-flex>
@@ -118,13 +120,13 @@
                     required
                   />
                   <v-text-field
-                    v-model="domains.whitelist"
+                    v-model="domainWhitelist"
                     label="Domain Whitelist"
                     multi-line
                     :placeholder="'landsat.usgs.gov'"
                   />
                   <v-text-field
-                    v-model="domains.blacklist"
+                    v-model="domainBlacklist"
                     label="Domain Blacklist"
                     multi-line
                     :placeholder="'example.com\necmwf.int'"
@@ -186,6 +188,7 @@
 
 <script>
 import { arrayOfWords } from '@/utils'
+import { addCrawl, getCrawls, getLanguages } from '@/api'
 
 export default {
   data () {
@@ -194,10 +197,8 @@ export default {
       name: '',
       crawldepth: 3,
       seedurls: 10,
-      domains: {
-        blacklist: '',
-        whitelist: '',
-      },
+      domainBlacklist: '',
+      domainWhitelist: '',
       commonKeywords: {
         keywords: ['hello', 'world'],
         translate: false,
@@ -208,14 +209,10 @@ export default {
         }
       ],
       languages: ['en'],
-      availableLanguages: [{
-        text: 'German',
-        value: 'de',
-      }, {
-        text: 'English',
-        value: 'en',
-      }]
     }
+  },
+  asyncData: {
+    availableLanguages: getLanguages,
   },
   methods: {
     cleanKeywordInput: arrayOfWords,
@@ -225,7 +222,7 @@ export default {
         translate: false
       })
     },
-    submit () {
+    async submit () {
       if (!this.$refs.form.validate()) return
 
       const {
@@ -233,7 +230,8 @@ export default {
         languages,
         commonKeywords,
         keywordGroups,
-        domains,
+        domainWhitelist,
+        domainBlacklist,
         seedurls,
         crawldepth,
       } = this.$data
@@ -243,12 +241,17 @@ export default {
         languages,
         commonKeywords,
         keywordGroups,
-        domains,
-        seedurls,
-        crawldepth,
+        domainWhitelist,
+        domainBlacklist,
+        crawlOptions: {
+          recursion: crawldepth,
+          seedUrlsPerKeywordGroup: seedurls,
+        },
       }
 
-      return crawlRequest
+      const res = await addCrawl(crawlRequest)
+      await getCrawls(false) // TESTME
+      this.$router.push({ name: 'Crawls' }) // FIXME: only if success!
     },
   },
   name: 'NewCrawl',

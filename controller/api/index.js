@@ -25,6 +25,8 @@ const app = connect()
 if (cfg.isDev) {
   app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE')
+    res.setHeader('Access-Control-Allow-Headers', 'content-type')
     next()
   })
 }
@@ -40,8 +42,15 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   app.use(middleware.swaggerRouter(options))
 
   // Serve the Swagger documents and Swagger UI
-  app.use(middleware.swaggerUi())
+  app.use(middleware.swaggerUi(options))
 })
+
+if (cfg.isDev) {
+  app.use((req, res, next) => {
+    console.log(`${new Date()}\t ${req.method} ${req.url}`)
+    next()
+  })
+}
 
 module.exports.startServer = function startServer (serverPort) {
   return new Promise((resolve, reject) => {

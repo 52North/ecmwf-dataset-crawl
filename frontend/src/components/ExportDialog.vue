@@ -39,18 +39,26 @@
 </template>
 
 <script>
+import { exportResults } from '@/api'
+
 export default {
-  props: ['results', 'open'],
+  props: ['query', 'crawls', 'open'],
   data () {
     return {
-      formats: ['CSV'],
-      format: 'CSV',
+      formats: ['csv'],
+      format: 'csv',
       numResults: null,
     }
   },
   methods: {
-    submit () {
-      console.log(this.results.length)
+    async submit () {
+      const params = {
+        crawls: this.crawls || null,
+        query: this.query || null,
+        maxResults: this.numResults || -1,
+        format: this.format,
+      }
+      await exportResults(params)
       this.open = false
     },
   },

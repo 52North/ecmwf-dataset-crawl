@@ -1,6 +1,11 @@
 <template>
   <v-container grid-list-xl :fill-height="!crawls.length">
     <v-layout column>
+
+      <v-alert :value="!!info" dismissible outline color="info" icon="info">
+        {{ info }}
+      </v-alert>
+
       <!-- crawl list -->
       <v-flex
         v-for="(crawl, i) in crawls"
@@ -73,8 +78,8 @@
           <v-card-actions justify-end>
             <v-spacer/>
             <v-btn flat color="secondary" v-if="!crawl.completed">stop crawl</v-btn>
-            <v-btn flat color="accent">view results</v-btn>
-            <v-btn flat color="red">delete results</v-btn>
+            <v-btn flat color="blue" :to="{ name: 'Search Results', query: { crawls: crawl.id } }">view results</v-btn>
+            <v-btn flat color="red" @click.stop="deleteResults(crawl)">delete results</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -103,11 +108,24 @@
 </template>
 
 <script>
-import { getCrawls } from '@/api'
+import { getCrawls, deleteResults } from '@/api'
 
 export default {
+  data () {
+    return {
+      crawls: [],
+      info: ''
+    }
+  },
   asyncData: {
     crawls: getCrawls
+  },
+  methods: {
+    async deleteResults (crawl) {
+      const res = await deleteResults({ crawls: [crawl.id] })
+      this.info = `Deleted ${res.deleted} Search Results`
+      setTimeout(() => { this.info = '' }, 8000)
+    },
   },
   name: 'CrawlList',
 }

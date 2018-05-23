@@ -27,7 +27,7 @@ services:
     build:
       context: frontend/
     volumes:
-      - frontend:/dist
+      - frontend:/dist:ro
 
   controller:
     build:

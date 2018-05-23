@@ -7,6 +7,7 @@
  * returns CrawlResponse
  **/
 exports.addCrawl = function (crawl) {
+  console.log(JSON.stringify(crawl, null, 2))
   return new Promise(function (resolve, reject) {
     var examples = {}
     examples['application/json'] = ''
@@ -64,7 +65,12 @@ exports.getCrawls = function () {
         "domainWhitelist": [
           "string"
         ],
-        "id": "string",
+        "crawlOptions": {
+          "recursion": 4,
+          "seedUrlsPerKeywordGroup": 10,
+        },
+        "id": "1",
+        "name": "Crawl Numero Eins",
         "started": "2018-05-22T10:27:31.710Z",
         "completed": "2018-05-22T10:27:31.710Z",
         "seedUrls": [

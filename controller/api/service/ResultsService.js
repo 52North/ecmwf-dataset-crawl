@@ -66,6 +66,7 @@ exports.getResults = function (crawls, query, maxResults, page, format, download
         'dataset': 0.8008281904610115
       },
       'url': 'https://example.com/foobar',
+      'title': 'Content Extraction using NLP',
       'crawl': '046b6c7f-0b8a-43b9-b35d-6489e6daee91'
     }, {
       'metadata': {
@@ -75,7 +76,8 @@ exports.getResults = function (crawls, query, maxResults, page, format, download
         'dataportal': 6.027456183070403,
         'dataset': 0.8008281904610115
       },
-      'url': 'https://example.com/foobar',
+      'url': 'https://example.com/hello',
+      'title': 'Dynamic Webcrawling',
       'crawl': '046b6c7f-0b8a-43b9-b35d-6489e6daee91'
     } ]
     if (Object.keys(examples).length > 0) {

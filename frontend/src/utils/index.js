@@ -6,3 +6,9 @@ export function arrayOfWords (strings) {
     .concat(...cleaned)
     .filter(v => !!v)
 }
+
+export function hostname (url) {
+  const tmp = document.createElement('a')
+  tmp.href = url
+  return tmp.hostname
+}
