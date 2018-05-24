@@ -1,9 +1,9 @@
 'use strict'
 
-const { Client } = require('elasticsearch')
+import { Client } from 'elasticsearch'
 
-const cfg = require('../config')
-const indexes = require('./index-definitions')
+import cfg from '../config'
+import indexes from './index-definitions'
 
 const client = new Client(cfg.elastic)
 
@@ -15,7 +15,7 @@ async function ensureIndex (indexDefinition, purge = false) {
     await client.indices.create(indexDefinition)
 }
 
-module.exports.addCrawlStatusIndex = async function addCrawlStatusIndex (crawl) {
+export async function addCrawlStatusIndex (crawl) {
   // create copy of definition first
   const def = JSON.parse(JSON.stringify(indexes.crawlStatus))
   def.index = `crawlstatus-${crawl.id}`
@@ -23,7 +23,7 @@ module.exports.addCrawlStatusIndex = async function addCrawlStatusIndex (crawl) 
   return ensureIndex(def)
 }
 
-module.exports.initializeIndizes = async function initializeIndizes (purge = false) {
+export async function initializeIndizes (purge = false) {
   await client.ping({})
   await ensureIndex(indexes.crawls, purge)
   await ensureIndex(indexes.crawlerMetrics, purge)

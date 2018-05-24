@@ -2,9 +2,12 @@
   "name": "ecmwf-dataset-crawl-api",
   "version": "0.1.0",
   "description": "Controller + API for ecmwf-dataset-crawl",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node dist/index.js",
+    "start:dev": "env $(cat .env | grep -v ^# | xargs) node --inspect",
+    "build": "rimraf dist && tsc -p . || true",
+    "build:watch": "rimraf dist && tsc -p . -w || true",
     "dev": "NODE_ENV=development; nodemon -e js,yaml --inspect",
     "lint": "eslint ."
   },
@@ -20,12 +23,10 @@
     "swagger-tools": "0.10.3"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "nodemon": "^1.17.5"
+    "@types/node": "^10.1.2",
+    "nodemon": "^1.17.5",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.10.0",
+    "typescript": "^2.8.3"
   }
 }

@@ -1,13 +1,11 @@
-'use strict'
+import fs from 'fs'
+import path from 'path'
+import http from 'http'
+import swaggerTools from 'swagger-tools'
+import jsyaml from 'js-yaml'
+import connect from 'connect'
 
-const fs = require('fs')
-const path = require('path')
-const http = require('http')
-const swaggerTools = require('swagger-tools')
-const jsyaml = require('js-yaml')
-const connect = require('connect')
-
-const cfg = require('../config')
+import cfg from '../config'
 
 // swaggerRouter configuration
 var options = {
@@ -31,7 +29,7 @@ if (cfg.isDev) {
   })
 }
 
-swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
+swaggerTools.initializeMiddleware(swaggerDoc, function (middleware: any) {
   // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
   app.use(middleware.swaggerMetadata())
 
@@ -52,9 +50,9 @@ if (cfg.isDev) {
   })
 }
 
-module.exports.startServer = function startServer (serverPort) {
-  return new Promise((resolve, reject) => {
-    http.createServer(app).listen(serverPort, function (err) {
+export default function startServer (serverPort: number) {
+  return new Promise((resolve: any, reject: any) => {
+    http.createServer(app).listen(serverPort, function (err: any) {
       if (err) reject(err)
       else resolve()
     })

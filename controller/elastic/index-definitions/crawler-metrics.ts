@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = {
+export default {
   index: 'crawler-metrics',
   body: {
     template: 'metrics*',

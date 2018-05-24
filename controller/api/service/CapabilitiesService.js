@@ -9,8 +9,8 @@ exports.getLanguages = function () {
   return new Promise(function (resolve, reject) {
     var examples = {}
     examples['application/json'] = [ {
-      'code': 'en',
-      'name': 'English'
+      'code': 'de',
+      'name': 'German'
     }, {
       'code': 'en',
       'name': 'English'
