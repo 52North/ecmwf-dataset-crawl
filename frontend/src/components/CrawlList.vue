@@ -2,8 +2,25 @@
   <v-container grid-list-xl :fill-height="!crawls.length">
     <v-layout column>
 
-      <v-alert :value="!!info" dismissible outline color="info" icon="info">
+      <v-alert
+        :value="!!info"
+        v-model="infoOpen"
+        dismissible
+        outline
+        color="info"
+        icon="info"
+      >
         {{ info }}
+      </v-alert>
+      <v-alert
+        :value="!!error"
+        v-model="errorOpen"
+        dismissible
+        outline
+        color="error"
+        icon="error"
+      >
+        {{ error }}
       </v-alert>
 
       <!-- crawl list -->
@@ -77,7 +94,7 @@
 
           <v-card-actions justify-end>
             <v-spacer/>
-            <v-btn flat color="secondary" v-if="!crawl.completed">stop crawl</v-btn>
+            <v-btn flat color="grey" v-if="!crawl.completed" @click.stop="stopCrawl(crawl)">stop crawl</v-btn>
             <v-btn flat color="blue" :to="{ name: 'Search Results', query: { crawls: crawl.id } }">view results</v-btn>
             <v-btn flat color="red" @click.stop="deleteResults(crawl)">delete results</v-btn>
           </v-card-actions>
@@ -108,24 +125,49 @@
 </template>
 
 <script>
-import { getCrawls, deleteResults } from '@/api'
+import { getCrawls, stopCrawl, deleteResults } from '@/api'
 
 export default {
+  mounted () {
+    this.info = this.$route.params.info
+  },
   data () {
     return {
       crawls: [],
-      info: ''
+      info: '',
+      infoOpen: !!this.$route.params.info,
+      error: '',
+      errorOpen: false,
     }
   },
   asyncData: {
     crawls: getCrawls
   },
   methods: {
+    async stopCrawl (crawl) {
+      try {
+        await stopCrawl(crawl)
+        this.info = `Stopped Crawl ${crawl.name}`
+      } catch (e) {
+        this.error = `Could not stop crawl ${crawl.name}: ${e}`
+        this.errorOpen = true
+      }
+    },
     async deleteResults (crawl) {
       const res = await deleteResults({ crawls: [crawl.id] })
       this.info = `Deleted ${res.deleted} Search Results`
-      setTimeout(() => { this.info = '' }, 8000)
     },
+  },
+  watch: {
+    info (newVal, oldVal) {
+      if (newVal) {
+        this.infoOpen = true
+        setTimeout(() => {
+          this.info = ''
+          this.infoOpen = false
+        }, 8000)
+      }
+    }
   },
   name: 'CrawlList',
 }

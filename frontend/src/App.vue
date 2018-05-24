@@ -57,7 +57,7 @@
     </span>
 
     <v-content>
-      <router-view/>
+      <router-view @new-crawl="crawlCount$refresh"/>
     </v-content>
     <!-- <v-footer app>
       <span>&copy; 2018 &mdash; developed during ECMWF SoWC</span>

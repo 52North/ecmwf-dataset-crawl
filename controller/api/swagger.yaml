@@ -60,8 +60,8 @@ paths:
           description: "Created"
           schema:
             $ref: "#/definitions/CrawlResponse"
-        422:
-          description: "Malformed Request"
+        400:
+          description: "Bad Request"
         500:
           description: "Internal Error"
       x-swagger-router-controller: "Crawls"
@@ -70,11 +70,11 @@ paths:
       - "crawls"
       summary: "Only defined to handle preflight CORS requests"
       operationId: "handlePreflight"
+      parameters: []
       responses:
         200:
           description: "Success"
       x-swagger-router-controller: "Crawls"
-      
   /crawls/{crawl-id}:
     get:
       tags:
@@ -121,6 +121,21 @@ paths:
           description: "Success"
         500:
           description: "Internal Error"
+      x-swagger-router-controller: "Crawls"
+    options:
+      tags:
+      - "crawls"
+      summary: "Only defined to handle preflight CORS requests"
+      operationId: "handlePreflight2"
+      parameters:
+      - name: "crawl-id"
+        in: "path"
+        description: "Crawl ID to operate on"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
       x-swagger-router-controller: "Crawls"
   /results:
     get:
@@ -217,12 +232,12 @@ paths:
       tags:
       - "results"
       summary: "Only defined to handle preflight CORS requests"
-      operationId: "handlePreflight"
+      operationId: "handlePreflight3"
+      parameters: []
       responses:
         200:
           description: "Success"
       x-swagger-router-controller: "Results"
-      
   /results/counts:
     get:
       tags:
@@ -262,6 +277,7 @@ paths:
       operationId: "getLanguages"
       produces:
       - "application/json"
+      parameters: []
       responses:
         200:
           description: "Success"
@@ -272,31 +288,32 @@ paths:
         500:
           description: "Internal Error"
       x-swagger-router-controller: "Capabilities"
-      
 definitions:
   CrawlRequest:
+    type: "object"
+    required:
+    - "commonKeywords"
+    - "crawlOptions"
+    - "domainBlacklist"
+    - "domainWhitelist"
+    - "keywordGroups"
+    - "languages"
+    - "name"
     properties:
       name:
         type: "string"
       crawlOptions:
-        type: "object"
-        properties:
-          recursion:
-            type: "integer"
-          seedUrlsPerKeywordGroup:
-            type: "integer"
+        $ref: "#/definitions/CrawlRequest_crawlOptions"
       languages:
         type: "array"
         items:
           type: "string"
       commonKeywords:
-        type: "array"
-        items:
-          $ref: "#/definitions/CrawlRequest_keywordGroups"
+        $ref: "#/definitions/CrawlRequest_keywordGroup"
       keywordGroups:
         type: "array"
         items:
-          $ref: "#/definitions/CrawlRequest_keywordGroups"
+          $ref: "#/definitions/CrawlRequest_keywordGroup"
       domainBlacklist:
         type: "array"
         items:
@@ -307,11 +324,10 @@ definitions:
           type: "string"
     example:
       domainWhitelist:
-      - "domainWhitelist"
-      - "domainWhitelist"
+      - "example.com"
+      - "open.nrw"
       domainBlacklist:
-      - "domainBlacklist"
-      - "domainBlacklist"
+      - "52north.org"
       languages:
       - "languages"
       - "languages"
@@ -370,7 +386,7 @@ definitions:
         type: "integer"
     example:
       deleted: 0
-  CrawlRequest_keywordGroups:
+  CrawlRequest_keywordGroup:
     properties:
       keywords:
         type: "array"
@@ -407,6 +423,19 @@ definitions:
         type: "string"
       outline:
         type: "object"
+        properties: {}
+    example:
+      code: "en"
+      name: "English"
+  CrawlRequest_crawlOptions:
+    required:
+    - "recursion"
+    - "seedUrlsPerKeywordGroup"
+    properties:
+      recursion:
+        type: "integer"
+      seedUrlsPerKeywordGroup:
+        type: "integer"
 externalDocs:
   description: "GitHub"
   url: "https://github.com/52north/ecmwf-dataset-crawl"

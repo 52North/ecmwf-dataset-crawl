@@ -42,3 +42,13 @@ module.exports.getResults = function getResults (req, res, next) {
       utils.writeJson(res, response)
     })
 }
+
+module.exports.handlePreflight3 = function handlePreflight3 (req, res, next) {
+  Results.handlePreflight3()
+    .then(function (response) {
+      utils.writeJson(res, response)
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response)
+    })
+}

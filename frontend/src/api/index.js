@@ -19,8 +19,13 @@ export async function getCrawls (cache = true) {
   return store.crawls
 }
 
-export async function addCrawl (params) {
-  const res = await axios.put('/crawls', { params })
+export async function addCrawl (crawl) {
+  const res = await axios.put('/crawls', crawl)
+  return res.data
+}
+
+export async function stopCrawl (crawl) {
+  const res = await axios.delete(`/crawls/${crawl.id}`)
   return res.data
 }
 

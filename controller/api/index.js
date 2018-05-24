@@ -42,7 +42,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   app.use(middleware.swaggerRouter(options))
 
   // Serve the Swagger documents and Swagger UI
-  app.use(middleware.swaggerUi(options))
+  app.use(middleware.swaggerUi())
 })
 
 if (cfg.isDev) {

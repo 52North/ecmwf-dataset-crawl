@@ -87,3 +87,14 @@ exports.getResults = function (crawls, query, maxResults, page, format, download
     }
   })
 }
+
+/**
+ * Only defined to handle preflight CORS requests
+ *
+ * no response value expected for this operation
+ **/
+exports.handlePreflight3 = function () {
+  return new Promise(function (resolve, reject) {
+    resolve()
+  })
+}

@@ -32,14 +32,15 @@
 
           <v-toolbar card v-if="searchExpanded">
             <v-select
-              tags
               chips
               deletable-chips
+              multiple
+              autocomplete
               v-model="crawls"
               :items="allCrawls"
               item-text="name"
               item-value="id"
-              @blur="onCrawlsUpdate"
+              @blur="updateUrl"
               label="Filter by Crawl"
               placeholder="all"
             />
@@ -56,7 +57,6 @@
           :headers="resultTable"
           :items="results"
           item-key="url"
-          hide-actions
           class="elevation-3"
         >
           <template slot="items" slot-scope="props">
@@ -86,7 +86,8 @@
 <script>
 import ExportDialog from '@/components/ExportDialog'
 import { getResults, getCrawls } from '@/api'
-import { arrayOfWords } from '@/utils'
+
+// TODO: server side pagination https://vuetifyjs.com/en/components/data-tables#example-server
 
 export default {
   props: {
@@ -102,9 +103,6 @@ export default {
         { text: 'Dataset Score', value: 'scores.dataset', align: 'right' },
         { text: 'Dataportal Score', value: 'scores.dataportal', align: 'right' },
       ],
-      // pagination: {
-      //   sortBy: 'domain',
-      // },
       searchExpanded: true,
     }
   },
@@ -113,7 +111,12 @@ export default {
   },
   asyncComputed: {
     results: {
-      get () {
+      async get () {
+        // catch retriggered requests (from this.updateUrl())
+        if (this.results$pending || this.results$loading) {
+          return
+        }
+
         const params = {
           crawls: this.crawls,
           query: this.query,
@@ -128,14 +131,10 @@ export default {
   },
   methods: {
     updateUrl () {
+      // warning: this retriggers the requests
       this.$router.replace({
         query: { crawls: this.crawls.join(','), q: this.query },
       })
-    },
-    onCrawlsUpdate () {
-      this.crawls = arrayOfWords(this.crawls)
-      this.updateUrl()
-      // this.results$now()
     }
   },
   components: {

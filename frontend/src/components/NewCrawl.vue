@@ -92,7 +92,10 @@
             <v-card-text>
               <v-flex>
                 <v-select
+                  chips
+                  deletable-chips
                   multiple
+                  autocomplete
                   :items="availableLanguages"
                   item-text="name"
                   item-value="code"
@@ -176,6 +179,8 @@
 
       </v-layout>
 
+      <v-alert :value="!!error" dismissible outline color="error" icon="error" v-html="error"/>
+
       <v-layout row justify-center>
         <v-btn large @click="submit" :disabled="!valid" color="primary">
           <v-icon>flight_takeoff</v-icon>&nbsp;&nbsp;&nbsp;&nbsp;launch crawl
@@ -193,20 +198,20 @@ import { addCrawl, getCrawls, getLanguages } from '@/api'
 export default {
   data () {
     return {
+      availableLanguages: [],
+      error: '',
       valid: false,
+
       name: '',
       crawldepth: 3,
       seedurls: 10,
       domainBlacklist: '',
       domainWhitelist: '',
       commonKeywords: {
-        keywords: ['hello', 'world'],
-        translate: false,
+        keywords: [], translate: false,
       },
       keywordGroups: [
-        {
-          keywords: ['foo'], translate: false,
-        }
+        { keywords: [], translate: false }
       ],
       languages: ['en'],
     }
@@ -241,17 +246,23 @@ export default {
         languages,
         commonKeywords,
         keywordGroups,
-        domainWhitelist,
-        domainBlacklist,
+        domainWhitelist: domainWhitelist.split('\n'),
+        domainBlacklist: domainBlacklist.split('\n'),
         crawlOptions: {
           recursion: crawldepth,
           seedUrlsPerKeywordGroup: seedurls,
         },
       }
 
-      const res = await addCrawl(crawlRequest)
-      await getCrawls(false) // TESTME
-      this.$router.push({ name: 'Crawls' }) // FIXME: only if success!
+      try {
+        await addCrawl(crawlRequest)
+        await getCrawls(false)
+        this.$emit('new-crawl')
+        this.$router.push({ name: 'Crawls', params: { info: `Crawl ${name} started!` } })
+      } catch (e) {
+        this.error = e.response.data
+        return false
+      }
     },
   },
   name: 'NewCrawl',
