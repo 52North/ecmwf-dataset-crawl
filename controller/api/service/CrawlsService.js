@@ -2,39 +2,38 @@
 
 const crawlStore = [
   {
-    "languages": [
-      "string"
+    'languages': [
+      'string'
     ],
-    "keywordGroups": [
+    'keywordGroups': [
       {
-        "keywords": [
-          "keywords",
-          "keywords"
+        'keywords': [
+          'keywords',
+          'keywords'
         ],
-        "translate": true
+        'translate': true
       }
     ],
-    "domainBlacklist": [
-      "string"
+    'domainBlacklist': [
+      'string'
     ],
-    "domainWhitelist": [
-      "string"
+    'domainWhitelist': [
+      'string'
     ],
-    "crawlOptions": {
-      "recursion": 4,
-      "seedUrlsPerKeywordGroup": 10,
+    'crawlOptions': {
+      'recursion': 4,
+      'seedUrlsPerKeywordGroup': 10,
     },
-    "id": "1",
-    "name": "Crawl Numero Eins",
-    "started": "2018-05-22T10:27:31.710Z",
-    "completed": "2018-05-22T10:27:31.710Z",
-    "seedUrls": [
-      "string"
+    'id': '1',
+    'name': 'Crawl Numero Eins',
+    'started': '2018-05-22T10:27:31.710Z',
+    'completed': '2018-05-22T10:27:31.710Z',
+    'seedUrls': [
+      'string'
     ],
-    "resultCount": 124,
+    'resultCount': 124,
   }
 ]
-
 
 /**
  * Add a new Crawl
