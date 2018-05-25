@@ -1,26 +1,11 @@
 import { Client, IndicesCreateParams } from 'elasticsearch'
 
 import cfg from '../config'
+import Crawl from '../models/Crawl'
 import indexes from './index-definitions'
 import log from './logger'
 
 export const client = new Client(Object.assign(cfg.elastic, { log }))
-
-async function ensureIndex (indexDefinition: IndicesCreateParams, purge = false) {
-  const exists = await client.indices.exists(indexDefinition)
-  if (exists && purge)
-    await client.indices.delete({ index: indexDefinition.index })
-  if (!exists || purge)
-    await client.indices.create(indexDefinition)
-}
-
-export async function addCrawlStatusIndex (crawl) {
-  // create copy of definition first
-  const def = JSON.parse(JSON.stringify(indexes.crawlStatus))
-  def.index = `crawlstatus-${crawl.id}`
-  // IDEA: use index templates instead?
-  return ensureIndex(def)
-}
 
 export async function initializeIndizes (purge = false) {
   await client.ping({})
@@ -28,3 +13,13 @@ export async function initializeIndizes (purge = false) {
   await ensureIndex(indexes.crawlerMetrics, purge)
   await ensureIndex(indexes.results, purge)
 }
+
+export async function ensureIndex (indexDefinition: IndicesCreateParams, purge = false) {
+  const exists = await client.indices.exists(indexDefinition)
+  if (exists && purge)
+    await client.indices.delete({ index: indexDefinition.index })
+  if (!exists || purge)
+    await client.indices.create(indexDefinition)
+}
+
+export * from './controllers/crawls'

@@ -36,7 +36,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/CrawlResponse"
+              $ref: "schema.json#/definitions/CrawlResponse"
         500:
           description: "Internal Error"
       x-swagger-router-controller: "Crawls"
@@ -54,12 +54,12 @@ paths:
         name: "crawl"
         required: true
         schema:
-          $ref: "#/definitions/CrawlRequest"
+          $ref: "schema.json#/definitions/CrawlRequest"
       responses:
         201:
           description: "Created"
           schema:
-            $ref: "#/definitions/CrawlResponse"
+            $ref: "schema.json#/definitions/CrawlResponse"
         400:
           description: "Bad Request"
         500:
@@ -95,7 +95,7 @@ paths:
         200:
           description: "Success"
           schema:
-            $ref: "#/definitions/CrawlResponse"
+            $ref: "schema.json#/definitions/CrawlResponse"
         404:
           description: "Crawl not found"
         500:
@@ -289,76 +289,6 @@ paths:
           description: "Internal Error"
       x-swagger-router-controller: "Capabilities"
 definitions:
-  CrawlRequest:
-    type: "object"
-    required:
-    - "commonKeywords"
-    - "crawlOptions"
-    - "domainBlacklist"
-    - "domainWhitelist"
-    - "keywordGroups"
-    - "languages"
-    - "name"
-    properties:
-      name:
-        type: "string"
-      crawlOptions:
-        $ref: "#/definitions/CrawlRequest_crawlOptions"
-      languages:
-        type: "array"
-        items:
-          type: "string"
-      commonKeywords:
-        $ref: "#/definitions/CrawlRequest_keywordGroup"
-      keywordGroups:
-        type: "array"
-        items:
-          $ref: "#/definitions/CrawlRequest_keywordGroup"
-      domainBlacklist:
-        type: "array"
-        items:
-          type: "string"
-      domainWhitelist:
-        type: "array"
-        items:
-          type: "string"
-    example:
-      domainWhitelist:
-      - "example.com"
-      - "open.nrw"
-      domainBlacklist:
-      - "52north.org"
-      languages:
-      - "languages"
-      - "languages"
-      keywordGroups:
-      - keywords:
-        - "keywords"
-        - "keywords"
-        translate: true
-      - keywords:
-        - "keywords"
-        - "keywords"
-        translate: true
-  CrawlResponse:
-    allOf:
-    - $ref: "#/definitions/CrawlRequest"
-    - properties:
-        id:
-          type: "string"
-          format: "uuid"
-        started:
-          type: "string"
-          format: "date-time"
-        completed:
-          type: "string"
-          format: "date-time"
-        seedUrls:
-          type: "array"
-          items:
-            type: "string"
-        resultCount:
-          type: "integer"
   Site:
     properties:
       crawl:
@@ -386,20 +316,6 @@ definitions:
         type: "integer"
     example:
       deleted: 0
-  CrawlRequest_keywordGroup:
-    properties:
-      keywords:
-        type: "array"
-        items:
-          type: "string"
-          minLength: 1
-      translate:
-        type: "boolean"
-    example:
-      keywords:
-      - "keywords"
-      - "keywords"
-      translate: true
   Site_scores:
     properties:
       dataset:
@@ -427,15 +343,6 @@ definitions:
     example:
       code: "en"
       name: "English"
-  CrawlRequest_crawlOptions:
-    required:
-    - "recursion"
-    - "seedUrlsPerKeywordGroup"
-    properties:
-      recursion:
-        type: "integer"
-      seedUrlsPerKeywordGroup:
-        type: "integer"
 externalDocs:
   description: "GitHub"
   url: "https://github.com/52north/ecmwf-dataset-crawl"
