@@ -1,5 +1,3 @@
-'use strict'
-
 export default {
   index: 'crawler-metrics',
   body: {

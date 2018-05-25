@@ -1,5 +1,3 @@
-'use strict'
-
 import crawls from './crawls'
 import crawlStatus from './crawl-status'
 import results from './results'

@@ -1,13 +1,11 @@
-'use strict'
-
-import { Client } from 'elasticsearch'
+import { Client, IndicesCreateParams } from 'elasticsearch'
 
 import cfg from '../config'
 import indexes from './index-definitions'
 
 const client = new Client(cfg.elastic)
 
-async function ensureIndex (indexDefinition, purge = false) {
+async function ensureIndex (indexDefinition: IndicesCreateParams, purge = false) {
   const exists = await client.indices.exists(indexDefinition)
   if (exists && purge)
     await client.indices.delete({ index: indexDefinition.index })

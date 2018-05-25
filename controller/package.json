@@ -5,11 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "start:dev": "env $(cat .env | grep -v ^# | xargs) node --inspect",
+    "start:dev": "env $(cat .env | grep -v ^# | xargs) nodemon -e js,ts,yaml --inspect",
     "build": "rimraf dist && tsc -p . || true",
     "build:watch": "rimraf dist && tsc -p . -w || true",
-    "dev": "NODE_ENV=development; nodemon -e js,yaml --inspect",
-    "lint": "eslint ."
+    "lint": "tslint --project ."
   },
   "keywords": [
     "swagger"
@@ -23,7 +22,10 @@
     "swagger-tools": "0.10.3"
   },
   "devDependencies": {
+    "@types/elasticsearch": "^5.0.23",
+    "@types/js-yaml": "^3.11.1",
     "@types/node": "^10.1.2",
+    "@types/swagger-tools": "^0.10.6",
     "nodemon": "^1.17.5",
     "rimraf": "^2.6.2",
     "tslint": "^5.10.0",

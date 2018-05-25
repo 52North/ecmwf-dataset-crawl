@@ -1,5 +1,3 @@
-'use strict'
-
 export default {
   isDev: process.env.NODE_ENV === 'development',
   apiPort: process.env.API_PORT ? parseInt(process.env.API_PORT) : 9000,

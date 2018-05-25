@@ -21,12 +21,13 @@ var swaggerDoc = jsyaml.safeLoad(spec)
 const app = connect()
 
 if (cfg.isDev) {
-  app.use((req, res, next) => {
+  const corsHandler: connect.NextHandleFunction = (req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE')
     res.setHeader('Access-Control-Allow-Headers', 'content-type')
     next()
-  })
+  }
+  app.use(corsHandler)
 }
 
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware: any) {
@@ -44,10 +45,11 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware: any) {
 })
 
 if (cfg.isDev) {
-  app.use((req, res, next) => {
+  const reqLogger: connect.NextHandleFunction = (req, res, next) => {
     console.log(`${new Date()}\t ${req.method} ${req.url}`)
     next()
-  })
+  }
+  app.use(reqLogger)
 }
 
 export default function startServer (serverPort: number) {
