@@ -246,11 +246,12 @@ export default {
         languages,
         commonKeywords,
         keywordGroups,
-        domainWhitelist: domainWhitelist.split('\n'),
-        domainBlacklist: domainBlacklist.split('\n'),
         crawlOptions: {
           recursion: crawldepth,
           seedUrlsPerKeywordGroup: seedurls,
+          domainWhitelist: domainWhitelist.split('\n'),
+          domainBlacklist: domainBlacklist.split('\n'),
+          terminationCondition: {}, // TODO
         },
       }
 

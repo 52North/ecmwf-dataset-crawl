@@ -1,5 +1,7 @@
 'use strict'
 
+const { Crawl } = require('../../models/Crawl')
+
 const crawlStore = [
   {
     'languages': [
@@ -41,18 +43,9 @@ const crawlStore = [
  * crawl CrawlRequest
  * returns CrawlResponse
  **/
-exports.addCrawl = function (crawl) {
-  return new Promise(function (resolve, reject) {
-    crawlStore.push(crawl)
-
-    var examples = {}
-    examples['application/json'] = crawl
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]])
-    } else {
-      resolve()
-    }
-  })
+exports.addCrawl = async function (crawl) {
+    const doc = new Crawl(crawl)
+    return doc.save()
 }
 
 /**

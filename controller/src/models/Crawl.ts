@@ -1,4 +1,6 @@
-export default class Crawl implements CrawlResponse {
+import { saveCrawl } from '../elastic/controllers/crawls'
+
+export class Crawl implements CrawlResponse {
   name: string
   languages: any[] // TODO: get type from ../languages
   commonKeywords: KeywordGroup
@@ -31,7 +33,9 @@ export default class Crawl implements CrawlResponse {
     this.completed = completed
   }
 
-  async save () : Promise<any> {}
+  async save () : Promise<any> {
+    return saveCrawl(this)
+  }
 
   async processKeywords () : Promise<any> {
     // merge keywordGroups with common keywords
@@ -55,7 +59,7 @@ export default class Crawl implements CrawlResponse {
     // delete crawl status index
   }
 
-  async toJson () : Promise<string> {
+  toJson () : string {
     // TODO: convert dates to ISO strings, move _id -> id, add resultCount
     return JSON.stringify(this)
   }
