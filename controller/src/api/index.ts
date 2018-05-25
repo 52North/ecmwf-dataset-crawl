@@ -6,16 +6,19 @@ import jsyaml from 'js-yaml'
 import connect from 'connect'
 
 import cfg from '../config'
+import createLogger from '../logging'
+
+const log = createLogger('api')
 
 // swaggerRouter configuration
-var options = {
+const options = {
   controllers: path.join(__dirname, './controllers'),
   useStubs: cfg.isDev, // Conditionally turn on stubs (mock mode)
 }
 
 // The Swagger document (require it, build it programmatically, fetch it from a URL, ...)
-var spec = fs.readFileSync('./swagger.yaml', 'utf8')
-var swaggerDoc = jsyaml.safeLoad(spec)
+const spec = fs.readFileSync('./swagger.yaml', 'utf8')
+const swaggerDoc = jsyaml.safeLoad(spec)
 
 // Initialize the Swagger middleware
 const app = connect()
@@ -44,19 +47,21 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware: any) {
   app.use(middleware.swaggerUi())
 })
 
-if (cfg.isDev) {
-  const reqLogger: connect.NextHandleFunction = (req, res, next) => {
-    console.log(`${new Date()}\t ${req.method} ${req.url}`)
-    next()
-  }
-  app.use(reqLogger)
+const reqLogger: connect.NextHandleFunction = (req, res, next) => {
+  log.info({ req })
+  next()
 }
+app.use(reqLogger)
 
 export default function startServer (serverPort: number) {
   return new Promise((resolve: any, reject: any) => {
     http.createServer(app).listen(serverPort, function (err: any) {
-      if (err) reject(err)
-      else resolve()
+      if (err)
+        return reject(err)
+
+      log.info(`Server is listening on http://localhost:${cfg.apiPort}`)
+      log.info(`Swagger-ui is available on http://localhost:${cfg.apiPort}/docs/`)
+      resolve()
     })
   })
 }

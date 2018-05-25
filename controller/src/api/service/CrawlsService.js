@@ -42,7 +42,6 @@ const crawlStore = [
  * returns CrawlResponse
  **/
 exports.addCrawl = function (crawl) {
-  console.log(JSON.stringify(crawl, null, 2))
   return new Promise(function (resolve, reject) {
     crawlStore.push(crawl)
 

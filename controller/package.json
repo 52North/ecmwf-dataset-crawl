@@ -4,8 +4,8 @@
   "description": "Controller + API for ecmwf-dataset-crawl",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "start:dev": "env $(cat .env | grep -v ^# | xargs) nodemon -e js,ts,yaml --inspect",
+    "start": "node dist/index.js | bunyan -o short",
+    "start:dev": "env $(cat .env | grep -v ^# | xargs) nodemon -e js,ts,yaml --inspect | bunyan -o short",
     "build": "rimraf dist && tsc -p . || true",
     "build:watch": "rimraf dist && tsc -p . -w || true",
     "lint": "tslint --project ."
@@ -16,12 +16,14 @@
   "license": "Apache-2.0",
   "private": true,
   "dependencies": {
+    "bunyan": "^1.8.12",
     "connect": "~3.6.6",
     "elasticsearch": "^15.0.0",
     "js-yaml": "~3.11.0",
     "swagger-tools": "0.10.3"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.4",
     "@types/elasticsearch": "^5.0.23",
     "@types/js-yaml": "^3.11.1",
     "@types/node": "^10.1.2",

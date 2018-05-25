@@ -2,8 +2,9 @@ import { Client, IndicesCreateParams } from 'elasticsearch'
 
 import cfg from '../config'
 import indexes from './index-definitions'
+import log from './logger'
 
-const client = new Client(cfg.elastic)
+export const client = new Client(Object.assign(cfg.elastic, { log }))
 
 async function ensureIndex (indexDefinition: IndicesCreateParams, purge = false) {
   const exists = await client.indices.exists(indexDefinition)

@@ -1,8 +1,10 @@
+const e = process.env
+
 export default {
-  isDev: process.env.NODE_ENV === 'development',
-  apiPort: process.env.API_PORT ? parseInt(process.env.API_PORT) : 9000,
+  isDev: e.NODE_ENV === 'development',
+  apiPort: e.API_PORT ? parseInt(e.API_PORT) : 9000,
+  loglevel: e.LOG_LEVEL || 'debug',
   elastic: {
-    host: process.env.ELASTIC_HOST || 'localhost:9200',
-    log: process.env.ELASTIC_LOGLEVEL || 'debug',
+    host: e.ELASTIC_HOST || 'localhost:9200',
   },
 }
