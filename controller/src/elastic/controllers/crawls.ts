@@ -5,14 +5,12 @@ import { client, ensureIndex } from '../'
 
 export async function saveCrawl (crawl: Crawl) {
   const doc = JSON.parse(crawl.toJson())
-
   const res = await client.index({
     index: crawlsMapping.index,
     id: crawl.id, // may be undefined
     type: 'datapoint',
     body: doc,
   })
-
   crawl.id = res._id
   return crawl
 }

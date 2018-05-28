@@ -6,7 +6,7 @@ export default class Result {
   content: string
   scores: ResultScores
 
-  constructor (params: Result ) {
+  constructor (params: Result) {
     const { url, host, title, crawl, scores, content } = params
 
     this.url = url

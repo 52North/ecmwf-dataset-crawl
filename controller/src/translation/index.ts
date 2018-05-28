@@ -12,6 +12,4 @@ export interface TranslationApi {
   translate (terms: string[], from: Language, to: Language, options: TranslationQueryOptions): Promise<any>
 }
 
-type TranslationApiConfig = { }
-
 type TranslationQueryOptions = { }

@@ -9,19 +9,19 @@ export class SearchApiGoogle implements SearchApi {
   RESULTS_PER_PAGE = 10
   MAX_RESULTS = 100
 
-  constructor(options: GcsSearchOpts) {
+  constructor (options: GcsSearchOpts) {
     this.opts = options
     this.log = createLogger('SearchApiGoogle')
   }
 
-  async init() {}
+  async init () { /* no init requried */ }
 
   async search (terms: string[], options?: SearchQueryOptions): Promise<SearchResult[]> {
     let {
       numResults: numResults = this.RESULTS_PER_PAGE,
       language: language = undefined,
       restrictLang: restrictLang = undefined,
-    } = (options) ? options : {};
+    } = (options) ? options : {}
 
     if (numResults > this.MAX_RESULTS) {
       this.log.warn('This API provides at most 100 results, truncating')
