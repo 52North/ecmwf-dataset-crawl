@@ -1,6 +1,6 @@
 import { saveCrawl } from '../elastic/controllers/crawls'
 
-export class Crawl implements CrawlResponse {
+export default class Crawl implements CrawlResponse {
   name: string
   languages: any[] // TODO: get type from ../languages
   commonKeywords: KeywordGroup
@@ -11,7 +11,7 @@ export class Crawl implements CrawlResponse {
   started?: Date
   completed?: Date
 
-  constructor(crawl: CrawlResponse) {
+  constructor (crawl: CrawlResponse) {
     const {
       name,
       languages,
@@ -33,11 +33,11 @@ export class Crawl implements CrawlResponse {
     this.completed = completed
   }
 
-  async save () : Promise<any> {
+  async save (): Promise<any> {
     return saveCrawl(this)
   }
 
-  async processKeywords () : Promise<any> {
+  async processKeywords (): Promise<any> {
     // merge keywordGroups with common keywords
 
     // translate keywords
@@ -45,7 +45,7 @@ export class Crawl implements CrawlResponse {
     // save updated document
   }
 
-  async startCrawling () : Promise<any> {
+  async startCrawling (): Promise<any> {
     if (this.started) return
 
     // find seed urls for documents
@@ -53,18 +53,18 @@ export class Crawl implements CrawlResponse {
     // insert seed URLs in new crawl status index
   }
 
-  async stopCrawling () : Promise<any> {
+  async stopCrawling (): Promise<any> {
     if (!this.started || this.completed) return
 
     // delete crawl status index
   }
 
-  toJson () : string {
+  toJson (): string {
     // TODO: convert dates to ISO strings, move _id -> id, add resultCount
     return JSON.stringify(this)
   }
 
-  async getResultCount () : Promise<number> {
+  async getResultCount (): Promise<number> {
     return 0
   }
 }

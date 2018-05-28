@@ -1,9 +1,14 @@
 {
     "defaultSeverity": "error",
     "extends": [
-        "tslint:recommended"
+        "tslint-config-standard"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+        "curly": false,
+        "no-use-before-declare": false,
+        "return-undefined": false,
+        "trailing-comma": true
+    },
     "rulesDirectory": []
 }

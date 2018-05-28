@@ -1,7 +1,6 @@
 import { Client, IndicesCreateParams } from 'elasticsearch'
 
 import cfg from '../config'
-import Crawl from '../models/Crawl'
 import log from './logger'
 
 import crawlerMetricsMapping from './index-definitions/crawler-metrics'

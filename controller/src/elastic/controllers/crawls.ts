@@ -1,6 +1,5 @@
-import { Client, IndicesCreateParams } from 'elasticsearch'
+import { IndicesCreateParams } from 'elasticsearch'
 
-import cfg from '../../config'
 import Crawl from '../../models/Crawl'
 import { client, ensureIndex } from '../'
 
@@ -18,17 +17,13 @@ export async function saveCrawl (crawl: Crawl) {
   return crawl
 }
 
-function getNewId() {
-  return '1'
-}
-
 export async function addCrawlStatusIndex (crawl: Crawl) {
   // IDEA: use index templates instead?
   const def = crawlStatusMapping(`crawlstatus-${crawl.id}`)
   return ensureIndex(def)
 }
 
-function crawlStatusMapping(index: string) {
+function crawlStatusMapping (index: string) {
   return {
     index,
     body: {

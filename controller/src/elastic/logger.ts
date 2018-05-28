@@ -10,7 +10,7 @@ export default class LogToBunyan {
   info: (error: Error, ...params: any[]) => void
   debug: (error: Error, ...params: any[]) => void
 
-  constructor(config: ConfigOptions) {
+  constructor (config: ConfigOptions) {
     const bun = this.bun = createLogger('elasticsearch')
     this.error = bun.error.bind(bun)
     this.warning = bun.warn.bind(bun)
@@ -29,5 +29,5 @@ export default class LogToBunyan {
     })
   }
 
-  close () { /* bunyan's loggers do not need to be closed */ };
+  close () { /* bunyan's loggers do not need to be closed */ }
 }
