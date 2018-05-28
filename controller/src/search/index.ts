@@ -4,17 +4,18 @@
 export interface SearchApi {
   // async setup like authentication etcpp
   init (): Promise<any>
-  search (terms: string[], options: SearchQueryOptions): Promise<SearchResult[]>
+  search (terms: string[], options?: SearchQueryOptions): Promise<SearchResult[]>
 }
 
 export type SearchQueryOptions = {
-  countries?: string[]
-  languages?: string[]
+  numResults?: number
+  language?: string
+  restrictLang?: boolean
 }
 
 export type SearchResult = {
   url: string
   title?: string
-  language?: string
-  score?: number
 }
+
+export * from './SearchApiGoogle'

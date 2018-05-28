@@ -17,6 +17,7 @@
   "license": "Apache-2.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "bunyan": "^1.8.12",
     "connect": "~3.6.6",
     "elasticsearch": "^15.0.0",

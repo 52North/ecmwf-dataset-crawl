@@ -7,7 +7,7 @@ import crawlerMetricsMapping from './index-definitions/crawler-metrics'
 import resultsMapping from './index-definitions/results'
 import { crawlsMapping } from './controllers/crawls'
 
-export const client = new Client(Object.assign(cfg.elastic, { log }))
+export const client = new Client(Object.assign({}, cfg.elastic, { log }))
 
 export async function initializeIndizes (purge = false) {
   await client.ping({})
