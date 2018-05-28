@@ -13,10 +13,24 @@ export default {
         _source: {
           enabled: false
         },
+        dynamic_templates: [{
+          metadata: {
+            path_match: 'scores.*',
+            mapping: {
+              type: 'number',
+              store: true
+            },
+          },
+        }],
         properties: {
           content: {
             type: 'text',
             index: 'true'
+          },
+          crawl: {
+            type: 'keyword',
+            index: 'true',
+            store: true,
           },
           host: {
             type: 'keyword',

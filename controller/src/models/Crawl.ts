@@ -1,4 +1,5 @@
 import { saveCrawl } from '../elastic/controllers/crawls'
+import { Language } from '../models/Language'
 
 export default class Crawl implements CrawlResponse {
   name: string
@@ -48,7 +49,9 @@ export default class Crawl implements CrawlResponse {
   async startCrawling (): Promise<any> {
     if (this.started) return
 
-    // find seed urls for documents
+    // find seed urls for keywords
+
+    // create new crawl status index
 
     // insert seed URLs in new crawl status index
   }
@@ -77,7 +80,7 @@ interface CrawlResponse extends CrawlRequest {
 
 type CrawlRequest = {
   name: string
-  languages: any[] // TODO: get type from ../languages
+  languages: Language[]
   commonKeywords: KeywordGroup
   keywordGroups: KeywordGroup[]
   crawlOptions: CrawlOptions
