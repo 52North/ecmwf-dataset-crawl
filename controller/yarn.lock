@@ -2504,6 +2504,10 @@ widest-line@^2.0.0:
   dependencies:
     string-width "^2.1.1"
 
+world-countries@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/world-countries/-/world-countries-2.0.0.tgz#a20198c438e2f78aca040d68dedeea0bc26adc6e"
+
 wrap-ansi@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-2.1.0.tgz#d8fc3d284dd05794fe84973caecdd1cf824fdd85"

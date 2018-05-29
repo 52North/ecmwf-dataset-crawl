@@ -37,7 +37,7 @@
               {{ crawl.completed | datestring }}
             </v-tooltip>
             <v-spacer></v-spacer>
-            <span class="grey--text">started at {{ crawl.started | datestring }}</span>
+            <span class="grey--text" v-if="crawl.started">started at {{ crawl.started | datestring }}</span>
           </v-card-title>
 
           <v-card-text class="crawldesc">
@@ -82,7 +82,7 @@
             </v-layout>
 
             <!-- status counters -->
-            <v-layout row align-center>
+            <v-layout row align-center v-if="crawl.seedUrls">
               <v-flex sm3 md2 text-sm-right><b>Seed Pages:</b></v-flex>
               <v-flex xs3 sm2 md1><v-chip>{{ crawl.seedUrls.length }}</v-chip></v-flex>
               <v-flex>
@@ -149,7 +149,8 @@ export default {
         await stopCrawl(crawl)
         this.info = `Stopped Crawl ${crawl.name}`
       } catch (e) {
-        this.error = `Could not stop crawl ${crawl.name}: ${e}`
+        const msg = e.response.data
+        this.error = `Could not stop crawl ${crawl.name}: ${msg}`
         this.errorOpen = true
       }
     },

@@ -7,7 +7,7 @@ const log = createLogger('main')
 
 async function main () {
   await api(cfg.apiPort)
-  await initializeIndizes(cfg.isDev)
+  await initializeIndizes(false)
 }
 
 main().catch(err => {

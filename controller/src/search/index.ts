@@ -1,3 +1,6 @@
+import cfg from '../config'
+import { Language } from '../models/Language'
+
 /**
  * implementation classes must implement this interface
  */
@@ -9,7 +12,7 @@ export interface SearchApi {
 
 export type SearchQueryOptions = {
   numResults?: number
-  language?: string
+  language?: Language
   restrictLang?: boolean
 }
 
@@ -18,4 +21,5 @@ export type SearchResult = {
   title?: string
 }
 
-export * from './SearchApiGoogle'
+import { SearchApiGoogle } from './SearchApiGoogle'
+export const searcher = new SearchApiGoogle(cfg.search.google)

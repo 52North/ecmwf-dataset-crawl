@@ -13,11 +13,11 @@ const log = createLogger('api')
 // swaggerRouter configuration
 const options = {
   controllers: path.join(__dirname, './controllers'),
-  useStubs: cfg.isDev, // Conditionally turn on stubs (mock mode)
+  useStubs: false,
 }
 
 // The Swagger document (require it, build it programmatically, fetch it from a URL, ...)
-const spec = fs.readFileSync('./swagger.yaml', 'utf8')
+const spec = fs.readFileSync(path.join('./swagger.yaml'), 'utf8')
 const swaggerDoc = jsyaml.safeLoad(spec)
 
 // Initialize the Swagger middleware

@@ -28,12 +28,13 @@ export class SearchApiGoogle implements SearchApi {
       numResults = this.MAX_RESULTS
     }
 
-    // FIXME: validate available languages / countries
+    // FIXME: validate available languages / countries. country != language! google just ignores invalid codes..
+    // https://developers.google.com/custom-search/docs/xml_results_appendices#countryCollections
     const params: GcsReqParams = {
       q: terms.map(encodeURIComponent).join('+'),
-      gl: language, // geolocation
-      lr: (restrictLang && language) ? `lang_${language}` : undefined, // document language
-      cr: (restrictLang && language) ? `country${language.toUpperCase()}` : undefined, // host country
+      gl: language ? language.code : undefined, // geolocation
+      lr: (restrictLang && language) ? `lang_${language.code}` : undefined, // document language
+      cr: (restrictLang && language) ? `country${language.code.toUpperCase()}` : undefined, // host country
     }
 
     // generate request params for each request page (10 results per page)
@@ -49,19 +50,37 @@ export class SearchApiGoogle implements SearchApi {
         return [].concat(...results)
           .filter((v: SearchResult, i: number) => i < numResults)
       })
-      .catch(this.log.error)
+      .catch(err => {
+        this.log.error(err)
+        throw new Error(`Error querying Google Search: ${err}`)
+      })
   }
 
   private async request (parameters: GcsReqParams): Promise<any> {
     const endpoint = 'https://www.googleapis.com/customsearch/v1'
     const { searchEngineId: cx, apiKey: key } = this.opts
     const params = Object.assign({ cx, key }, parameters)
-    return axios.get(endpoint, { params })
+
+    // FIXME: filter PDFs?
+    // FIXME: check sorting?
+
+    try {
+      const res = await axios.get(endpoint, { params })
+      return res.data
+    } catch (err) {
+      // catch rate limit: just return nothing
+      if (err.response.data.error.errors[0].reason === 'dailyLimitExceeded') {
+        this.log.warn('Daily Rate Limit Exceeded, returning without results')
+        return { items: [] }
+      } else {
+        throw err
+      }
+    }
   }
 
   private async parseResponse (response: any): Promise<SearchResult[]> {
     // IDEA: parse site.pagemap.metatags already?
-    return response.data.items.map((site: any) => ({
+    return response.items.map((site: any) => ({
       url: site.link,
       title: site.title,
     }))

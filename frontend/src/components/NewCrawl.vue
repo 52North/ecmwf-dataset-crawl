@@ -44,7 +44,6 @@
                     chips
                     deletable-chips
                     v-model="commonKeywords.keywords"
-                    @blur="commonKeywords.keywords = cleanKeywordInput(commonKeywords.keywords)"
                     label="Common Keywords"
                   />
                 </v-flex>
@@ -63,7 +62,6 @@
                     chips
                     deletable-chips
                     v-model="group.keywords"
-                    @blur="group.keywords = cleanKeywordInput(group.keywords)"
                     :label="'Keyword Group ' + (i + 1)"
                   />
                 </v-flex>
@@ -192,7 +190,6 @@
 </template>
 
 <script>
-import { arrayOfWords } from '@/utils'
 import { addCrawl, getCrawls, getLanguages } from '@/api'
 
 export default {
@@ -220,7 +217,6 @@ export default {
     availableLanguages: getLanguages,
   },
   methods: {
-    cleanKeywordInput: arrayOfWords,
     addKeywordGroup () {
       this.keywordGroups.push({
         keywords: [],

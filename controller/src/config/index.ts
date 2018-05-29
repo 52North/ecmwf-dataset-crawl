@@ -17,4 +17,5 @@ export default {
       apiKey: e.GCS_APIKEY,
     } as GcsSearchOpts,
   },
+  defaultLanguage: 'gb',
 }

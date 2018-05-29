@@ -36,7 +36,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "schema.json#/definitions/CrawlResponse"
+              $ref: "./schema.json#/definitions/CrawlResponse"
         500:
           description: "Internal Error"
       x-swagger-router-controller: "Crawls"
@@ -54,12 +54,12 @@ paths:
         name: "crawl"
         required: true
         schema:
-          $ref: "schema.json#/definitions/CrawlRequest"
+          $ref: "./schema.json#/definitions/CrawlRequest"
       responses:
         201:
           description: "Created"
           schema:
-            $ref: "schema.json#/definitions/CrawlResponse"
+            $ref: "./schema.json#/definitions/CrawlResponse"
         400:
           description: "Bad Request"
         500:
@@ -75,7 +75,7 @@ paths:
         200:
           description: "Success"
       x-swagger-router-controller: "Crawls"
-  /crawls/{crawl-id}:
+  /crawls/{crawlid}:
     get:
       tags:
       - "crawls"
@@ -86,7 +86,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "crawl-id"
+      - name: "crawlid"
         in: "path"
         description: "Crawl ID to operate on"
         required: true
@@ -95,7 +95,7 @@ paths:
         200:
           description: "Success"
           schema:
-            $ref: "schema.json#/definitions/CrawlResponse"
+            $ref: "./schema.json#/definitions/CrawlResponse"
         404:
           description: "Crawl not found"
         500:
@@ -111,7 +111,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "crawl-id"
+      - name: "crawlid"
         in: "path"
         description: "Crawl ID to operate on"
         required: true
@@ -128,7 +128,7 @@ paths:
       summary: "Only defined to handle preflight CORS requests"
       operationId: "handlePreflight2"
       parameters:
-      - name: "crawl-id"
+      - name: "crawlid"
         in: "path"
         description: "Crawl ID to operate on"
         required: true

@@ -9,7 +9,10 @@ export interface TranslationApi {
 
   availableLanguages (fromLang?: Language): Promise<Language[]>
 
-  translate (terms: string[], from: Language, to: Language, options: TranslationQueryOptions): Promise<any>
+  translate (terms: string[], from: Language, to: Language, options?: TranslationQueryOptions): Promise<string[]>
 }
 
 type TranslationQueryOptions = { }
+
+// TODO
+export const translator: TranslationApi = {} as TranslationApi
