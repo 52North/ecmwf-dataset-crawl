@@ -284,7 +284,26 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Language"
+              type: "object"
+        500:
+          description: "Internal Error"
+      x-swagger-router-controller: "Capabilities"
+  /capabilities/countries:
+    get:
+      tags:
+      - "capabilities"
+      summary: "Returns all available country codes for translation"
+      operationId: "getCountries"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              type: "object"
         500:
           description: "Internal Error"
       x-swagger-router-controller: "Capabilities"
@@ -331,18 +350,6 @@ definitions:
         type: "string"
     example:
       contact: "contact"
-  Language:
-    properties:
-      code:
-        type: "string"
-      name:
-        type: "string"
-      outline:
-        type: "object"
-        properties: {}
-    example:
-      code: "en"
-      name: "English"
 externalDocs:
   description: "GitHub"
   url: "https://github.com/52north/ecmwf-dataset-crawl"

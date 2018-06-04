@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import { SearchApi, SearchQueryOptions, SearchResult } from './'
 import createLogger from '../logging'
+import { languagesFromCountry } from '../models/Language'
 
 export class SearchApiGoogle implements SearchApi {
   opts: GcsSearchOpts
@@ -19,8 +20,9 @@ export class SearchApiGoogle implements SearchApi {
   async search (terms: string[], options?: SearchQueryOptions): Promise<SearchResult[]> {
     let {
       numResults: numResults = this.RESULTS_PER_PAGE,
+      country: country = undefined,
       language: language = undefined,
-      restrictLang: restrictLang = undefined,
+      restrictCountry: restrictCountry = undefined,
     } = (options) ? options : {}
 
     if (numResults > this.MAX_RESULTS) {
@@ -28,20 +30,29 @@ export class SearchApiGoogle implements SearchApi {
       numResults = this.MAX_RESULTS
     }
 
-    // FIXME: validate available languages / countries. country != language! google just ignores invalid codes..
+    // set up language/country filters. google just ignores invalid codes, and seems to use
+    // - for the language codes ISO 639-1,
+    // - the country codes are mostly ISO3166-1 alpha-2, except UK, ghana?
     // https://developers.google.com/custom-search/docs/xml_results_appendices#countryCollections
+    let cr = undefined
+    let lr = undefined
+    if (restrictCountry) {
+      cr = country ? `country${country.toUpperCase()}` : undefined
+      lr = `lang_${language || languagesFromCountry({ iso3166_a2: country })[0]}`
+    }
+
     const params: GcsReqParams = {
       q: terms.map(encodeURIComponent).join('+'),
-      gl: language ? language.code : undefined, // geolocation
-      lr: (restrictLang && language) ? `lang_${language.code}` : undefined, // document language
-      cr: (restrictLang && language) ? `country${language.code.toUpperCase()}` : undefined, // host country
+      gl: country, // user geolocation
+      lr,          // document language
+      cr,          // host country
     }
 
     // generate request params for each request page (10 results per page)
     const requests = new Array(Math.floor((numResults - 1) / this.RESULTS_PER_PAGE) + 1)
       .fill(1)
       .map((n, i) => Object.assign({ start: i * 10 + 1 }, params))
-      .map(p => this.request(p).then(this.parseResponse))
+      .map(p => this.request(p).then(this.parseResponse.bind(this)))
 
     return Promise.all(requests)
       // flatten array of responses to a single results list
@@ -61,8 +72,8 @@ export class SearchApiGoogle implements SearchApi {
     const { searchEngineId: cx, apiKey: key } = this.opts
     const params = Object.assign({ cx, key }, parameters)
 
-    // FIXME: filter PDFs?
-    // FIXME: check sorting?
+    // filter unwanted formats, most notably PDFs
+    params.orTerms = 'filetype:html filtetype:xml'
 
     try {
       const res = await axios.get(endpoint, { params })
@@ -80,6 +91,9 @@ export class SearchApiGoogle implements SearchApi {
 
   private async parseResponse (response: any): Promise<SearchResult[]> {
     // IDEA: parse site.pagemap.metatags already?
+    if (!response.items)
+      return []
+
     return response.items.map((site: any) => ({
       url: site.link,
       title: site.title,
@@ -99,4 +113,5 @@ type GcsReqParams = {
   cr?: string
   gl?: string
   lr?: string
+  orTerms?: string
 }

@@ -4,8 +4,7 @@ import {
   clearStatusIndex
 } from '../elastic/controllers/crawls'
 import {
-  Language,
-  getLanguageFromValue,
+  languagesFromCountry,
   getDefaultLanguage
 } from '../models/Language'
 import { searcher, SearchResult } from '../search'
@@ -13,7 +12,7 @@ import { translator } from '../translation'
 
 export default class Crawl implements CrawlResponse {
   name: string
-  languages: string[]
+  countries: string[]
   commonKeywords: KeywordGroup
   keywordGroups: KeywordGroup[]
   crawlOptions: CrawlOptions
@@ -28,7 +27,7 @@ export default class Crawl implements CrawlResponse {
   constructor (crawl: CrawlResponse) {
     const {
       name,
-      languages,
+      countries,
       commonKeywords,
       keywordGroups,
       crawlOptions,
@@ -40,7 +39,7 @@ export default class Crawl implements CrawlResponse {
     } = crawl
 
     this.name = name
-    this.languages = languages
+    this.countries = countries
     this.commonKeywords = commonKeywords
     this.keywordGroups = keywordGroups
     this.crawlOptions = crawlOptions
@@ -59,33 +58,40 @@ export default class Crawl implements CrawlResponse {
 
   async processKeywords (): Promise<Crawl> {
     this.processedKeywords = []
-    const defaultLang = getDefaultLanguage()
+    const defaultLang = getDefaultLanguage() // the language we receive the keywords in
 
-    // FIXME: language interface
-    // FIXME: filter untranslated keywordGroups
-    // FIXME: handle empty keyword groups
+    // TODO: allow to exclude default lang from processedKeywords?
     for (const group of this.keywordGroups) {
       // add default language: just merge keywordGroups with common keywords
+      // dont set a country for the default language, to avoid incorrect geofilter
       this.processedKeywords.push({
-        language: defaultLang,
+        language: defaultLang.iso639_1,
         keywords: Array.from(group.keywords.concat(this.commonKeywords.keywords)),
       })
 
       if (!group.translate) continue
 
       // translate (common) keywords
-      for (const lang of this.languages) {
+      for (const country of this.countries) {
+        if (country === defaultLang.iso3166_a2)
+          continue // default lang was already added
+
         let keywords = this.commonKeywords.translate
           ? Array.from(group.keywords.concat(this.commonKeywords.keywords))
           : Array.from(group.keywords)
 
-        const language = getLanguageFromValue({ code: lang })
+        // ignore all languages but the first for a country
+        const language = languagesFromCountry({ iso3166_a2: country })[0]
         // keywords = await translator.translate(keywords, defaultLang, language) // TODO
 
         if (!this.commonKeywords.translate)
           keywords = keywords.concat(this.commonKeywords.keywords)
 
-        this.processedKeywords.push({ language, keywords })
+        this.processedKeywords.push({
+          language: language.iso639_1,
+          country,
+          keywords
+        })
       }
     }
 
@@ -94,15 +100,16 @@ export default class Crawl implements CrawlResponse {
 
   async getSeedUrls (): Promise<Crawl> {
     if (!this.processedKeywords)
-      throw new Error(`Cant fetch seed URLs for crawl ${this.id || this.name}: process keywords first.`)
+      throw new Error(`Can't fetch seed URLs for crawl ${this.id || this.name}: process keywords first.`)
 
     this.seedUrls = []
 
     // find seed urls for keywords
     for (const group of this.processedKeywords) {
-      const { language, keywords } = group
+      const { country, language, keywords } = group
       const results = await searcher.search(keywords, {
         numResults: this.crawlOptions.seedUrlsPerKeywordGroup,
+        country,
         language,
       })
 
@@ -133,7 +140,7 @@ export default class Crawl implements CrawlResponse {
 
   async stopCrawling (): Promise<Crawl> {
     if (!this.started || this.completed)
-      throw new Error('crawl is not running yet!')
+      throw new Error('Crawl is not running yet!')
 
     await clearStatusIndex(this)
     this.completed = new Date()
@@ -163,7 +170,7 @@ interface CrawlResponse extends CrawlRequest {
 
 type CrawlRequest = {
   name: string
-  languages: string[] // TODO: how to handle base lang 'en'?
+  countries: string[]
   commonKeywords: KeywordGroup
   keywordGroups: KeywordGroup[]
   crawlOptions: CrawlOptions
@@ -182,7 +189,8 @@ type CrawlOptions = {
 
 type ProcessedKeywordGroup = {
   keywords: string[] // FIXME: enforce min length of 1 or handle empty case
-  language: Language
+  language: string // ISO639-1 code
+  country?: string // ISO3166-1 alpha2 code
 }
 
 type KeywordGroup = {

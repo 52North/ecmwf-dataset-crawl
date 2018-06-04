@@ -20,7 +20,7 @@
                     By adding more Keyword Groups, multiple search queries for the initial crawl sites can be added.
                   </v-list-tile>
                   <v-list-tile>
-                    Each Keyword Group may be translated into the selected languages.
+                    Each Keyword Group may be translated into the official language of the selected countries.
                   </v-list-tile>
                 </v-list>
               </v-flex>
@@ -37,54 +37,59 @@
               </v-flex>
             </v-card-title>
             <v-card-text>
-              <v-layout row wrap>
-                <v-flex xs8 sm9 md10 xl12>
-                  <v-select
-                    tags
-                    chips
-                    deletable-chips
-                    v-model="commonKeywords.keywords"
-                    label="Common Keywords"
-                  />
+              <v-container>
+                <v-layout
+                  v-for="(group, i) in keywordGroups"
+                  :key="i"
+                >
+                  <v-flex xs8 sm9 md10 xl12 >
+                    <v-select
+                      tags
+                      chips
+                      deletable-chips
+                      v-model="group.keywords"
+                      :label="'Keyword Group ' + (i + 1)"
+                      required
+                      :rules="[v => !!v.length || 'at least one keyword required']"
+                    />
+                  </v-flex>
+                  <v-flex xs4 sm3 md2 xl1>
+                    <v-checkbox class="translated" v-model="group.translate" label="translate"></v-checkbox>
+                  </v-flex>
+                </v-layout>
+                <v-flex>
+                  <v-btn @click="addKeywordGroup" color="accent">
+                    <v-icon>add</v-icon>
+                    add Keyword Group
+                  </v-btn>
                 </v-flex>
-                <v-flex xs4 sm3 md2 xl1>
-                  <v-checkbox class="translated" v-model="commonKeywords.translate" label="translate"></v-checkbox>
-                </v-flex>
-              </v-layout>
-
-              <v-layout
-                v-for="(group, i) in keywordGroups"
-                :key="i"
-              >
-                <v-flex xs8 sm9 md10 xl12 >
-                  <v-select
-                    tags
-                    chips
-                    deletable-chips
-                    v-model="group.keywords"
-                    :label="'Keyword Group ' + (i + 1)"
-                  />
-                </v-flex>
-                <v-flex xs4 sm3 md2 xl1>
-                  <v-checkbox class="translated" v-model="group.translate" label="translate"></v-checkbox>
-                </v-flex>
-              </v-layout>
-              <v-flex>
-                <v-btn @click="addKeywordGroup" color="accent">
-                  <v-icon>add</v-icon>
-                  add Keyword Group
-                </v-btn>
-              </v-flex>
+              </v-container>
+              <v-container>
+                <v-layout row wrap>
+                  <v-flex xs8 sm9 md10 xl12>
+                    <v-select
+                      tags
+                      chips
+                      deletable-chips
+                      v-model="commonKeywords.keywords"
+                      label="Common Keywords"
+                    />
+                  </v-flex>
+                  <v-flex xs4 sm3 md2 xl1>
+                    <v-checkbox class="translated" v-model="commonKeywords.translate" label="translate"></v-checkbox>
+                  </v-flex>
+                </v-layout>
+              </v-container>
             </v-card-text>
           </v-card>
         </v-flex>
 
-        <!-- languages TODO: map view -->
+        <!-- countries / languages TODO: map view -->
         <v-flex>
           <v-card>
             <v-card-title>
               <v-flex>
-                <h4 class="headline">Languages</h4>
+                <h4 class="headline">Countries</h4>
               </v-flex>
             </v-card-title>
             <v-card-text>
@@ -94,10 +99,10 @@
                   deletable-chips
                   multiple
                   autocomplete
-                  :items="availableLanguages"
+                  :items="availableCountries"
                   item-text="name"
-                  item-value="code"
-                  v-model="languages"
+                  item-value="iso3166_a2"
+                  v-model="countries"
                 />
               </v-flex>
             </v-card-text>
@@ -134,43 +139,44 @@
                   />
               </v-flex>
 
-              <v-layout row wrap>
-                <v-flex>
-                  <v-slider
-                    v-model="crawldepth"
-                    thumb-label
-                    label="Crawl Depth (Recursion)"
-                    min="0"
-                    max="10"
-                    required
-                  />
-                </v-flex>
-                <v-flex xs3 md1>
-                  <v-text-field
-                    v-model="crawldepth"
-                    type="number"
-                    :rules="[v => !!v || 'required']"
-                    required
-                  />
-                </v-flex>
-                <v-flex>
-                  <v-slider
-                    v-model="seedurls"
-                    thumb-label
-                    label="Seed URLs per Keyword Group"
-                    min="1"
-                    max="100"
-                  />
-                </v-flex>
-                <v-flex xs3 md1>
-                  <v-text-field
-                    v-model="seedurls"
-                    type="number"
-                    :rules="[v => !!v || 'required']"
-                    required
-                  />
-                </v-flex>
-              </v-layout>
+              <v-container>
+                <v-layout row wrap>
+                  <v-flex>
+                    <v-slider
+                      v-model="crawldepth"
+                      thumb-label
+                      label="Crawl Depth (Recursion)"
+                      min="0"
+                      max="10"
+                    />
+                  </v-flex>
+                  <v-flex xs3 md1>
+                    <v-text-field
+                      v-model="crawldepth"
+                      type="number"
+                      :rules="[v => !!v || 'required']"
+                      required
+                    />
+                  </v-flex>
+                  <v-flex>
+                    <v-slider
+                      v-model="seedurls"
+                      thumb-label
+                      label="Seed URLs per Keyword Group"
+                      min="1"
+                      max="100"
+                    />
+                  </v-flex>
+                  <v-flex xs3 md1>
+                    <v-text-field
+                      v-model="seedurls"
+                      type="number"
+                      :rules="[v => !!v || 'required']"
+                      required
+                    />
+                  </v-flex>
+                </v-layout>
+              </v-container>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -190,12 +196,12 @@
 </template>
 
 <script>
-import { addCrawl, getCrawls, getLanguages } from '@/api'
+import { addCrawl, getCrawls, getCountries } from '@/api'
 
 export default {
   data () {
     return {
-      availableLanguages: [],
+      availableCountries: [],
       error: '',
       valid: false,
 
@@ -210,11 +216,11 @@ export default {
       keywordGroups: [
         { keywords: [], translate: false }
       ],
-      languages: ['en'],
+      countries: ['de'],
     }
   },
   asyncData: {
-    availableLanguages: getLanguages,
+    availableCountries: getCountries,
   },
   methods: {
     addKeywordGroup () {
@@ -228,7 +234,7 @@ export default {
 
       const {
         name,
-        languages,
+        countries,
         commonKeywords,
         keywordGroups,
         domainWhitelist,
@@ -239,7 +245,7 @@ export default {
 
       const crawlRequest = {
         name,
-        languages,
+        countries,
         commonKeywords,
         keywordGroups,
         crawlOptions: {
@@ -252,6 +258,7 @@ export default {
       }
 
       try {
+        // TODO: loading spinner, scroll to top
         await addCrawl(crawlRequest)
         await getCrawls(false)
         this.$emit('new-crawl')

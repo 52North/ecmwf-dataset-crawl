@@ -428,6 +428,10 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
+countries-list@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/countries-list/-/countries-list-2.3.2.tgz#9306d1d98e141f81abfa2649e291ceaa2f6c0c4e"
+
 create-error-class@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/create-error-class/-/create-error-class-3.0.2.tgz#06be7abef947a3f14a30fd610671d401bca8b7b6"
@@ -2503,10 +2507,6 @@ widest-line@^2.0.0:
   resolved "https://registry.yarnpkg.com/widest-line/-/widest-line-2.0.0.tgz#0142a4e8a243f8882c0233aa0e0281aa76152273"
   dependencies:
     string-width "^2.1.1"
-
-world-countries@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/world-countries/-/world-countries-2.0.0.tgz#a20198c438e2f78aca040d68dedeea0bc26adc6e"
 
 wrap-ansi@^2.0.0:
   version "2.1.0"

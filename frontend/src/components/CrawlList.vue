@@ -41,35 +41,37 @@
           </v-card-title>
 
           <v-card-text class="crawldesc">
-            <!-- languages -->
-            <v-layout row algin-center>
+            <!-- countries -->
+            <v-layout row align-center>
               <v-flex sm3 md2 text-sm-right>
-                <b>Languages:</b>
+                <b>Countries:</b>
               </v-flex>
-              <v-chip
-                v-for="(lang, j) in crawl.languages"
-                :key="j"
-                label
-                color="secondary"
-              >
-                {{ lang }}
-              </v-chip>
+              <v-flex xs2 sm1>
+                <v-chip
+                  v-for="(lang, j) in crawl.countries"
+                  :key="j"
+                  label
+                  color="accent"
+                >
+                  {{ lang }}
+                </v-chip>
+              </v-flex>
             </v-layout>
 
             <!-- keyword groups -->
             <v-layout row align-center
-              v-for="(keywordgroup, j) in crawl.keywordGroups"
+              v-for="(keywordgroup, j) in crawl.processedKeywords"
               :key="j"
             >
               <v-flex sm3 md2 text-sm-right>
                 <b v-if="j === 0">Keywords:</b>
               </v-flex>
 
-              <v-flex xs4 sm3 md2 xl1>
-                <v-checkbox class="translated" v-model="keywordgroup.translate" label="translated" disabled></v-checkbox>
+              <v-flex xs2 sm1>
+                <v-chip label color="accent">{{ keywordgroup.language }}</v-chip>
               </v-flex>
 
-              <v-flex xs5 sm6 md8 xl9>
+              <v-flex xs7 sm8 md9>
                 <v-chip
                   label
                   color="secondary"

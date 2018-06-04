@@ -1,5 +1,4 @@
 import cfg from '../config'
-import { Language } from '../models/Language'
 
 /**
  * implementation classes must implement this interface
@@ -12,8 +11,9 @@ export interface SearchApi {
 
 export type SearchQueryOptions = {
   numResults?: number
-  language?: Language
-  restrictLang?: boolean
+  country?: string // ISO3166-1-alpha2 country code
+  language?: string // ISO639-1 language code
+  restrictCountry?: boolean
 }
 
 export type SearchResult = {

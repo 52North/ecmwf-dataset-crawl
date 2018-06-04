@@ -1,39 +1,48 @@
-import cfg from '../config'
+import { countries, languages } from 'countries-list'
 
 export type Language = {
   name: string
-  code: string   // https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 // FIXME rename!
-  code3?: string // https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+  iso639_1: string
 }
 
-// @ts-ignore
-import countries from 'world-countries'
-
-export function getDefaultLanguage (): Language {
-  return getLanguageFromValue({ code: cfg.defaultLanguage })
+export function getDefaultLanguage (): Language & {iso3166_a2: string} {
+  return { name: 'English', iso639_1: 'en', iso3166_a2: 'uk' }
 }
 
-// FIXME: dont conflate countries & languages! need to think of a concept to translate between the two
-export function getLanguageFromValue (values: LangAttrs): Language {
-  const valuesEqual = (lhs: string, rhs?: string) => lhs.toLowerCase() === (rhs || '').toLowerCase()
+export function languagesFromCountry (country: { iso3166_a2?: string }): Language[] {
+  const { iso3166_a2 } = country
 
-  const { name, code, code3 } = values
-  const c = countries.find((c: any) => (
-    valuesEqual(c.name.common, name) ||
-    valuesEqual(c.cca2, code) ||
-    valuesEqual(c.cca3, code3)
-  ))
-  if (!c) throw new Error(`No Language matched for ${JSON.stringify(values)}`)
-
-  return {
-    name: c.name.common,
-    code: c.cca2,
-    code3: c.cca3,
+  if (iso3166_a2) {
+    // @ts-ignore
+    const langs: string[] = countries[iso3166_a2.toUpperCase()].languages
+    if (langs) {
+      return langs.map((l: string) => ({
+        // @ts-ignore
+        name: languages[l].name,
+        iso639_1: l,
+        iso3166_a2,
+      }))
+    }
   }
+
+  throw new Error(`No Language matched for ${JSON.stringify(country)}`)
 }
 
-type LangAttrs = {
-  name?: string
-  code?: string  // https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 // FIXME rename!
-  code3?: string // https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+type Country = {
+  name: string
+  iso3166_a2: string
+}
+
+export function countriesFromLanguages (langs: string[]): Country[] {
+  const codes = Object.keys(countries)
+  const res = []
+  for (const c of codes) {
+    // @ts-ignore
+    const country = countries[c]
+    if (langs.indexOf(country.languages[0]) >= 0) {
+      res.push({ name: country.name, iso3166_a2: c.toLowerCase() })
+    }
+  }
+
+  return res
 }
