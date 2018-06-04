@@ -5,17 +5,17 @@ import createLogger from '../logging'
 import { languagesFromCountry } from '../models/Language'
 
 export class SearchApiGoogle implements SearchApi {
-  opts: GcsSearchOpts
-  log: any
-  RESULTS_PER_PAGE = 10
-  MAX_RESULTS = 100
+  private opts: GcsSearchOpts
+  private log: any
+  private RESULTS_PER_PAGE = 10
+  private MAX_RESULTS = 100
 
   constructor (options: GcsSearchOpts) {
     this.opts = options
     this.log = createLogger('SearchApiGoogle')
   }
 
-  async init () { /* no init requried */ }
+  async init () { /* no init required */ }
 
   async search (terms: string[], options?: SearchQueryOptions): Promise<SearchResult[]> {
     let {

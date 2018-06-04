@@ -88,7 +88,7 @@ export default class Crawl implements CrawlResponse {
 
         // ignore all languages but the first for a country
         const language = languagesFromCountry({ iso3166_a2: country })[0]
-        // keywords = await translator.translate(keywords, defaultLang, language) // TODO
+        keywords = await translator.translate(keywords, defaultLang, language)
 
         if (!this.commonKeywords.translate)
           keywords = keywords.concat(this.commonKeywords.keywords)
