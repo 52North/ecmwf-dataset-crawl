@@ -43,6 +43,19 @@ export async function saveCrawl (crawl: Crawl): Promise<Crawl> {
   return crawl
 }
 
+export async function deleteCrawl (crawl: Crawl): Promise<Crawl> {
+  if (!crawl.id)
+    return crawl
+
+  await client.delete({
+    index: crawlsMapping.index,
+    id: crawl.id,
+    type: 'datapoint',
+  })
+  crawl.id = undefined
+  return crawl
+}
+
 export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
   await ensureIndex(crawlStatusMapping(crawl))
 
@@ -61,7 +74,7 @@ export async function clearStatusIndex (crawl: Crawl) {
 
 function getCrawlStatusId (crawl: Crawl) {
   if (!crawl.id) throw new Error(`Crawl needs an ID before creating a Status Index`)
-  return `crawlstatus-${crawl.id}`
+  return `crawlstatus-${crawl.id.toLowerCase()}`
 }
 
 function crawlStatusMapping (crawl: Crawl) {

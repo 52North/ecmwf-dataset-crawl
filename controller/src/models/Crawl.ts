@@ -1,7 +1,8 @@
 import {
   saveCrawl,
   addToStatusIndex,
-  clearStatusIndex
+  clearStatusIndex,
+  deleteCrawl,
 } from '../elastic/controllers/crawls'
 import {
   languagesFromCountry,
@@ -53,6 +54,11 @@ export default class Crawl implements CrawlResponse {
   async save (): Promise<Crawl> {
     const { id } = await saveCrawl(this)
     this.id = id
+    return this
+  }
+
+  async delete (): Promise<Crawl> {
+    await deleteCrawl(this)
     return this
   }
 

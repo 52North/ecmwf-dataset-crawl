@@ -13,10 +13,15 @@ import {
 export async function addCrawl (crawl: Crawl) {
   const doc = new Crawl(crawl)
 
-  await doc.processKeywords()
-  await doc.getSeedUrls()
-  await doc.startCrawling()
-  return doc
+  try {
+    await doc.processKeywords()
+    await doc.getSeedUrls()
+    await doc.startCrawling()
+    return doc
+  } catch (err) {
+    await doc.delete()
+    throw err
+  }
 }
 
 /**
