@@ -1,3 +1,4 @@
+import { parse as urlParse } from 'url'
 import { IndicesCreateParams } from 'elasticsearch'
 
 import Crawl from '../../models/Crawl'
@@ -59,9 +60,21 @@ export async function deleteCrawl (crawl: Crawl): Promise<Crawl> {
 export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
   await ensureIndex(crawlStatusMapping(crawl))
 
+  const _index = getCrawlStatusId(crawl)
   const docs = urls.map(url => ([
-    { index: { _index: getCrawlStatusId(crawl), _type: 'status' } },
-    { url, status: 'DISCOVERED', nextFetchDate: new Date(), metadata: { crawl: crawl.id } }
+    { index: { _index, _type: 'status' } },
+    {
+      url,
+      status: 'DISCOVERED',
+      nextFetchDate: new Date(),
+      // TODO: see how we can provide domain white / blacklist to crawl
+      // seems to be impossible as long as https://github.com/DigitalPebble/storm-crawler/issues/399 is open
+      metadata: {
+        'crawl': crawl.id,                         // used to identify the crawl this was fetched by
+        'hostname': urlParse(url).hostname,        // required by stormcrawler's CollapsingSpout for polite fetching
+        'max.depth': crawl.crawlOptions.recursion, // https://github.com/DigitalPebble/storm-crawler/issues/399#issuecomment-270874934
+      },
+    }
   ]))
 
   // @ts-ignore
@@ -83,7 +96,7 @@ function crawlStatusMapping (crawl: Crawl) {
     body: {
       settings: {
         index: {
-          number_of_shards: 10,
+          number_of_shards: 10, // MUST be equal to value in storm crawler elastic spout configuration
           number_of_replicas: 0,
           refresh_interval: '5s',
         },
