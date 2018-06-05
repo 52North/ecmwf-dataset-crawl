@@ -6,16 +6,16 @@ includes:
       override: false
 
     - resource: false
-      file: "crawler-conf.yaml"
+      file: "crawler-conf.flux"
       override: true
 
     - resource: false
-      file: "es-conf.yaml"
+      file: "es-conf.flux"
       override: true
 
 spouts:
   - id: "spout"
-    className: "org.n52.webcrawl.ConfigurableEsSpout"
+    className: "com.digitalpebble.stormcrawler.elasticsearch.persistence.CollapsingSpout"
     parallelism: 10
 
 bolts:

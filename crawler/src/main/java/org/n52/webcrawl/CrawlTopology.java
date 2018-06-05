@@ -11,6 +11,7 @@ import com.digitalpebble.stormcrawler.elasticsearch.bolt.IndexerBolt;
 import com.digitalpebble.stormcrawler.elasticsearch.metrics.MetricsConsumer;
 import com.digitalpebble.stormcrawler.elasticsearch.metrics.StatusMetricsBolt;
 import com.digitalpebble.stormcrawler.elasticsearch.persistence.StatusUpdaterBolt;
+import com.digitalpebble.stormcrawler.elasticsearch.persistence.CollapsingSpout;
 import com.digitalpebble.stormcrawler.util.ConfUtils;
 import org.apache.storm.metric.LoggingMetricsConsumer;
 import org.apache.storm.topology.TopologyBuilder;
@@ -35,7 +36,7 @@ public class CrawlTopology extends ConfigurableTopology {
         // true in the configuration
         int numShards = 1;
 
-        builder.setSpout("spout", new ConfigurableEsSpout("status-*"), numShards);
+        builder.setSpout("spout", new CollapsingSpout(), numShards);
 
         builder.setBolt("status_metrics", new StatusMetricsBolt())
                 .shuffleGrouping("spout");
