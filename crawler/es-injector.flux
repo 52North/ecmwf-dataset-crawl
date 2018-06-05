@@ -29,7 +29,7 @@ spouts:
     parallelism: 1
     constructorArgs:
       - "."
-      - "seeds"
+      - "seedurls.txt"
       - ref: "scheme"
 
 bolts:

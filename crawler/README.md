@@ -1,7 +1,5 @@
-# stormcrawlerfight
-Benchmarking of StormCrawler with different versions, backends or alternative crawlers.
+Fetch URLs from seedurls.txt, write HTML to /tmp/crawledPages/
 
-Create a link named 'seeds' to the seeds file of your choice.
 
 With Storm installed, you can generate an uberjar:
 
@@ -9,17 +7,25 @@ With Storm installed, you can generate an uberjar:
 mvn clean package
 ```
 
-and then use the following command to inject URLs into the topology
+
+With Elasticsearch running then use the following command to inject URLs into the topology
 
 ``` sh
-storm jar target/storm-crawler-fight-2.0-SNAPSHOT.jar  org.apache.storm.flux.Flux --local es-injector.flux
+./ES_IndexInit.sh # clear & set up indexes
+storm jar target/crawler-alpha.jar  org.apache.storm.flux.Flux --local es-injector.flux
 ```
 
-then 
+then crawl the seed urls:
 
 ``` sh
-storm jar target/storm-crawler-fight-2.0-SNAPSHOT.jar  org.apache.storm.flux.Flux --local es-crawler.flux
+storm jar target/storm-crawler-fight-2.0-SNAPSHOT.jar  org.apache.storm.flux.Flux --local --sleep 600000 es-crawler.flux
 ```
 
 Replace '--local' with '--remote' to deploy it on a running Storm cluster.
+
+Alternatively, run the application via the following command, which can be adapted to allow debugging from IDEs:
+
+```sh
+mvn clean compile exec:java -Dexec.mainClass=org.apache.storm.flux.Flux -Dexec.args="--local crawler.flux --sleep 60000
+```
 

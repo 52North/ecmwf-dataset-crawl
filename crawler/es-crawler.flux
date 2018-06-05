@@ -15,7 +15,7 @@ includes:
 
 spouts:
   - id: "spout"
-    className: "org.n52.webcrawl.ConfigurableEsSpout"
+    className: "com.digitalpebble.stormcrawler.elasticsearch.persistence.AggregationSpout"
     parallelism: 10
 
 bolts:
@@ -30,15 +30,18 @@ bolts:
     parallelism: 1
   - id: "parse"
     className: "com.digitalpebble.stormcrawler.bolt.JSoupParserBolt"
-    parallelism: 5
+    parallelism: 1
   - id: "index"
-    className: "com.digitalpebble.stormcrawler.elasticsearch.bolt.IndexerBolt"
+    className: "org.n52.webcrawl.N52IndexerBolt"
     parallelism: 1
   - id: "status"
     className: "com.digitalpebble.stormcrawler.elasticsearch.persistence.StatusUpdaterBolt"
     parallelism: 4
   - id: "status_metrics"
     className: "com.digitalpebble.stormcrawler.elasticsearch.metrics.StatusMetricsBolt"
+    parallelism: 1
+  - id: "html_store"
+    className: "org.n52.webcrawl.N52FileBolt"
     parallelism: 1
 
 streams:
@@ -100,3 +103,9 @@ streams:
       type: FIELDS
       args: ["url"]
       streamId: "status"
+
+  - from: "index"
+    to: "html_store"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+      streamId: "storage"
