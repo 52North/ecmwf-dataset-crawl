@@ -65,7 +65,7 @@
                 </v-flex>
               </v-container>
               <v-container>
-                <v-layout row wrap>
+                <v-layout>
                   <v-flex xs8 sm9 md10 xl12>
                     <v-select
                       tags
@@ -125,6 +125,7 @@
                     label="Crawl Name"
                     required
                   />
+                  <!-- hide white/blacklist, as this feature seems to be unfeasible atm
                   <v-text-field
                     v-model="domainWhitelist"
                     label="Domain Whitelist"
@@ -137,6 +138,7 @@
                     multi-line
                     :placeholder="'example.com\necmwf.int'"
                   />
+                  -->
               </v-flex>
 
               <v-container>
@@ -214,7 +216,7 @@ export default {
         keywords: [], translate: false,
       },
       keywordGroups: [
-        { keywords: [], translate: false }
+        { keywords: [], translate: true }
       ],
       countries: ['de'],
     }
@@ -226,7 +228,7 @@ export default {
     addKeywordGroup () {
       this.keywordGroups.push({
         keywords: [],
-        translate: false
+        translate: true
       })
     },
     async submit () {

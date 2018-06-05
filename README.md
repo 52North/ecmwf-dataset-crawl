@@ -15,8 +15,6 @@ docker-compose up proxy
 
 # stop the services
 docker-compose down --volumes
-# stop the services
-docker-compose down --volumes
 ```
 
 Licensed under Apache License 2
