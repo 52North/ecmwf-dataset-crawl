@@ -1,25 +1,11 @@
-# stormcrawlerfight
-Benchmarking of StormCrawler with different versions, backends or alternative crawlers.
+# Crawler
 
-Create a link named 'seeds' to the seeds file of your choice.
+Based on Apache Storm + Flux. Depends on Running elasticsearch instance.
+Can be configured via `*.flux` files, as well as via environments in `*.properties`.
 
-With Storm installed, you can generate an uberjar:
+To build a bundle that can be run with storm: see `Dockerfile`
 
-``` sh
-mvn clean package
+To run the topology without a storm executable:
+```sh
+mvn clean compile exec:java -Dexec.mainClass=org.apache.storm.flux.Flux -Dexec.args="--local --sleep 60000 --filter dev.properties es-crawler.flux"
 ```
-
-and then use the following command to inject URLs into the topology
-
-``` sh
-storm jar target/storm-crawler-fight-2.0-SNAPSHOT.jar  org.apache.storm.flux.Flux --local es-injector.flux
-```
-
-then 
-
-``` sh
-storm jar target/storm-crawler-fight-2.0-SNAPSHOT.jar  org.apache.storm.flux.Flux --local es-crawler.flux
-```
-
-Replace '--local' with '--remote' to deploy it on a running Storm cluster.
-

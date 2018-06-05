@@ -1,10 +1,10 @@
 # Custom configuration for StormCrawler
-# This is used to override the default values from crawler-default.xml and provide additional ones 
+# This is used to override the default values from crawler-default.xml and provide additional ones
 # for your custom components.
-# Use this file with the parameter -config when launching your extension of ConfigurableTopology.  
+# Use this file with the parameter -config when launching your extension of ConfigurableTopology.
 # This file does not contain all the key values but only the most frequently used ones. See crawler-default.xml for an extensive list.
 
-config: 
+config:
   topology.workers: 1
   topology.message.timeout.secs: 300
   topology.max.spout.pending: 250
@@ -12,10 +12,9 @@ config:
 
   topology.worker.childopts: "-Djava.net.preferIPv4Stack=true"
 
-  # does not seem to work?
-  # topology.worker.max.heap.size.mb: 2048.0
+  worker.heap.memory.mb: ${CRAWLER_MEMORY}
 
-  fetcher.threads.number: 500
+  fetcher.threads.number: ${FETCH_THREADS}
 
   # set to 50MB to handle sitemaps
   http.content.limit: 52428800
@@ -49,11 +48,11 @@ config:
    - isSitemap
    - isFeed
 
-  http.agent.name: "DigitalPebble Crawler"
-  http.agent.version: "1.8"
-  http.agent.description: "StormCrawler Benchmark"
-  http.agent.url: "http://digitalpebble.com/"
-  http.agent.email: "crawler@digitalpebble.com"
+  http.agent.name: "ECMWF Dataset Crawler"
+  http.agent.version: "0.1-alpha"
+  http.agent.description: "ECMWF Dataset Crawler"
+  http.agent.url: "https://github.com/52north/ecmwf-dataset-crawl"
+  http.agent.email: "n.roosen@52north.org"
 
   http.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.okhttp.HttpProtocol"
   https.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.okhttp.HttpProtocol"

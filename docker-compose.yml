@@ -12,6 +12,7 @@ services:
     environment:
       - WEB_DOMAIN=localhost
       - ACME_AGREE=true
+      - API_PORT=9000
     ports:
       - "2015:2015"
       - "80:80"
@@ -32,6 +33,15 @@ services:
   controller:
     build:
       context: controller/
+    environment:
+      AZURE_SUBKEY: "foobarsupersecret"
+      GCS_SEARCHID: "foobarsupersecret"
+      GCS_APIKEY: "foobarsupersecret"
+      ELASTIC_HOST: "elasticsearch:9200"
+      FRONTEND_HOST: "example.com"
+      API_PORT: "9000"
+      LOG_LEVEL: "info"
+      NODE_ENV: "production"
     depends_on:
       - elasticsearch
     networks:
@@ -43,6 +53,8 @@ services:
       context: crawler/
     depends_on:
       - elasticsearch
+    environment:
+      FLUX_ENV: production
     networks:
       - back
 
