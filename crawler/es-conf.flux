@@ -40,7 +40,7 @@ config:
   es.status.ttl.purgatory: 30
 
   # Min time (in msecs) to allow between 2 successive queries to ES
-  es.status.min.delay.queries: 1000
+  es.status.min.delay.queries: 2000
 
   es.status.max.buckets: 250
   es.status.max.urls.per.bucket: 4

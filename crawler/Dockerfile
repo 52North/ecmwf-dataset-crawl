@@ -13,8 +13,7 @@ RUN mvn clean package
 FROM storm:1.2 as storm
 RUN apk --no-cache --virtual .build add curl
 
-COPY --from=0 /topology/target/crawler-alpha.jar /topology.jar
-COPY *.yaml /
-COPY *.flux /
 WORKDIR /
-CMD storm jar /topology.jar org.apache.storm.flux.Flux /es-crawler.flux -local
+COPY --from=0 /topology/target/crawler-alpha.jar ./topology.jar
+COPY *.flux .
+CMD storm jar topology.jar org.apache.storm.flux.Flux --local --sleep 99999 es-crawler.flux

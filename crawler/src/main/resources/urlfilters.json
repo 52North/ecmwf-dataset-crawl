@@ -12,14 +12,14 @@
       "class": "com.digitalpebble.stormcrawler.filtering.depth.MaxDepthFilter",
       "name": "MaxDepthFilter",
       "params": {
-        "maxDepth": -1
+        "maxDepth": 10
       }
     },
     {
       "class": "com.digitalpebble.stormcrawler.filtering.basic.BasicURLNormalizer",
       "name": "BasicURLNormalizer",
       "params": {
-        "removeAnchorPart": true, 
+        "removeAnchorPart": true,
         "unmangleQueryString": true,
         "checkValidURI": true,
         "removeHashes": false
