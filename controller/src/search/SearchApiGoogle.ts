@@ -84,7 +84,7 @@ export class SearchApiGoogle implements SearchApi {
         this.log.warn('Daily Rate Limit Exceeded, returning without results')
         return { items: [] }
       } else {
-        throw err
+        throw new Error(err.response.data.error.errors[0].reason)
       }
     }
   }

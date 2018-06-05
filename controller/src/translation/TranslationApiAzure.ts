@@ -33,33 +33,35 @@ export default class TranslationApiAzure implements TranslationApi {
   async translate (terms: string[], from: Language, to: Language, options?: TranslationQueryOptions): Promise<string[]> {
     // IDEA: optimize by requesting multiple languages at once?
     // generate requests for each 25 phrases (limited per request)
-    const reqOpts = this.requestParams({ from, to })
+    const reqOpts = this.requestParams({
+      from: from.iso639_1,
+      to: to.iso639_1,
+    })
     const requests = []
     for (let i = 0; i < terms.length; i += this.RESULTS_PER_PAGE) {
       const phrases = terms.slice(i, i + this.RESULTS_PER_PAGE)
-      requests.push(this.requestTranslation(phrases, reqOpts))
+      const req = this.requestTranslation(phrases, reqOpts)
+        .then(this.parseTranslationResponse.bind(this))
+      requests.push(req)
     }
 
     return Promise.all(requests)
-      // flatten array of responses to a single results list
-      .then(this.parseTranslationResponse.bind(this))
-      .then(results => {
-        // @ts-ignore
-        return [].concat(...results)
-      })
+      // @ts-ignore // flatten array of responses to a single results list
+      .then(results => [].concat(...results))
       .catch(err => {
-        this.log.error(err)
+        this.log.error({ err })
         throw new Error(`Error querying Azure Translator: ${err}`)
       })
   }
 
   private async parseTranslationResponse (res: AxiosResponse): Promise<string[]> {
     const result = []
+    this.log.debug(res)
     for (const phrase of res.data) {
       try {
         result.push(phrase.translations[0].text)
       } catch (err) {
-        this.log(`Could not translate a term ${phrase}: ${err}`)
+        this.log.warn(`Could not translate a term ${phrase}: ${err}`)
       }
     }
     return result
@@ -68,15 +70,14 @@ export default class TranslationApiAzure implements TranslationApi {
   private async requestTranslation (phrases: string[], params: AxiosRequestConfig): Promise<AxiosResponse> {
     const body = phrases.map(t => ({ 'Text': t }))
     try {
-      return axios.post(`${this.ENDPOINT}/translate`, body, params)
+      const res = await axios.post(`${this.ENDPOINT}/translate`, body, params)
+      return res
     } catch (err) {
-      // catch rate limit: just return nothing
-      if (err.response.data.error.code === 403000) {
-        this.log.warn('Monthly (?) rate limit exceeded, returning without results')
-        return err.response
-      } else {
-        throw err
-      }
+      // catch rate limit for better msg
+      if (err.response.data.error.code === 403000)
+        throw new Error('Monthly (?) rate limit exceeded, returning without results')
+
+      throw new Error(err.response.data.error.message)
     }
   }
 
