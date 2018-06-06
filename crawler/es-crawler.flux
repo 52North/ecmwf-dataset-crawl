@@ -15,7 +15,7 @@ includes:
 
 spouts:
   - id: "spout"
-    className: "com.digitalpebble.stormcrawler.elasticsearch.persistence.AggregationSpout"
+    className: "com.digitalpebble.stormcrawler.elasticsearch.persistence.CollapsingSpout"
     parallelism: 10
 
 bolts:

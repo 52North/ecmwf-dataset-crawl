@@ -3,7 +3,7 @@
 config:
   # ES indexer bolt
   es.indexer.addresses: "${ES_ADDRESS}"
-  es.indexer.index.name: "index"
+  es.indexer.index.name: "results"
   es.indexer.doc.type: "doc"
   es.indexer.create: false
   es.indexer.flushInterval: "1s"

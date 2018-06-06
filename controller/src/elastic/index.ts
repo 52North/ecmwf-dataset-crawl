@@ -11,6 +11,7 @@ export const client = new Client(Object.assign({}, cfg.elastic, { log }))
 
 export async function initializeIndizes (purge = false) {
   await client.ping({})
+  if (purge) await client.indices.delete({ index: 'crawlstatus-*' })
   await ensureIndex(crawlsMapping, purge)
   await ensureIndex(crawlerMetricsMapping, purge)
   await ensureIndex(resultsMapping, purge)

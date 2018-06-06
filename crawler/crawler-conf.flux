@@ -8,7 +8,7 @@ config:
   topology.workers: 1
   topology.message.timeout.secs: 300
   topology.max.spout.pending: 250
-  topology.debug: false
+  topology.debug: true
 
   topology.worker.childopts: "-Djava.net.preferIPv4Stack=true"
 
