@@ -122,7 +122,7 @@ curl -s -XPUT "${ESHOST}/index" -H 'Content-Type: application/json' -d '
 	"mappings": {
 		"doc": {
 			"_source": {
-				"enabled": false
+				"enabled": true
 			},
 			"properties": {
 				"content": {
@@ -141,7 +141,7 @@ curl -s -XPUT "${ESHOST}/index" -H 'Content-Type: application/json' -d '
 				},
 				"url": {
 					"type": "keyword",
-					"index": "false",
+					"index": "true",
 					"store": true
 				}
 			}

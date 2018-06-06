@@ -43,8 +43,32 @@ services:
       context: crawler/
     depends_on:
       - elasticsearch
+      - selenium
     networks:
       - back
+
+  selenium:
+    image: "elgalu/selenium"
+    ports:
+      - "4444:24444"
+      - "5900:25550"
+      - "5901:25551"
+    networks:
+      - back
+    volumes:
+      - /dev/shm:/dev/shm
+    privileged: true
+    environment:
+      - VIDEO=false
+      - GRID=true
+      - CHROME=false
+      - FIREFOX=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/grid/console"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
 
   elasticsearch:
     build:
@@ -52,9 +76,9 @@ services:
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - elasticdata:/usr/share/elasticsearch/data
-    #ports:
-    #  - "9200:9200"
-    #  - "9300:9300"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     healthcheck:
@@ -71,8 +95,8 @@ services:
       context: kibana/
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
-    #ports:
-    #  - "5601:5601"
+    ports:
+      - "5601:5601"
     networks:
       - front
       - back

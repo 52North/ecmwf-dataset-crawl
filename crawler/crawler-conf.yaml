@@ -55,8 +55,21 @@ config:
   http.agent.url: "http://digitalpebble.com/"
   http.agent.email: "crawler@digitalpebble.com"
 
-  http.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.okhttp.HttpProtocol"
-  https.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.okhttp.HttpProtocol"
+  http.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.selenium.RemoteDriverProtocol"
+  https.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.selenium.RemoteDriverProtocol"
+  selenium.addresses: "http://localhost:4444/wd/hub"
+  http.use.cookies: true
+  fetcher.server.delay: 10.0
+  selenium.implicitlyWait: 7000
+  selenium.pageLoadTimeout: 10000
+  selenium.setScriptTimeout: 10000
+  selenium.instances.num: 1
+  selenium.capabilities:
+    browserName: "firefox"
+    version: "60.0.1"
+    takesScreenshot: false
+    loadImages: false
+    javascriptEnabled: true
 
   # FetcherBolt queue dump : comment out to activate
   # if a file exists on the worker machine with the corresponding port number
