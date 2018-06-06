@@ -7,11 +7,12 @@ More information can be found in the [wiki](https://github.com/noerw/ecmwf-datas
 
 
 ```sh
+# get API keys for google custom search, Azure Text Translator
+# and insert them into configuration via environment vars.
+vi docker-compose.yml
+
 # start all the services
 docker-compose up --build --force-recreate -d
-
-# start only front facing services (not the crawler)
-docker-compose up proxy
 
 # stop the services
 docker-compose down --volumes

@@ -156,7 +156,7 @@
                     <v-text-field
                       v-model="crawldepth"
                       type="number"
-                      :rules="[v => !!v || 'required']"
+                      :rules="[v =>  !isNaN(v) || 'required']"
                       required
                     />
                   </v-flex>

@@ -46,7 +46,7 @@
               <v-flex sm3 md2 text-sm-right>
                 <b>Countries:</b>
               </v-flex>
-              <v-flex xs2 sm1>
+              <v-flex>
                 <v-chip
                   v-for="(lang, j) in crawl.countries"
                   :key="j"
