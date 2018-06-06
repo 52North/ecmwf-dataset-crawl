@@ -10,9 +10,7 @@ export default {
     },
     mappings: {
       doc: {
-        _source: {
-          enabled: false
-        },
+        _source: { enabled: true },
         dynamic_templates: [{
           metadata: {
             path_match: 'scores.*',
@@ -44,7 +42,7 @@ export default {
           },
           url: {
             type: 'keyword',
-            index: 'false',
+            index: 'true',
             store: true
           }
         }
