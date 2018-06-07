@@ -48,23 +48,15 @@ services:
       - back
 
   selenium:
-    image: "elgalu/selenium"
+    image: "selenium/standalone-firefox"
     ports:
-      - "4444:24444"
-      - "5900:25550"
-      - "5901:25551"
+      - "4444:4444"
     networks:
       - back
     volumes:
       - /dev/shm:/dev/shm
-    privileged: true
-    environment:
-      - VIDEO=false
-      - GRID=true
-      - CHROME=false
-      - FIREFOX=true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4444/grid/console"]
+      test: ["CMD", "curl", "-f", "http://localhost:4444"]
       interval: 30s
       timeout: 3s
       retries: 3
