@@ -43,7 +43,7 @@ services:
       context: crawler/
     depends_on:
       - elasticsearch
-      - selenium
+      #- selenium
     networks:
       - back
 
