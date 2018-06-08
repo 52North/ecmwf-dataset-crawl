@@ -1,0 +1,18 @@
+{
+  "com.digitalpebble.stormcrawler.parse.ParseFilters": [
+    {
+      "class": "org.n52.webcrawl.SimpleTopicScoreParseFilter",
+      "name": "SimpleTopicScoreParseFilter",
+      "params": {
+        "download": [
+          "download~",
+          "herunter?lad~"
+        ],
+        "dataset": [
+          "dataset~",
+          "datens?tz~"
+        ]
+      }
+    }
+  ]
+}
