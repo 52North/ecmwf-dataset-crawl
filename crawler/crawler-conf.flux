@@ -28,20 +28,26 @@ config:
   # metadata to transfer to the outlinks
   # used by Fetcher for redirections, sitemapparser, etc...
   # these are also persisted for the parent document (see below)
-  # metadata.transfer:
-  # - customMetadataName
+  metadata.transfer:
+   - crawl
 
   metadata.track.path: false
   metadata.track.depth: true
 
   # lists the metadata to persist to storage
-  # and the outlinks
-  metadata.transfer:
-   - status_index
-
-  # lists the metadata to persist to storage
   # these are not transfered to the outlinks
   metadata.persist:
+   - "parse.title"
+   - "topics.contact.xpath"
+   - "topics.data.api.xpath"
+   - "topics.data.license.xpath"
+   - "topics.data.link.xpath"
+   - "topics.data.pdf.xpath"
+   - "topics.data.portal.xpath"
+   - "topics.data.historic.keywords"
+   - "topics.data.portal.keywords"
+   - "topics.data.realtime.keywords"
+   - microdata
    - _redirTo
    - error.cause
    - error.source
@@ -95,6 +101,8 @@ config:
   - parse.keywords=keywords
   - parse.description=description
   - host=host
+  - topics.data.portal.xpath=topics.data.portal.xpath
+  - topics.data.link.xpath=topics.data.link.xpath
 
   status.updater.cache.spec: "maximumSize=500000,expireAfterAccess=1h"
 

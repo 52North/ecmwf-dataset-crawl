@@ -7,13 +7,56 @@
         "parse.title": [
             "//TITLE",
             "//META[@name=\"title\"]/@content"
-         ]
+        ],
+        "topics.data.portal.xpath": [
+          "//META[@generator][starts-with(@content, 'ckan')]/@content",
+          "//*[contains(text(), 'DKAN')]",
+          "//*[contains(text(), 'geoportal')]",
+          "//SCRIPT[contains(text(), 'entryscape-catalog-portal')]",
+          "//SCRIPT[@type='application/ld+json']/text()"
+        ],
+        "topics.data.api.xpath": [
+          "//A[contains(@href, 'GetCapabilities')]/@href",
+          "//A[contains(@href, 'WFS')]/@href",
+          "//A[contains(@href, 'WMS')]/@href",
+          "//A[contains(@href, 'resource')]/@href"
+        ],
+        "topics.data.link.xpath": [
+          "//A[contains(@href, 'dataset')]/@href",
+          "//A[contains(@href, 'csv')]/@href",
+          "//A[contains(@href, 'json')]/@href",
+          "//A[contains(@href, 'xml')]/@href",
+          "//A[contains(@href, 'zip')]/@href"
+        ],
+        "topics.data.pdf.xpath": [
+          "//A[contains(text(), 'PDF') or contains(text(), 'pdf') or contains(@href, 'pdf')]/@href",
+          "//A[contains(text(), 'download')]/@href"
+        ],
+        "topics.data.license.xpath": [
+          "//*[contains(text(), 'License')]/../descendant::text()",
+          "//*[contains(text(), 'Lizenz')]/../descendant::text()"
+        ],
+        "topics.contact.xpath": [
+          "//*[contains(text(), '@')]/text()",
+          "//*[contains(text(), 'Kontakt')]/../descendant::text()",
+          "//*[contains(text(), 'Contact')]/../descendant::text()"
+        ]
       }
     },
     {
       "class": "org.n52.webcrawl.SimpleTopicScoreParseFilter",
       "name": "SimpleTopicScoreParseFilter",
-      "params": { }
+      "params": {
+        "topics.data.portal.keywords": [
+          "ckan"
+        ],
+        "topics.data.realtime.keywords": [
+          "realtime"
+        ],
+        "topics.data.historic.keywords": [
+          "historic"
+        ]
+      }
     },
     {
       "class": "com.digitalpebble.stormcrawler.parse.filter.DomainParseFilter",
