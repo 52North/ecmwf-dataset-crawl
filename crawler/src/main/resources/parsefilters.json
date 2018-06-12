@@ -1,8 +1,8 @@
 {
   "com.digitalpebble.stormcrawler.parse.ParseFilters": [
     {
-      "class": "com.digitalpebble.stormcrawler.parse.filter.XPathFilter",
-      "name": "XPathFilter",
+      "class": "org.n52.webcrawl.XPath3Filter",
+      "name": "XPath3Filter",
       "params": {
         "parse.title": [
             "/HTML/HEAD/TITLE",
