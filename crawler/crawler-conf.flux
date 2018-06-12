@@ -103,6 +103,14 @@ config:
   - host=host
   - topics.data.portal.xpath=topics.data.portal.xpath
   - topics.data.link.xpath=topics.data.link.xpath
+  - topics.data.api.xpath=topics.data.api.xpath
+  - topics.data.inline.xpath=topics.data.inline.xpath
+  - topics.data.pdf.xpath=topics.data.pdf.xpath
+  - topics.data.license.xpath=topics.data.license.xpath
+  - topics.contact.xpath=topics.contact.xpath
+  - topics.data.portal.keywords=topics.data.portal.keywords
+  - topics.data.realtime.keywords=topics.data.realtime.keywords
+  - topics.data.historic.keywords=topics.data.historic.keywords
 
   status.updater.cache.spec: "maximumSize=500000,expireAfterAccess=1h"
 

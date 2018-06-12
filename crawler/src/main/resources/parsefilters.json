@@ -5,41 +5,40 @@
       "name": "XPathFilter",
       "params": {
         "parse.title": [
-            "//TITLE",
-            "//META[@name=\"title\"]/@content"
+            "/HTML/HEAD/TITLE",
+            "/HTML/HEAD/META[@name=\"title\"]/@content"
         ],
         "topics.data.portal.xpath": [
-          "//META[@generator][starts-with(@content, 'ckan')]/@content",
-          "//*[contains(text(), 'DKAN')]",
-          "//*[contains(text(), 'geoportal')]",
-          "//SCRIPT[contains(text(), 'entryscape-catalog-portal')]",
-          "//SCRIPT[@type='application/ld+json']/text()"
+          "/HTML/HEAD/META[@generator][starts-with(@content, 'ckan')]/@content",
+          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'DKAN')]",
+          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'geoportal')]",
+          "//SCRIPT[contains(text(), 'entryscape-catalog-portal')]"
         ],
         "topics.data.api.xpath": [
           "//A[contains(@href, 'GetCapabilities')]/@href",
           "//A[contains(@href, 'WFS')]/@href",
-          "//A[contains(@href, 'WMS')]/@href",
-          "//A[contains(@href, 'resource')]/@href"
+          "//A[contains(@href, 'WMS')]/@href"
         ],
         "topics.data.link.xpath": [
+          "//SCRIPT[@type='application/ld+json'][contains(text(), 'Dataset\"')]/text()",
           "//A[contains(@href, 'dataset')]/@href",
           "//A[contains(@href, 'csv')]/@href",
           "//A[contains(@href, 'json')]/@href",
-          "//A[contains(@href, 'xml')]/@href",
-          "//A[contains(@href, 'zip')]/@href"
+          "//A[contains(@href, '.xml')]/@href",
+          "//A[contains(@href, '.zip')]/@href"
         ],
         "topics.data.pdf.xpath": [
-          "//A[contains(text(), 'PDF') or contains(text(), 'pdf') or contains(@href, 'pdf')]/@href",
-          "//A[contains(text(), 'download')]/@href"
+          "//A[contains(string-join(text()), 'PDF') or contains(string-join(text()), 'pdf') or contains(@href, 'pdf')]/@href",
+          "//A[contains(string-join(text()), 'download')]/@href"
         ],
         "topics.data.license.xpath": [
-          "//*[contains(text(), 'License')]/../descendant::text()",
-          "//*[contains(text(), 'Lizenz')]/../descendant::text()"
+          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'License')]/../descendant::text()",
+          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'Lizenz')]/../descendant::text()"
         ],
         "topics.contact.xpath": [
-          "//*[contains(text(), '@')]/text()",
-          "//*[contains(text(), 'Kontakt')]/../descendant::text()",
-          "//*[contains(text(), 'Contact')]/../descendant::text()"
+          "//*[not(name()=SCRIPT)][contains(string-join(text()), '@')][not(contains(string-join(text()), '@import '))]/text()",
+          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'Kontakt')]/../descendant::text()",
+          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'Contact')]/../descendant::text()"
         ]
       }
     },
