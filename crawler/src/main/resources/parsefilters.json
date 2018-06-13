@@ -10,35 +10,31 @@
         ],
         "topics.data.portal.xpath": [
           "/HTML/HEAD/META[@generator][starts-with(@content, 'ckan')]/@content",
-          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'DKAN')]",
-          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'geoportal')]",
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))][text()[contains(lower-case(.), 'dkan')]]",
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))][text()[contains(lower-case(.), 'geoportal')]]",
           "//SCRIPT[contains(text(), 'entryscape-catalog-portal')]"
         ],
         "topics.data.api.xpath": [
-          "//A[contains(@href, 'GetCapabilities')]/@href",
-          "//A[contains(@href, 'WFS')]/@href",
-          "//A[contains(@href, 'WMS')]/@href"
+          "//A[matches(lower-case(@href), '(getcapabilities|wfs|wms)')]/@href"
         ],
         "topics.data.link.xpath": [
-          "//SCRIPT[@type='application/ld+json'][contains(text(), 'Dataset\"')]/text()",
-          "//A[contains(@href, 'dataset')]/@href",
-          "//A[contains(@href, 'csv')]/@href",
-          "//A[contains(@href, 'json')]/@href",
-          "//A[contains(@href, '.xml')]/@href",
-          "//A[contains(@href, '.zip')]/@href"
+          "//SCRIPT[@type='application/ld+json']/text()[matches(., '\"@type\":\\s?\"(\\S+/)?Dataset\"')]",
+          "//A[contains(lower-case(@href), 'dataset')]/@href",
+          "//A[text()[matches(lower-case(.), '(csv|json|\\.zip)')] or matches(lower-case(@href), '(csv|json|\\.zip)')]/@href",
+          "//A[text()[contains(lower-case(.), 'xml')] or contains(lower-case(@href), 'xml') and not(matches(lower-case(@href), '(sitemap|feed|atom|rss)'))]/@href"
         ],
         "topics.data.pdf.xpath": [
-          "//A[contains(string-join(text()), 'PDF') or contains(string-join(text()), 'pdf') or contains(@href, 'pdf')]/@href",
-          "//A[contains(string-join(text()), 'download')]/@href"
+          "//A[text()[contains(lower-case(.), 'pdf')] or contains(lower-case(@href), 'pdf')]/@href",
+          "//A[text()[contains(lower-case(.), 'download')]]/@href"
         ],
         "topics.data.license.xpath": [
-          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'License')]/../descendant::text()",
-          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'Lizenz')]/../descendant::text()"
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))][text()[contains(lower-case(.), 'license')]]/../descendant::text()",
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))][text()[contains(lower-case(.), 'lizenz')]]/../descendant::text()"
         ],
         "topics.contact.xpath": [
-          "//*[not(name()=SCRIPT)][contains(string-join(text()), '@')][not(contains(string-join(text()), '@import '))]/text()",
-          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'Kontakt')]/../descendant::text()",
-          "//*[not(name()=SCRIPT)][contains(string-join(text()), 'Contact')]/../descendant::text()"
+          "//*[text()[matches(., '.+@.+')]]/text()",
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))][text()[contains(lower-case(.), 'contact')]]/../descendant::text()",
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))][text()[contains(lower-case(.), 'kontakt')]]/../descendant::text()"
         ]
       }
     },

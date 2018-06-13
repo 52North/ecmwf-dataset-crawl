@@ -37,6 +37,7 @@ config:
   # lists the metadata to persist to storage
   # these are not transfered to the outlinks
   metadata.persist:
+   - crawl
    - "parse.title"
    - "topics.contact.xpath"
    - "topics.data.api.xpath"
@@ -97,6 +98,7 @@ config:
   indexer.text.fieldname: "content"
   indexer.canonical.name: "canonical"
   indexer.md.mapping:
+  - crawl=crawl
   - parse.title=title
   - parse.keywords=keywords
   - parse.description=description
