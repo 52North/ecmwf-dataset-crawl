@@ -8,7 +8,7 @@ const cfg = {
   isDev: e.NODE_ENV === 'development',
   loglevel: e.LOG_LEVEL || 'debug' as LogLevel,
   apiPort: e.API_PORT ? parseInt(e.API_PORT) : 9000, // tslint:disable-line
-  frontendHost: e.FRONTEND_HOST || 'http://localhost:8080',
+  frontendHost: e.WEB_DOMAIN || 'localhost:8080',
   elastic: {
     host: e.ELASTIC_HOST || 'localhost:9200',
   },

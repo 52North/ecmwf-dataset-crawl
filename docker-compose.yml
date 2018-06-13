@@ -10,8 +10,8 @@ services:
       - frontend:/srv/frontend
       #- ./frontend/dist:/srv/frontend
     environment:
-      - WEB_DOMAIN=localhost
-      - ACME_AGREE=true
+      - WEB_DOMAIN
+      - ACME_AGREE
       - API_PORT=9000
     ports:
       - "2015:2015"
@@ -34,14 +34,15 @@ services:
     build:
       context: controller/
     environment:
-      AZURE_SUBKEY: "foobarsupersecret"
-      GCS_SEARCHID: "foobarsupersecret"
-      GCS_APIKEY: "foobarsupersecret"
-      ELASTIC_HOST: "elasticsearch:9200"
-      FRONTEND_HOST: "example.com"
-      API_PORT: "9000"
-      LOG_LEVEL: "info"
-      NODE_ENV: "production"
+      - AZURE_SUBKEY
+      - GCS_SEARCHID
+      - GCS_APIKEY
+      - ELASTIC_HOST
+      - WEB_DOMAIN
+      - LOG_LEVEL
+      - ELASTIC_HOST=elasticsearch:9200
+      - API_PORT=9000
+      - NODE_ENV=production
     depends_on:
       - elasticsearch
     networks:
@@ -54,12 +55,12 @@ services:
     depends_on:
       - elasticsearch
     environment:
+      - FETCH_THREADS
+      - CRAWLER_MEMORY
+      - PROXY_HOST
+      - PROXY_PORT
+      - PROXY_TYPE
       - ES_ADDRESS=http://elasticsearch:9200/
-      - FETCH_THREADS=20
-      - CRAWLER_MEMORY=2048
-      - PROXY_HOST=
-      - PROXY_PORT=8080
-      - PROXY_TYPE=HTTPS
     networks:
       - back
     restart: always
