@@ -12,9 +12,9 @@ config:
 
   topology.worker.childopts: "-Djava.net.preferIPv4Stack=true"
 
-  worker.heap.memory.mb: ${CRAWLER_MEMORY}
+  worker.heap.memory.mb: ${ENV-CRAWLER_MEMORY}
 
-  fetcher.threads.number: ${FETCH_THREADS}
+  fetcher.threads.number: ${ENV-FETCH_THREADS}
 
   # set to 50MB to handle sitemaps
   http.content.limit: 52428800
@@ -60,6 +60,9 @@ config:
   http.agent.description: "ECMWF Dataset Crawler"
   http.agent.url: "https://github.com/52north/ecmwf-dataset-crawl"
   http.agent.email: "n.roosen@52north.org"
+  http.proxy.host: "${ENV-PROXY_HOST}"
+  http.proxy.port: "${ENV-PROXY_PORT}"
+  http.proxy.type: "${ENV-PROXY_TYPE}"
 
   http.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.okhttp.HttpProtocol"
   https.protocol.implementation: "com.digitalpebble.stormcrawler.protocol.okhttp.HttpProtocol"

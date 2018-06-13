@@ -54,9 +54,15 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      FLUX_ENV: production
+      - ES_ADDRESS=http://elasticsearch:9200/
+      - FETCH_THREADS=20
+      - CRAWLER_MEMORY=2048
+      - PROXY_HOST=
+      - PROXY_PORT=8080
+      - PROXY_TYPE=HTTPS
     networks:
       - back
+    restart: always
 
   elasticsearch:
     build:
