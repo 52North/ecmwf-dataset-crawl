@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- TESTCASES positive: in the header no nesting is expected! -->
+    <!--<div data-test="shouldmatch">-->
+        <!--<div data-filter="parse.title">-->
+            <title>ThePageTitle1</title>
+            <meta name="title" content="ThePageTitle2"/>
+        <!--</div>-->
+
+        <!--<div data-filter="parse.keywords">-->
+            <meta name="keywords" content="Offene Daten, Open Data, Open.NRW, Nordrhein-Westfalen" />
+        <!--</div>-->
+
+        <!--<div data-filter="topics.data.portal.xpath">-->
+            <meta name="generator" content="ckan 2.0.1">
+        <!--</div>-->
+    <!--</div>-->
+
+    <!-- TESTCASES negative -->
+    <!--<div data-test="shouldnotmatch">-->
+        <meta name="generator" content="wordpress">
+    <!--</div>-->
+</head>
+<body>
+    <!-- TESTCASES positive -->
+    <div data-test="shouldmatch">
+        <div data-filter="topics.data.portal.xpath">
+            <!-- http://open.nrw/dataset/96cc55db-064c-441a-87eb-dd2dc4ec4df8bkg -->
+            <h4>CKAN - Datensatzdetails</h4>
+
+            <!-- http://data.gov.jm/ -->
+            <p>Powered by <a href="http://getdkan.org/">DKAN</a></p>
+
+            <!-- https://geoportal.sachsen.de/cps/index.html -->
+            <a href="whatever">Geoportal Sachsenatlas</a>
+
+            <!-- https://catalog.goteborg.se/portal/ entryscape -->
+            <script>document.write('<link rel="stylesheet" href="release/entryscape-catalog-portal/style.css"/>');</script>
+
+            <!-- TODO: http://metaver.de/portal PortalU -->
+
+            <!-- TODO: https://www.geomis.sachsen.de/ -->
+
+            <!-- TODO: https://search.earthdata.nasa.gov/search -->
+
+        </div>
+
+        <div data-filter="topics.data.api.xpath">
+            <!-- http://open.nrw/dataset/96cc55db-064c-441a-87eb-dd2dc4ec4df8bkg -->
+            <a href="https://geoservices.julius-kuehn.de/geoserver/oeko/wms?VERSION=1.3.0&REQUEST=GetCapabilities&SERVICE=WMS" class="ext">WMS-Capabilities: Anbaugebiete des ökologischen Anbaus (WMS)<span class="ext"><span class="element-invisible"> (link is external)</span></span></a>
+            <a href="http://sg.geodatenzentrum.de/wmts_topplus_web_open/1.0.0/WMTSCapabilities.xml?REQUEST=GetCapabilities&amp;SERVICE=WMTS" class="ext"> WMTS-Capabilities: WMTS TopPlus-Web-Open<span class="ext"><span class="element-invisible"> (link is external)</span></span></a>
+            <a href="https://geoservices.julius-kuehn.de/geoserver/oeko/wfs?VERSION=1.1.0&REQUEST=GetCapabilities&SERVICE=WFS">WFS</a>
+
+            <!-- https://open.nrw/dataset/bebauungsplan-der-stadt-gelsenkirchen-wms-wfs-ge -->
+            <div class="ckanDatasetNotes">
+                <p>Mit Hillfe des WFS-Dienstes und dem WMS-Dienstes "Bebauungsplan" können die Daten über rechtskräftige und im Aufstellungsverfahren befindliche Bebauungspläne, Veränderungssperren und weitere Satzungen abgerufen werden.</p>
+                <p><strong>Link des WMS-Dienstes:</strong></p>
+                <p><strong>https://gdi.gelsenkirchen.de/wss/service/WMSBebauungsplan/guest</strong></p>
+                <p>&nbsp;</p>
+                <p><strong>Download-Link des WFS-Dienstes:</strong></p>
+                <p><strong>https://gdi.gelsenkirchen.de/wss/service/WFSBebauungsplan/guest</strong></p>
+            </div>
+        </div>
+
+        <div data-filter="topics.data.link.xpath">
+            <!-- https://data.gov.uk -->
+            <script type="application/ld+json">{"@context":"http://schema.org","@type":"Dataset","name":"Diesdas","includedInDataCatalog":{"@type":"DataCatalog","url":"https://data.gov.uk"}}</script>
+            <script type="application/ld+json">{"@type":"schema:Dataset","name":"TestData"}</script>
+            <script type="application/ld+json">{"@type":"http://schema.org/Dataset","name":"TestData"}</script>
+            <script type="application/ld+json">{"@context":"http://schema.org","@type":"DataCatalog","url":"https://data.gov.uk"}</script>
+
+            <a href="http://example.com/a-dataset-link">Datasets</a>
+            <a href="http://example.com/rivers.json">Dataset</a>
+            <a href="http://example.com/riverdataset.zip">Download</a>
+            <a href="http://example.com/mydata?format=csv">Click ME!!!1!!</a>
+        </div>
+
+        <div data-filter="topics.contact.xpath">
+            <div><p>Contact: <span>max@mustermann.de</span></p></div>
+        </div>
+    </div>
+
+    <!-- TESTCASES negative -->
+    <div data-test="shouldnotmatch">
+        <div data-filter="topics.data.link.xpath">
+            <script type="application/ld+json">{"@context":"http://schema.org","@type":"Website"}</script>
+        </div>
+        <div data-filter="topics.data.contact.xpath">
+            <style>@import(http://example.com/wat.css)</style>
+        </div>
+    </div>
+</body>
+</html>
