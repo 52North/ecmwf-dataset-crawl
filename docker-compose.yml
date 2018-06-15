@@ -70,6 +70,7 @@ services:
       context: elasticsearch/
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/snapshots/:/mount/snapshots/
       - elasticdata:/usr/share/elasticsearch/data
     #ports:
     #  - "9200:9200"
