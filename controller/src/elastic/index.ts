@@ -5,7 +5,7 @@ import log from './logger'
 
 import crawlerMetricsMapping from './index-definitions/crawler-metrics'
 import resultsMapping from './index-definitions/results'
-import { crawlsMapping } from './controllers/crawls'
+import { crawlsMapping } from './crawls'
 
 export const client = new Client(Object.assign({}, cfg.elastic, { log }))
 
@@ -25,4 +25,5 @@ export async function ensureIndex (indexDefinition: IndicesCreateParams, purge =
     await client.indices.create(indexDefinition)
 }
 
-export * from './controllers/crawls'
+export * from './crawls'
+export * from './results'

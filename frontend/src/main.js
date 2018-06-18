@@ -11,6 +11,7 @@ import router from './router'
 import { hostname } from './utils'
 
 Vue.filter('datestring', string => new Date(string).toLocaleString())
+Vue.filter('shortstring', (s, length = 50) => (s && s.length > length) ? `${s.substring(0, length - 4)} ...` : s)
 Vue.filter('domain', hostname)
 
 Vue.use(AsyncProperties, { transform: null })

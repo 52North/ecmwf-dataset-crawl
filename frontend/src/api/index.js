@@ -42,7 +42,7 @@ export async function getResults (params, cache = false) {
 export async function getTotalResults (cache = false) {
   if (store.totalResults === null || !cache) {
     const res = await axios.get('/results/counts')
-    store.totalResults = res.data
+    store.totalResults = res.data.count
   }
 
   return store.totalResults

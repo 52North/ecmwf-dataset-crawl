@@ -2,7 +2,7 @@ import Crawl from '../../models/Crawl'
 import {
   getCrawls as getCrawlsFromDb,
   getCrawl as getCrawlFromDb,
-} from '../../elastic/controllers/crawls'
+} from '../../elastic'
 
 /**
  * Add a new Crawl
@@ -32,7 +32,7 @@ export async function addCrawl (crawl: Crawl) {
  */
 export async function getCrawl (crawlId: string) {
   const crawl = await getCrawlFromDb({ id: crawlId })
-  return crawl.serialize()
+  return crawl.serialize(true)
 }
 
 /**
@@ -42,7 +42,7 @@ export async function getCrawl (crawlId: string) {
  */
 export async function getCrawls () {
   const crawls = await getCrawlsFromDb()
-  return Promise.all(crawls.map(c => c.serialize()))
+  return Promise.all(crawls.map(c => c.serialize(true)))
 }
 
 /**

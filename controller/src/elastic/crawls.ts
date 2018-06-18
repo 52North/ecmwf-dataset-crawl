@@ -1,8 +1,8 @@
 import { parse as urlParse } from 'url'
 import { IndicesCreateParams } from 'elasticsearch'
 
-import Crawl from '../../models/Crawl'
-import { client, ensureIndex } from '../'
+import Crawl from './../models/Crawl'
+import { client, ensureIndex } from './'
 
 export async function getCrawl (crawl: Crawl | any): Promise<Crawl> {
   const res = await client.search({

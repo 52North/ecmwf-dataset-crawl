@@ -3,7 +3,8 @@ import {
   addToStatusIndex,
   clearStatusIndex,
   deleteCrawl,
-} from '../elastic/controllers/crawls'
+  getResultCount,
+} from '../elastic'
 import {
   languagesFromCountry,
   getDefaultLanguage
@@ -161,7 +162,9 @@ export default class Crawl implements CrawlResponse {
   }
 
   async getResultCount (): Promise<number> {
-    return 0 // TODO
+    if (!this.id) return 0
+    const { count } = await getResultCount([this.id])
+    return count
   }
 }
 

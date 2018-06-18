@@ -1,6 +1,6 @@
 'use strict'
 
-var utils = require('../utils/writer.js')
+var { writeJson, respondWithCode } = require('../utils/writer')
 var Results = require('../service/ResultsService')
 
 module.exports.deleteResults = function deleteResults (req, res, next) {
@@ -8,10 +8,10 @@ module.exports.deleteResults = function deleteResults (req, res, next) {
   var query = req.swagger.params['query'].value
   Results.deleteResults(crawls, query)
     .then(function (response) {
-      utils.writeJson(res, response)
+      writeJson(res, response)
     })
-    .catch(function (response) {
-      utils.writeJson(res, response)
+    .catch(function (err) {
+      writeJson(res, respondWithCode(500, err.message))
     })
 }
 
@@ -20,10 +20,10 @@ module.exports.getResultCount = function getResultCount (req, res, next) {
   var query = req.swagger.params['query'].value
   Results.getResultCount(crawls, query)
     .then(function (response) {
-      utils.writeJson(res, response)
+      writeJson(res, respondWithCode(200, response))
     })
-    .catch(function (response) {
-      utils.writeJson(res, response)
+    .catch(function (err) {
+      writeJson(res, respondWithCode(500, err.message))
     })
 }
 
@@ -36,19 +36,19 @@ module.exports.getResults = function getResults (req, res, next) {
   var download = req.swagger.params['download'].value
   Results.getResults(crawls, query, maxResults, page, format, download)
     .then(function (response) {
-      utils.writeJson(res, response)
+      writeJson(res, response)
     })
-    .catch(function (response) {
-      utils.writeJson(res, response)
+    .catch(function (err) {
+      writeJson(res, respondWithCode(500, err.message))
     })
 }
 
 module.exports.handlePreflight3 = function handlePreflight3 (req, res, next) {
   Results.handlePreflight3()
     .then(function (response) {
-      utils.writeJson(res, response)
+      writeJson(res, response)
     })
-    .catch(function (response) {
-      utils.writeJson(res, response)
+    .catch(function (err) {
+      writeJson(res, respondWithCode(500, err.message))
     })
 }

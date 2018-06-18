@@ -14,7 +14,7 @@ export default class Result {
     this.title = title
     this.crawl = crawl
     this.scores = {
-      dataset: scores.dataset
+      // dataset: scores.dataset
     }
     this.content = content
   }

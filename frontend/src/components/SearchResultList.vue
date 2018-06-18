@@ -58,17 +58,19 @@
           :items="results"
           item-key="url"
           class="elevation-3"
+          disable-initial-sort
+          expand
         >
           <template slot="items" slot-scope="props">
             <tr @click="props.expanded = !props.expanded">
-              <td>{{ props.item.title.substring(0, 50) }}</td>
+              <td>{{ props.item.title | shortstring(80) }}</td>
               <td>{{ props.item.url | domain }}</td>
               <td class="text-xs-right">{{ props.item.scores.dataset }}</td>
               <td class="text-xs-right">{{ props.item.scores.dataportal }}</td>
             </tr>
           </template>
           <template slot="expand" slot-scope="props">
-            <v-card dense color="secondary">
+            <v-card dense color="secondary" v-if="props.item.metadata">
               <v-card-text>
                 <v-subheader>Contact</v-subheader>
                 <v-container>
@@ -98,8 +100,8 @@ export default {
     return {
       allCrawls: [],
       resultTable: [
-        { text: 'Title', value: 'title', align: 'left' },
-        { text: 'Domain', value: 'domain', align: 'left' },
+        { text: 'Title', value: 'title', align: 'left', sortable: false },
+        { text: 'Host', value: 'host', align: 'left' },
         { text: 'Dataset Score', value: 'scores.dataset', align: 'right' },
         { text: 'Dataportal Score', value: 'scores.dataportal', align: 'right' },
       ],
