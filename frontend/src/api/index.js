@@ -56,6 +56,10 @@ export async function exportResults (parameters) {
   }, parameters)
 
   const res = await axios.get('/results', { params })
+  if (params.download) {
+    // TODO: hacky solution will end up with 2 requests.. need to find a way to build the URL
+    window.open(res.request.responseURL)
+  }
   return res.data
 }
 
@@ -66,6 +70,7 @@ export async function deleteResults (params) {
   }
 
   const res = await axios.delete('/results', { params })
+  store.totalResults -= res.data.deleted
   return res.data
 }
 

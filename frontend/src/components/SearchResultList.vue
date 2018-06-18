@@ -50,9 +50,14 @@
       </v-flex>
     </v-layout>
 
-    <!-- results TODO: extract in separate component, use v-data-iterator for pagination etc? -->
-    <v-container v-if="!!results.length">
-      <v-card>
+    <v-container>
+      <v-layout column v-if="!results.length">
+        <v-layout class="grey--text" column justify-center align-center>
+            <h1 class="headline">No Results Found! :^(</h1>
+        </v-layout>
+      </v-layout>
+
+      <v-card v-if="!!results.length">
         <v-data-table
           :headers="resultTable"
           :items="results"
@@ -65,7 +70,7 @@
           :rows-per-page-items="[25,50,100,200,{text: 'All', value: 10000}]"
         >
           <template slot="items" slot-scope="props">
-            <tr @click="props.expanded = !props.expanded">
+            <tr @click="props.expanded = !props.expanded" class="searchresult">
               <td>{{ props.item.title | shortstring(80) }}</td>
               <td>{{ props.item.url | domain }}</td>
               <td class="text-xs-right">{{ props.item.scores.dataset }}</td>
@@ -163,11 +168,16 @@ export default {
 </script>
 
 <style scoped>
+/* header */
 .card--flex-toolbar {
   margin-top: -40px;
 }
 
 .card--flex-toolbar .input-group {
   margin-right: 16px;
+}
+
+.searchresult {
+  cursor: pointer;
 }
 </style>
