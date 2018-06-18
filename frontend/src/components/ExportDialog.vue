@@ -55,7 +55,7 @@ export default {
       const params = {
         crawls: this.crawls || null,
         query: this.query || null,
-        maxResults: this.numResults || -1,
+        size: this.numResults || 10000,
         format: this.format,
       }
       await exportResults(params)

@@ -60,6 +60,9 @@
           class="elevation-3"
           disable-initial-sort
           expand
+          :pagination.sync="pagination"
+          :total-items="totalResults"
+          :rows-per-page-items="[25,50,100,200,{text: 'All', value: 10000}]"
         >
           <template slot="items" slot-scope="props">
             <tr @click="props.expanded = !props.expanded">
@@ -89,8 +92,6 @@
 import ExportDialog from '@/components/ExportDialog'
 import { getResults, getCrawls } from '@/api'
 
-// TODO: server side pagination https://vuetifyjs.com/en/components/data-tables#example-server
-
 export default {
   props: {
     query: { default: () => [] },
@@ -99,6 +100,8 @@ export default {
   data () {
     return {
       allCrawls: [],
+      pagination: {}, // set through data table
+      totalResults: 0,
       resultTable: [
         { text: 'Title', value: 'title', align: 'left', sortable: false },
         { text: 'Host', value: 'host', align: 'left' },
@@ -119,17 +122,30 @@ export default {
           return
         }
 
+        const { page, rowsPerPage } = this.pagination
         const params = {
           crawls: this.crawls,
           query: this.query,
+          size: rowsPerPage,
+          from: rowsPerPage * (page - 1) || 0,
         }
+
         this.updateUrl()
-        return getResults(params)
+        return getResults(params).then(({ total, hits }) => {
+          this.totalResults = total
+          return hits
+        })
       },
       watch: 'query',
-      watchClosely: 'crawls',
+      watchClosely: function () {
+        this.crawls = this.crawls
+        this.pagination = this.pagination
+      },
       default: [],
     }
+  },
+  mounted () {
+    return this.results$now()
   },
   methods: {
     updateUrl () {

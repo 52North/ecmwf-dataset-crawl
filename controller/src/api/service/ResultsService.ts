@@ -40,9 +40,8 @@ export async function getResultCount (crawls?: string[], query?: string) {
  * download Boolean Whether to send an attachment header (optional)
  * returns List
  **/
-export async function getResults (crawls?: string[], query?: string, maxResults, page, format, download) {
-  // TODO: paging, format
-  const results = await getResultsFromDb(crawls, query)
+export async function getResults (crawls?: string[], query?: string, from?: number, size?: number) {
+  const results = await getResultsFromDb(crawls, query, from, size)
   return results
 }
 

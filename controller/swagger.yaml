@@ -159,15 +159,15 @@ paths:
         description: "Elastic Search query term to filter results"
         required: false
         type: "string"
-      - name: "maxResults"
+      - name: "size"
         in: "query"
         description: "The amount of results to return"
         required: false
         type: "integer"
-        default: 250
-      - name: "page"
+        default: 25
+      - name: "from"
         in: "query"
-        description: "To page through the results"
+        description: "First result to return (pagination)"
         required: false
         type: "integer"
         default: 0

@@ -50,7 +50,7 @@ export async function getTotalResults (cache = false) {
 
 export async function exportResults (parameters) {
   const params = Object.assign({
-    maxResults: -1,
+    size: 10000,
     format: 'csv',
     download: true
   }, parameters)

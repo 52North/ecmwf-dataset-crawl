@@ -4,13 +4,17 @@ import { client } from './'
 import resultsMapping from './index-definitions/results'
 import Result from '../models/Result'
 
-export async function getResults (crawls?: string[], query?: string): Promise<Result[]> {
+export async function getResults (crawls?: string[], query?: string, from?: number, size?: number): Promise<{ total: number, hits: Result[] }> {
   const res = await client.search({
     index: resultsMapping.index,
-    size: 9999, // TODO: howto elastic paging?
+    from,
+    size,
     body: buildQueryBody(crawls, query),
   })
-  return res.hits.hits.map(d => new Result(d._source as Result))
+  return {
+    total: res.hits.total,
+    hits: res.hits.hits.map(d => new Result(d._source as Result)),
+  }
 }
 
 export async function getResultCount (crawls?: string[], query?: string): Promise<any> {
