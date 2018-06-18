@@ -1,6 +1,6 @@
 'use strict'
 
-var { writeJson, respondWithCode } = require('../utils/writer')
+var { writeCsv, writeJson, respondWithCode } = require('../utils/writer')
 var Results = require('../service/ResultsService')
 
 module.exports.deleteResults = function deleteResults (req, res, next) {
@@ -36,7 +36,14 @@ module.exports.getResults = function getResults (req, res, next) {
   var download = req.swagger.params['download'].value
   Results.getResults(crawls, query, from, size)
     .then(function (response) {
-      writeJson(res, response)
+      const payload = (download || format === 'csv') ? response.hits : response
+      if (download)
+        res.setHeader('Content-Disposition', `attachment; filename=results.${format || 'json'}`)
+
+      if (format == 'csv')
+        writeCsv(res, payload)
+      else
+        writeJson(res, payload)
     })
     .catch(function (err) {
       writeJson(res, respondWithCode(500, err.message))
