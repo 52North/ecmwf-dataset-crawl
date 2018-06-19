@@ -2,6 +2,7 @@
 
 var { writeCsv, writeJson, respondWithCode } = require('../utils/writer')
 var Results = require('../service/ResultsService')
+const { log } = require('../')
 
 module.exports.deleteResults = function deleteResults (req, res, next) {
   var crawls = req.swagger.params['crawls'].value
@@ -9,9 +10,12 @@ module.exports.deleteResults = function deleteResults (req, res, next) {
   Results.deleteResults(crawls, query)
     .then(function (response) {
       writeJson(res, response)
+      const { deleted } = response
+      log.info({ req, res, deleted }, 'deleteResults()')
     })
     .catch(function (err) {
       writeJson(res, respondWithCode(500, err.message))
+      log.error({ err, req, res }, 'could not delete resuls')
     })
 }
 
@@ -21,9 +25,12 @@ module.exports.getResultCount = function getResultCount (req, res, next) {
   Results.getResultCount(crawls, query)
     .then(function (response) {
       writeJson(res, respondWithCode(200, response))
+      const { count } = response
+      log.info({ req, res, count }, 'getResultCount()')
     })
     .catch(function (err) {
       writeJson(res, respondWithCode(500, err.message))
+      log.error({ err, req, res }, 'could not get result count')
     })
 }
 
@@ -44,9 +51,12 @@ module.exports.getResults = function getResults (req, res, next) {
         writeCsv(res, payload)
       else
         writeJson(res, payload)
+
+      log.info({ req, res, count: response.total }, 'getResults()')
     })
     .catch(function (err) {
       writeJson(res, respondWithCode(500, err.message))
+      log.error({ err, req, res }, 'could not get results')
     })
 }
 

@@ -16,6 +16,7 @@ export async function addCrawl (crawl: Crawl) {
   try {
     await doc.processKeywords()
     await doc.getSeedUrls()
+    await doc.save()
     await doc.startCrawling()
     return doc
   } catch (err) {

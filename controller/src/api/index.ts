@@ -8,7 +8,7 @@ import connect from 'connect'
 import cfg from '../config'
 import createLogger from '../logging'
 
-const log = createLogger('api')
+export const log = createLogger('api')
 
 // swaggerRouter configuration
 const options = {
@@ -46,12 +46,6 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware: any) {
   // Serve the Swagger documents and Swagger UI
   app.use(middleware.swaggerUi())
 })
-
-const reqLogger: connect.NextHandleFunction = (req, res, next) => {
-  log.info({ req })
-  next()
-}
-app.use(reqLogger)
 
 export default function startServer (serverPort: number) {
   return new Promise((resolve: any, reject: any) => {

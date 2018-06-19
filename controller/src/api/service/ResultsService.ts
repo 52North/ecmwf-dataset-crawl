@@ -41,8 +41,7 @@ export async function getResultCount (crawls?: string[], query?: string) {
  * returns List
  **/
 export async function getResults (crawls?: string[], query?: string, from?: number, size?: number) {
-  const results = await getResultsFromDb(crawls, query, from, size)
-  return results
+  return getResultsFromDb(crawls, query, from, size)
 }
 
 /**
