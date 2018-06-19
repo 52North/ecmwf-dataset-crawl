@@ -58,7 +58,7 @@ export async function exportResults (parameters) {
   const res = await axios.get('/results', { params })
   if (params.download) {
     // TODO: hacky solution will end up with 2 requests.. need to find a way to build the URL
-    window.open(res.request.responseURL)
+    triggerDownload(res.request.responseURL)
   }
   return res.data
 }
@@ -90,4 +90,13 @@ export async function getCountries (cache = true) {
   }
 
   return store.countries
+}
+
+function triggerDownload (url) {
+  const iframe = document.createElement('iframe')
+  iframe.src = url
+  iframe.style.display = 'none'
+
+  document.body.insertBefore(iframe, document.body.firstChild)
+  setTimeout(() => { document.body.removeChild(iframe) }, 1000)
 }

@@ -37,4 +37,11 @@ export const routes = [
 
 export default new Router({
   routes,
+  scrollBehavior (to, from, savedPos) {
+    if (to.path === '/crawls/new') {
+      return { x: 0, y: 0 }
+    } else {
+      return savedPos
+    }
+  }
 })
