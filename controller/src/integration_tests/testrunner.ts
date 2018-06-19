@@ -1,5 +1,8 @@
 import { promisify } from 'util'
-import Crawl from './models/Crawl'
+import Crawl from '../models/Crawl'
+import { addCrawl } from '../api/service/CrawlsService';
+import { deleteResults } from '../elastic'
+import testcases, { Testcase } from './testcases'
 
 /**
  * These Integration tests..
@@ -10,34 +13,24 @@ import Crawl from './models/Crawl'
  *   with a known high result score, as well as crawls with an expected low
  *   result score.
  *
- * Test cases consist of a Crawl definition. To skip external API calls and save
- * API quota, only the processed keywords are provided. This may change when
- * there are more exotic test cases.
+ * Test cases consist of a Crawl definition.
  */
 
-const test1Germany = new Crawl({
-  id: 'testcase-germany',
-  name: 'testcase-germany',
-  crawlOptions: {
-    recursion: 2,
-    seedUrlsPerKeywordGroup: 10,
-  },
-  processedKeywords: [
-    { keywords: ['hydrologische', 'echtzeit', 'daten'], language: 'de', country: 'de' },
-    { keywords: ['umwelt', 'daten', 'katalog'], language: 'de', country: 'de' },
-  ],
-} as Crawl)
+const CRAWL_WAIT_MSECS = 1000 * 60 * 5
 
-const CRAWL_WAIT_MSECS = 1000 * 60 * 3
-type Testcase = Crawl
-const testcases: Testcase[] = [
-  test1Germany
-]
+async function clearResults(testcases: Testcase[]) {
+  for (const t of testcases) {
+    try {
+      await t.delete()
+    } catch (err) {}
+  }
+
+  return testcases
+}
 
 async function startTestCrawls (testcases: Testcase[]) {
   for (const testcase of testcases) {
-    await testcase.getSeedUrls()
-    await testcase.startCrawling()
+    await addCrawl(testcase)
   }
   return testcases
 }
@@ -56,13 +49,13 @@ async function evaluateTestCrawls (testcases: Testcase[]) {
 
 const wait = promisify(setTimeout)
 
-async function log (testcases: Testcase[], ...args: any[]) {
-  console.log(testcases)
-  args.map(v => console.log(v))
+function log (...args: any[]) {
+  args.map(v => console.log(JSON.stringify(v, null, 2)))
   return testcases
 }
 
-startTestCrawls(testcases)
+clearResults(testcases)
+  .then(startTestCrawls)
   .then(tests => log(tests, `waiting ${CRAWL_WAIT_MSECS / 1000}s for crawler...`))
   .then(tests => wait(CRAWL_WAIT_MSECS, tests))
   .then(stopTestCrawls)
