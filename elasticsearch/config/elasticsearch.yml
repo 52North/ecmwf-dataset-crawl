@@ -15,4 +15,9 @@ discovery.zen.minimum_master_nodes: 1
 #
 discovery.type: single-node
 
+# for snapshots, can be mounted from docker image
 path.repo: ["/mount/snapshots"]
+
+# required so that the crawler does does not recreate the crawlstatus-* index
+# after it was removed
+action.auto_create_index: false

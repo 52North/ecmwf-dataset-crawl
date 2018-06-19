@@ -188,6 +188,8 @@ export default class Crawl implements CrawlResponse {
     if (this.completed)
       throw new Error('Crawl already stopped!')
 
+    // NOTE: for this to have the effect of stopping the crawl, elasticsearch
+    // must be configured with `action.auto_create_index: false`!
     await clearStatusIndex(this)
     this.completed = new Date()
     return this.save()
