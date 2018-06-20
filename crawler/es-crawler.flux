@@ -29,7 +29,7 @@ bolts:
     className: "com.digitalpebble.stormcrawler.bolt.SiteMapParserBolt"
     parallelism: 1
   - id: "parse"
-    className: "com.digitalpebble.stormcrawler.bolt.JSoupParserBolt"
+    className: "org.n52.webcrawl.N52JSoupParserBolt"
     parallelism: 1
   - id: "index"
     className: "org.n52.webcrawl.N52IndexerBolt"

@@ -59,13 +59,15 @@ public class N52IndexerBolt extends IndexerBolt {
 
         String uniformedUrl = getUniformedUrl(tuple);
         Metadata metadata = (Metadata) tuple.getValueByField("metadata");
-        String crawlId = metadata.getFirstValue("crawl"); // TODO: not populated yet?
-        String content = new String(tuple.getBinaryByField("content"));
+        String lang = metadata.getFirstValue("language");
+        // "content" contains HTML, "text" extracted text...
+//        String content = new String(tuple.getBinaryByField("content"));
+        String content = (String) tuple.getValueByField("text");
 
         //TODO extract the fetchedTime from metadata (the field name is date)
         long date = new Date().getTime();
 
-        _collector.emit("storage", tuple, new Values("asdf", date, uniformedUrl, content));
+        _collector.emit("storage", tuple, new Values(lang, date, uniformedUrl, content));
     }
 
     private String getUniformedUrl(Tuple tuple) {
@@ -80,7 +82,7 @@ public class N52IndexerBolt extends IndexerBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         super.declareOutputFields(declarer);
-        declarer.declareStream("storage", new Fields("crawl", "fetchedDate", "url", "content"));
+        declarer.declareStream("storage", new Fields("language", "fetchedDate", "url", "content"));
     }
 
 

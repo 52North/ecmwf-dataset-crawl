@@ -42,13 +42,14 @@ public class N52FileBolt extends BaseRichBolt {
      */
     @Override
     public void execute(Tuple tuple) {
-        String crawlId = tuple.getStringByField("crawl");
+        String language = tuple.getStringByField("language");
         long fetchedDate = tuple.getLongByField("fetchedDate");
         String url = tuple.getStringByField("url");
         String content = tuple.getStringByField("content");
 
         try {
-            store(crawlId,fetchedDate,url,content);
+            if (language == null) language = "unknown";
+            store(language,fetchedDate,url,content);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,8 +62,8 @@ public class N52FileBolt extends BaseRichBolt {
     }
 
 
-    private void store(String crawlId, long fetchedDate, String url, String htmlContent) throws Exception {
-        String pathName =  generateFolderName(url) + getFileName(crawlId, url, fetchedDate);
+    private void store(String language, long fetchedDate, String url, String htmlContent) throws Exception {
+        String pathName =  generateFolderName(language) + getFileName(url, fetchedDate);
         saveStringToFile(htmlContent, pathName);
     }
 
@@ -71,8 +72,8 @@ public class N52FileBolt extends BaseRichBolt {
     }
 
 
-    private String getFileName(String crawlId, String pageUrl, long timestamp) {
-        return crawlId + "-" + getDomainFileFriendly(pageUrl) + "-" + Long.toString(timestamp) + ".html";
+    private String getFileName(String pageUrl, long timestamp) {
+        return getDomainFileFriendly(pageUrl) + "-" + Long.toString(timestamp) + ".html";
     }
 
     private String getDomainFileFriendly(String url){

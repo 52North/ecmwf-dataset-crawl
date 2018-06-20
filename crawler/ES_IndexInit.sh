@@ -2,8 +2,10 @@
 
 ESHOST='http://localhost:9200'
 #ESHOST='http://elasticsearch:9200'
+STATUS_INDEX='injectiontest-status'
+RESULT_INDEX='injectiontest-results'
 
-curl -s -XDELETE "${ESHOST}/status/" >  /dev/null
+curl -s -XDELETE "${ESHOST}/${STATUS_INDEX}/" >  /dev/null
 
 echo "Deleted status index"
 
@@ -11,7 +13,7 @@ echo "Deleted status index"
 
 echo "Creating status index with mapping"
 
-curl -XPUT "${ESHOST}/status" -H 'Content-Type: application/json' -d '
+curl -XPUT "${ESHOST}/${STATUS_INDEX}" -H 'Content-Type: application/json' -d '
 {
 	"settings": {
 		"index": {
@@ -103,14 +105,14 @@ curl -s -XPOST "${ESHOST}/_template/storm-metrics-template" -H 'Content-Type: ap
 
 # deletes and recreates a doc index with a bespoke schema
 
-curl -s -XDELETE "${ESHOST}/index/" >  /dev/null
+curl -s -XDELETE "${ESHOST}/${RESULT_INDEX}/" >  /dev/null
 
 echo ""
 echo "Deleted docs index"
 
 echo "Creating docs index with mapping"
 
-curl -s -XPUT "${ESHOST}/index" -H 'Content-Type: application/json' -d '
+curl -s -XPUT "${ESHOST}/${RESULT_INDEX}" -H 'Content-Type: application/json' -d '
 {
 	"settings": {
 		"index": {

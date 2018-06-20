@@ -11,6 +11,11 @@
       }
     },
     {
+      "class": "org.n52.webcrawl.LanguageDetectionFilter",
+      "name": "LanguageDetectionFilter",
+      "params": {}
+    },
+    {
       "class": "com.digitalpebble.stormcrawler.parse.filter.DomainParseFilter",
       "name": "DomainParseFilter",
       "params": {
