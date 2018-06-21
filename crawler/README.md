@@ -26,6 +26,6 @@ Replace '--local' with '--remote' to deploy it on a running Storm cluster.
 Alternatively, run the application via the following command, which can be adapted to allow debugging from IDEs:
 
 ```sh
-mvn clean compile exec:java -Dexec.mainClass=org.apache.storm.flux.Flux -Dexec.args="--local crawler.flux --sleep 60000
+mvn clean compile exec:java -Dexec.mainClass=org.apache.storm.flux.Flux -Dexec.args="--local crawler.flux --sleep 60000"
 ```
 

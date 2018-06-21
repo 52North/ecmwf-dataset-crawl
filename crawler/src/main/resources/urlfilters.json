@@ -12,14 +12,14 @@
       "class": "com.digitalpebble.stormcrawler.filtering.depth.MaxDepthFilter",
       "name": "MaxDepthFilter",
       "params": {
-        "maxDepth": 0
+        "maxDepth": 2
       }
     },
     {
       "class": "com.digitalpebble.stormcrawler.filtering.basic.BasicURLNormalizer",
       "name": "BasicURLNormalizer",
       "params": {
-        "removeAnchorPart": true, 
+        "removeAnchorPart": true,
         "unmangleQueryString": true,
         "checkValidURI": true,
         "removeHashes": false
@@ -30,7 +30,7 @@
       "name": "HostURLFilter",
       "params": {
         "ignoreOutsideHost": false,
-        "ignoreOutsideDomain": true
+        "ignoreOutsideDomain": false
       }
     },
     {

@@ -10,10 +10,7 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Tuple;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,13 +40,14 @@ public class N52FileBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         String language = tuple.getStringByField("language");
+        String category = tuple.getStringByField("category");
         long fetchedDate = tuple.getLongByField("fetchedDate");
         String url = tuple.getStringByField("url");
         String content = tuple.getStringByField("content");
 
         try {
             if (language == null) language = "unknown";
-            store(language,fetchedDate,url,content);
+            store(language, category, fetchedDate,url,content);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,18 +60,18 @@ public class N52FileBolt extends BaseRichBolt {
     }
 
 
-    private void store(String language, long fetchedDate, String url, String htmlContent) throws Exception {
-        String pathName =  generateFolderName(language) + getFileName(url, fetchedDate);
+    private void store(String language, String cat, long fetchedDate, String url, String htmlContent) throws Exception {
+        String pathName =  generateFolderName(language, cat) + getFileName(url, fetchedDate);
         saveStringToFile(htmlContent, pathName);
     }
 
-    private String generateFolderName(String url) {
-        return baseFolder + getDomainFileFriendly(url) + "/";
+    private String generateFolderName(String lang, String cat) {
+        return baseFolder + "/" + lang + "/" + cat + "/";
     }
 
 
     private String getFileName(String pageUrl, long timestamp) {
-        return getDomainFileFriendly(pageUrl) + "-" + Long.toString(timestamp) + ".html";
+        return getDomainFileFriendly(pageUrl) + "-" + Long.toString(timestamp) + ".txt";
     }
 
     private String getDomainFileFriendly(String url){
@@ -97,12 +95,9 @@ public class N52FileBolt extends BaseRichBolt {
             throw new IOException("Couldn't create the storage folder: " + folder.getAbsolutePath() + " does it already exist ?");
         }
 
-        try(  PrintWriter out = new PrintWriter( pathName )  ){
-            out.println( stringToWrite);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
+        FileWriter writer = new FileWriter(file);
+        writer.write(stringToWrite);
+        writer.flush();
+        writer.close();
     }
 }

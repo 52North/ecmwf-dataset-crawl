@@ -28,8 +28,8 @@ spouts:
     className: "com.digitalpebble.stormcrawler.spout.FileSpout"
     parallelism: 1
     constructorArgs:
-      - "."
-      - "seedurls.txt"
+      - "../topicmodeler/seeds"
+      - "noerw_collection.tsv"
       - ref: "scheme"
 
 bolts:
