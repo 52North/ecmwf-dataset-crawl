@@ -29,7 +29,7 @@ spouts:
     parallelism: 1
     constructorArgs:
       - "../topicmodeler/seeds"
-      - "noerw_collection.tsv"
+      - "${ENV-SEEDLIST}"
       - ref: "scheme"
 
 bolts:

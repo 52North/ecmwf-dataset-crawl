@@ -86,6 +86,4 @@ public class N52IndexerBolt extends IndexerBolt {
         super.declareOutputFields(declarer);
         declarer.declareStream("storage", new Fields("language", "category", "fetchedDate", "url", "content"));
     }
-
-
 }

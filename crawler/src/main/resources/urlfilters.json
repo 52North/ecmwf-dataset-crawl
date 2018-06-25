@@ -29,8 +29,8 @@
       "class": "com.digitalpebble.stormcrawler.filtering.host.HostURLFilter",
       "name": "HostURLFilter",
       "params": {
-        "ignoreOutsideHost": false,
-        "ignoreOutsideDomain": false
+        "ignoreOutsideHost": true,
+        "ignoreOutsideDomain": true
       }
     },
     {

@@ -15,7 +15,7 @@ config:
   # does not seem to work?
   # topology.worker.max.heap.size.mb: 2048.0
 
-  fetcher.threads.number: 500
+  fetcher.threads.number: 50
 
   # set to 50MB to handle sitemaps
   http.content.limit: 52428800
@@ -94,7 +94,7 @@ config:
 
   # revisit a page with a fetch error after 2 hours (value in minutes)
   # set it to -1 to never refetch a page
-  fetchInterval.fetch.error: 120
+  fetchInterval.fetch.error: 1
 
   # never revisit a page with an error (or set a value in minutes)
   fetchInterval.error: -1

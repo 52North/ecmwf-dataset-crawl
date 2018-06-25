@@ -76,26 +76,30 @@ def sortVectors(vectors):
     return sorted(vectors, key=lambda item: -item[1])
 
 # get data
-docs = readDocuments('./crawledPages', 'en')
+print('reading all the documents...')
+docs = readDocuments('./trainingdata/dataportals', 'en')
 stopwords = getStopwords('./stopwords', 'en')
 
 # transform to vectorspace
+print('building dictionary & converting docs to vectorspace...')
 dictionary, docs = docs2corpus(docs, stopwords)
 
 # splitting the docs up by handcrafted topics. this seems to be an antipattern, this classifcation is partly the goal of Topic modeling!
-corpusAgency = [doc.vectorspace for doc in docs if doc.category == 'agencysite'] # "corpus" contains scores for each token per doc
-print('agencysite', [len(d) for d in corpusAgency])
-lsi, topicsAgency = calcLsi(corpusAgency) # "topicsAgency" contains scores for each topic per doc
+# corpusAgency = [doc.vectorspace for doc in docs if doc.category == 'agencysite'] # "corpus" contains scores for each token per doc
+# print('agencysite', [len(d) for d in corpusAgency])
+# lsi, topicsAgency = calcLsi(corpusAgency) # "topicsAgency" contains scores for each topic per doc
 
-docsNocontent = [doc for doc in docs if doc.category == 'nocontent']
-corpusNocontent = [doc.vectorspace for doc in docsNocontent]
-print('nocontent', [len(d) for d in corpusNocontent])
-lsi, topicsNocontent = calcLsi(corpusNocontent)
+# docsNocontent = [doc for doc in docs if doc.category == 'nocontent']
+# corpusNocontent = [doc.vectorspace for doc in docsNocontent]
+# print('nocontent', [len(d) for d in corpusNocontent])
+# lsi, topicsNocontent = calcLsi(corpusNocontent)
 
+print('building LSI model...')
 corpus = [doc.vectorspace for doc in docs]
 lsi, topics = calcLsi(corpus)
 
 # now compute similiarity of hypothetical external doc with current topics and/or docs (0815 index query home made)
+print('testing against example document...')
 
 # need to convert query doc first
 # doc = 'Compatible browser required'

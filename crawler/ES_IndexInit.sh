@@ -2,8 +2,8 @@
 
 ESHOST='http://localhost:9200'
 #ESHOST='http://elasticsearch:9200'
-STATUS_INDEX='injectiontest-status'
-RESULT_INDEX='injectiontest-results'
+STATUS_INDEX=${INDEXNAME}-status
+RESULT_INDEX=${INDEXNAME}-results
 
 curl -s -XDELETE "${ESHOST}/${STATUS_INDEX}/" >  /dev/null
 
