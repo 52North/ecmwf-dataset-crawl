@@ -1,7 +1,7 @@
-(
-)
 /
 .
+,
+;
 ?
 !
 -
@@ -9,9 +9,19 @@
 \
 °
 ~
+!
+@
 #
 $
-@
+%
+^
+&
+*
+(
+)
+_
++
+=
 a
 about
 above
@@ -357,3 +367,419 @@ your
 yours
 yourself
 yourselves
+
+u.k.
+u.s.
+uk
+us
+afghanistan
+albania
+algeria
+andorra
+angola
+antigua
+barbuda
+argentina
+armenia
+australia
+austria
+azerbaijan
+bahamas
+bahrain
+bangladesh
+barbados
+belarus
+belgium
+belize
+benin
+bhutan
+bolivia
+bosnia
+and
+herzegovina
+botswana
+brazil
+brunei
+bulgaria
+burkina faso
+burundi
+cambodia
+cameroon
+canada
+cape verde
+central
+african
+republic
+chad
+chile
+china
+colombia
+comoros
+congo
+costa
+rica
+croatia
+cuba
+cyprus
+czech
+denmark
+djibouti
+dominica
+dominican
+east timor
+ecuador
+egypt
+el salvador
+guinea
+eritrea
+estonia
+ethiopia
+fiji
+finland
+france
+gabon
+gambia
+georgia
+germany
+ghana
+greece
+grenada
+guatemala
+guinea
+guinea-bissau
+guyana
+haiti
+honduras
+hungary
+iceland
+india
+indonesia
+iran
+iraq
+ireland
+israel
+italy
+jamaica
+japan
+jordan
+kazakhstan
+kenya
+kiribati
+korea
+kuwait
+kyrgyzstan
+laos
+latvia
+lebanon
+lesotho
+liberia
+libya
+liechtenstein
+lithuania
+luxembourg
+macedonia
+madagascar
+malawi
+malaysia
+maldives
+mali
+malta
+mauritania
+mauritius
+mexico
+micronesia
+moldova
+monaco
+mongolia
+montenegro
+morocco
+mozambique
+myanmar
+namibia
+nauru
+nepal
+netherlands
+new
+zealand
+nicaragua
+niger
+nigeria
+norway
+oman
+pakistan
+palau
+palestine
+panama
+papua new guinea
+paraguay
+peru
+philippines
+poland
+portugal
+qatar
+romania
+russia
+rwanda
+saint
+kitts
+nevis
+saint
+lucia
+vincent
+grenadines
+samoa
+san marino
+saudi arabia
+senegal
+serbia
+seychelles
+sierra leone
+singapore
+slovakia
+slovenia
+solomon
+somalia
+south
+africa
+sudan
+spain
+sri
+lanka
+sudan
+suriname
+swaziland
+sweden
+switzerland
+syria
+tajikistan
+tanzania
+thailand
+togo
+tonga
+trinidad
+tobago
+tunisia
+turkey
+turkmenistan
+tuvalu
+uganda
+ukraine
+united arab emirates
+united kingdom
+united states
+uruguay
+uzbekistan
+vanuatu
+vatican city
+venezuela
+vietnam
+yemen
+zambia
+zimbabwe
+abkhazia
+artsakh
+cook
+kosovo
+niue
+northern
+cyprus
+sahrawi
+arab
+somaliland
+south ossetia
+taiwan
+transnistria
+
+alabama
+alaska
+arizona
+arkansas
+california
+colorado
+connecticut
+delaware
+florida
+georgia
+hawaii
+idaho
+illinois
+indiana
+iowa
+kansas
+kentucky
+louisiana
+maine
+maryland
+massachusetts
+michigan
+minnesota
+mississippi
+missouri
+montana
+nebraska
+nevada
+new hampshire
+new jersey
+new mexico
+new york
+north carolina
+north dakota
+ohio
+oklahoma
+oregon
+pennsylvania
+rhode island
+south carolina
+south dakota
+tennessee
+texas
+utah
+vermont
+virginia
+washington
+west virginia
+wisconsin
+wyoming
+
+new york
+los angeles
+chicago
+houston
+phoenix
+philadelphia
+san antonio
+san diego
+dallas
+san jose
+austin
+jacksonville
+san francisco
+columbus
+fort worth
+indianapolis
+charlotte
+seattle
+denver
+washington
+boston
+el paso
+detroit
+nashville
+memphis
+portland
+oklahoma city
+las vegas
+louisville
+baltimore
+milwaukee
+albuquerque
+tucson
+fresno
+sacramento
+mesa
+kansas city
+atlanta
+long beach
+omaha
+raleigh
+colorado springs
+miami
+virginia beach
+oakland
+minneapolis
+tulsa
+arlington
+new orleans
+ontario
+vancouver
+springfield
+
+ontario
+quebec
+nova scotia
+new brunswick
+manitoba
+british columbia
+prince edward island
+saskatchewan
+alberta
+newfoundland
+labrador
+
+oranjestad
+nassau
+freeport city
+bridgetown
+speightstown
+belize city
+belmopan
+toronto
+montreal
+calgary
+edmonton
+ottawa
+vancouver
+winnipeg
+halifax
+havana
+santiago de cuba
+roseau
+santo domingo
+santiago de los caballeros
+san felipe de puerto plata
+san salvador
+san miguel
+santa ana
+nuuk
+sisimiut
+ilulissat
+qaqortoq
+aasiaat
+guatemala city
+port-au-prince
+cap-haïtien
+gonaïves
+port-de-paix
+jacmel
+les cayes
+jérémie
+tegucigalpa
+san pedro sula
+choloma
+la ceiba
+el progreso
+choluteca
+comayagua
+puerto cortés
+la lima
+danlí
+kingston
+montego bay
+spanish town
+portmore
+ocho rios
+mexico city
+guadalajara
+monterrey
+puebla
+toluca
+tijuana
+chihuahua
+juárez
+león
+torreón
+san luis potosí
+mérida
+acapulco
+cancún
+los cabos
+cuernavaca
+pachuca
+querétaro
+managua
+leon
+san juan
+castries
+port-of-spain
+cockburn town
+charlotte amalie

@@ -15,7 +15,7 @@ config:
   # does not seem to work?
   # topology.worker.max.heap.size.mb: 2048.0
 
-  fetcher.threads.number: 50
+  fetcher.threads.number: 500
 
   # set to 50MB to handle sitemaps
   http.content.limit: 52428800
@@ -119,5 +119,5 @@ config:
 
   status.updater.cache.spec: "maximumSize=500000,expireAfterAccess=1h"
 
-  file.path: "../topicmodeler/trainingdata/noerw_collection"
+  file.path: "../topicmodeler/trainingdata/${ENV-RESULTSDIR}"
 
