@@ -42,8 +42,24 @@ const test1KnownData = testCrawl('testcase-known', [
 
 // low scores expected
 const test2Unrelated = testCrawl('testcase-unrelated', [
-  { keywords: ['micro-marketing', 'geo-data'], translate: true }, // similar keywords, different domain
-  { keywords: ['cat-pictures'], translate: true },                // unrelated
+  // unrelated content but similar keywords
+  { keywords: ['micro-marketing', 'geo-data'], translate: true },
+  { keywords: ['tax', 'data'], translate: true },
+  { keywords: ['market', 'real-time', 'data'], translate: true },
+  { keywords: ['natural', 'language', 'processing', 'data'], translate: true },
+  { keywords: ['rest', 'api', 'data'], translate: true },
+  { keywords: ['natural', 'language', 'processing', 'data'], translate: true },
+  { keywords: ['data', 'science', 'scholarship'], translate: true },
+  { keywords: ['book', 'review', 'portal'], translate: true },
+  { keywords: ['environment', 'news'], translate: true },
+
+  // completely unrelated stuff, so the model can learn about the world
+  { keywords: ['food', 'blogs'], translate: true },
+  { keywords: ['gardening', 'tips'], translate: true },
+  { keywords: ['public', 'health', 'care', 'agencies'], translate: true },
+  { keywords: ['kernel', 'development'], translate: true },
+  { keywords: ['springfield', 'news'], translate: true },
+  { keywords: ['cute', 'cat', 'pictures'], translate: true },
 ], ['de'])
 
 // unknown scores

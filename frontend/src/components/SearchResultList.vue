@@ -50,13 +50,21 @@
       </v-flex>
     </v-layout>
 
-    <v-container>
-      <v-layout column v-if="!results.length">
-        <v-layout class="grey--text" column justify-center align-center>
-            <h1 class="headline">No Results Found! :^(</h1>
-        </v-layout>
+    <v-container mt-2>
+      <!-- no results hint -->
+      <v-layout
+        class="grey--text"
+        column
+        justify-center
+        align-center
+        mt-3
+        v-if="!results.length && !results$pending && !results$loading"
+      >
+        <h1 class="headline">No Results Found! :^(</h1>
+        <p>refine your query, or <router-link class="subheading" :to="{ name: 'New Crawl' }">start a new crawl</router-link></p>
       </v-layout>
 
+      <!-- results listing -->
       <v-card v-if="!!results.length">
         <v-data-table
           :headers="resultTable"
