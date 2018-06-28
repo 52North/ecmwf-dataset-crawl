@@ -41,31 +41,24 @@ logging.basicConfig(level=logging.INFO,
 # parse commandline arguments
 op = OptionParser()
 op.add_option("--report",
-              action="store_true", dest="print_report",
+              action="store_true", dest="print_report", default=True,
               help="Print a detailed classification report.")
 op.add_option("--chi2_select",
               action="store", type="int", dest="select_chi2",
               help="Select some number of features using a chi-squared test")
 op.add_option("--confusion_matrix",
-              action="store_true", dest="print_cm",
+              action="store_true", dest="print_cm", default=True,
               help="Print the confusion matrix.")
 op.add_option("--top10",
-              action="store_true", dest="print_top10",
+              action="store_true", dest="print_top10", default=True,
               help="Print ten most discriminative terms per class"
                    " for every classifier.")
-op.add_option("--all_categories",
-              action="store_true", dest="all_categories",
-              help="Whether to use all categories or not.")
 op.add_option("--use_hashing",
               action="store_true",
               help="Use a hashing vectorizer.")
 op.add_option("--n_features",
               action="store", type=int, default=2 ** 16,
               help="n_features when using the hashing vectorizer.")
-op.add_option("--filtered",
-              action="store_true",
-              help="Remove newsgroup information that is easily overfit: "
-                   "headers, signatures, and quoting.")
 
 
 def is_interactive():
@@ -85,35 +78,16 @@ print()
 
 # #############################################################################
 # Load some categories from the training set
-if opts.all_categories:
-    categories = None
-else:
-    categories = [
-        'dataportal',
-        'unrelated',
-    ]
+categories = [
+    'dataportal',
+    'unrelated',
+]
 
-if opts.filtered:
-    remove = ('headers', 'footers', 'quotes')
-else:
-    remove = ()
-
-print("Loading 20 newsgroups dataset for categories:")
+print("Loading dataset for categories:")
 print(categories if categories else "all")
-
-
-# data_train = fetch_20newsgroups(subset='train', categories=categories,
-#                                 shuffle=True, random_state=42,
-#                                 remove=remove)
-
-# data_test = fetch_20newsgroups(subset='test', categories=categories,
-#                                shuffle=True, random_state=42,
-#                                remove=remove)
 
 data_train = load_files('./trainingdata/traintest1_en/trainingset', encoding='utf-8', shuffle=True)
 data_test = load_files('./trainingdata/traintest1_en/testset', encoding='utf-8', shuffle=True)
-
-# data_test = load_files('./trainingdata/dataportals/en' , encoding='utf-8') #TODO
 print('data loaded')
 
 # order of labels in `target_names` can be different from `categories`
@@ -130,7 +104,7 @@ print("%d documents - %0.3fMB (training set)" % (
     len(data_train.data), data_train_size_mb))
 print("%d documents - %0.3fMB (test set)" % (
     len(data_test.data), data_test_size_mb))
-# print("%d categories" % len(categories))
+print("%d categories" % len(categories))
 print()
 
 # split a training set and a test set
@@ -165,7 +139,19 @@ if opts.use_hashing:
 else:
     feature_names = vectorizer.get_feature_names()
 
-if opts.select_chi2:
+
+if opts.select_chi2: # wow, this extracts (mostly) the right keywords magically. how? whats happening here?
+    # idea: this is a feature selection technique, try dimensionality reduction instead, maybe we don't loose as much info? (LDA?)
+
+    # idea: further optimize by blacklisting some tokens here? e.g. council, recreation, parks, expenditure..
+    # or is this an antipattern, and we should make sure the data is not as overfitted?
+
+    # idea: normalize input data -> stem tokens (how to integrate into this workflow?)
+
+    # idea: cross validation, hyperparam optim?
+
+
+
     print("Extracting %d best features by a chi-squared test" %
           opts.select_chi2)
     t0 = time()
@@ -185,7 +171,7 @@ if feature_names:
 
 def trim(s):
     """Trim string to fit on terminal (assuming 80-column display)"""
-    return s if len(s) <= 80 else s[:77] + "..."
+    return s if len(s) <= 120 else s[:117] + "..."
 
 
 # #############################################################################
@@ -213,9 +199,14 @@ def benchmark(clf):
 
         if opts.print_top10 and feature_names is not None:
             print("top 10 keywords per class:")
-            for i, label in enumerate(target_names):
-                top10 = np.argsort(clf.coef_[i])[-10:]
-                print(trim("%s: %s" % (label, " ".join(feature_names[top10]))))
+            try: # when only using two classes, a single classifier is made, so the second class has no coefficients.
+                for i, label in enumerate(target_names):
+                    coefsSorted = np.argsort(clf.coef_[i])
+                    if not opts.select_chi2:
+                        coefsSorted = coefsSorted[-10:]
+                    print("%s: %s" % (label, " ".join(feature_names[coefsSorted])))
+            except Exception:
+                pass
         print()
 
     if opts.print_report:
