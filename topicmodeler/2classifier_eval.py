@@ -75,73 +75,23 @@ print(__doc__)
 op.print_help()
 print()
 
-
 # #############################################################################
 # Load some categories from the training set
-categories = [
-    'dataportal',
-    'unrelated',
-]
+import pickle
+saved_objects = []
+with (open("./dataset_vectorized.dat", "rb")) as openfile:
+    while True:
+        try:
+            saved_objects.append(pickle.load(openfile))
+        except EOFError:
+            break
 
-print("Loading dataset for categories:")
-print(categories if categories else "all")
-
-data_train = load_files('./trainingdata/traintest1_en/trainingset', encoding='utf-8', shuffle=True)
-data_test = load_files('./trainingdata/traintest1_en/testset', encoding='utf-8', shuffle=True)
+X_train, X_test, y_train, y_test, target_names, feature_names = saved_objects[0]
 print('data loaded')
-
-# order of labels in `target_names` can be different from `categories`
-target_names = data_train.target_names
-
-
-def size_mb(docs):
-    return sum(len(s.encode('utf-8')) for s in docs) / 1e6
-
-data_train_size_mb = size_mb(data_train.data)
-data_test_size_mb = size_mb(data_test.data)
-
-print("%d documents - %0.3fMB (training set)" % (
-    len(data_train.data), data_train_size_mb))
-print("%d documents - %0.3fMB (test set)" % (
-    len(data_test.data), data_test_size_mb))
-print("%d categories" % len(categories))
-print()
-
-# split a training set and a test set
-y_train, y_test = data_train.target, data_test.target
-
-print("Extracting features from the training data using a sparse vectorizer")
-t0 = time()
-if opts.use_hashing:
-    vectorizer = HashingVectorizer(stop_words='english', alternate_sign=False,
-                                   n_features=opts.n_features)
-    X_train = vectorizer.transform(data_train.data)
-else:
-    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
-                                 stop_words='english')
-    X_train = vectorizer.fit_transform(data_train.data)
-duration = time() - t0
-print("done in %fs at %0.3fMB/s" % (duration, data_train_size_mb / duration))
-print("n_samples: %d, n_features: %d" % X_train.shape)
-print()
-
-print("Extracting features from the test data using the same vectorizer")
-t0 = time()
-X_test = vectorizer.transform(data_test.data)
-duration = time() - t0
-print("done in %fs at %0.3fMB/s" % (duration, data_test_size_mb / duration))
-print("n_samples: %d, n_features: %d" % X_test.shape)
-print()
-
-# mapping from integer feature name to original token string
-if opts.use_hashing:
-    feature_names = None
-else:
-    feature_names = vectorizer.get_feature_names()
-
 
 if opts.select_chi2: # wow, this extracts (mostly) the right keywords magically. how? whats happening here?
     # idea: this is a feature selection technique, try dimensionality reduction instead, maybe we don't loose as much info? (LDA?)
+    # or: use word occurence vector with BernoulliNB?
 
     # idea: further optimize by blacklisting some tokens here? e.g. council, recreation, parks, expenditure..
     # or is this an antipattern, and we should make sure the data is not as overfitted?
@@ -149,8 +99,6 @@ if opts.select_chi2: # wow, this extracts (mostly) the right keywords magically.
     # idea: normalize input data -> stem tokens (how to integrate into this workflow?)
 
     # idea: cross validation, hyperparam optim?
-
-
 
     print("Extracting %d best features by a chi-squared test" %
           opts.select_chi2)
@@ -167,7 +115,6 @@ if opts.select_chi2: # wow, this extracts (mostly) the right keywords magically.
 
 if feature_names:
     feature_names = np.asarray(feature_names)
-
 
 def trim(s):
     """Trim string to fit on terminal (assuming 80-column display)"""
