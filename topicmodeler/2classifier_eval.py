@@ -44,7 +44,7 @@ op.add_option("--report",
               action="store_true", dest="print_report", default=True,
               help="Print a detailed classification report.")
 op.add_option("--chi2_select",
-              action="store", type="int", dest="select_chi2",
+              action="store", type="int", dest="select_chi2", default=12,
               help="Select some number of features using a chi-squared test")
 op.add_option("--confusion_matrix",
               action="store_true", dest="print_cm", default=True,
