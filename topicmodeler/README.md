@@ -14,8 +14,14 @@ collected by hand from lists:
 - query google with ~10 queries, store first 30 results each. queries are from `unrelated` testcase in develop branch.
   after submitting the crawl testcase to the controller, get the URLs out of elasticsearch:
     ```
-    curl localhost:9200/crawlstatus-*/_search?size=9999 | jq '.hits.hits[]._source.url' | tr -d '"' > ../topicmodeler/seeds/unrelated.tsv 
+    curl localhost:9200/crawlstatus-*/_search?size=9999 | jq '.hits.hits[]._source.url' | tr -d '"' > ../topicmodeler/seeds/unrelated.tsv
     ```
+
+To get a unique list of URLS, in TSV format with augmented metadata for stormcrawler run:
+```sh
+seed_category=dataportal
+cat $seed_category.txt | sort | uniq -u | sed "s/$/\tcategory=$seed_category\tmax.depth=1/" > $seed_category.tsv
+```
 
 ## put seed urls into crawler
 using `crawler/run.sh`, using a separate index for each class.

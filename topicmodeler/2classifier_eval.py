@@ -44,7 +44,7 @@ op.add_option("--report",
               action="store_true", dest="print_report", default=True,
               help="Print a detailed classification report.")
 op.add_option("--chi2_select",
-              action="store", type="int", dest="select_chi2", default=12,
+              action="store", type="int", dest="select_chi2", default=20,
               help="Select some number of features using a chi-squared test")
 op.add_option("--confusion_matrix",
               action="store_true", dest="print_cm", default=True,
@@ -174,9 +174,9 @@ results = []
 for clf, name in (
         (RidgeClassifier(tol=1e-2, solver="lsqr"), "Ridge Classifier"),
         (Perceptron(n_iter=50), "Perceptron"),
-        (PassiveAggressiveClassifier(n_iter=50), "Passive-Aggressive"),
-        (KNeighborsClassifier(n_neighbors=10), "kNN"),
-        (RandomForestClassifier(n_estimators=100), "Random forest")):
+        (PassiveAggressiveClassifier(n_iter=50), "Passive-Aggressive")):
+        # (KNeighborsClassifier(n_neighbors=10), "kNN"),
+        # (RandomForestClassifier(n_estimators=100), "Random forest")):
     print('=' * 80)
     print(name)
     results.append(benchmark(clf))
