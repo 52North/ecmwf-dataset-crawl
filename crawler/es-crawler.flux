@@ -32,7 +32,7 @@ bolts:
     className: "org.n52.webcrawl.N52JSoupParserBolt"
     parallelism: 1
   - id: "index"
-    className: "org.n52.webcrawl.N52IndexerBolt"
+    className: "com.digitalpebble.stormcrawler.elasticsearch.bolt.IndexerBolt"
     parallelism: 1
   - id: "status"
     className: "com.digitalpebble.stormcrawler.elasticsearch.persistence.StatusUpdaterBolt"
@@ -53,7 +53,7 @@ streams:
   - from: "spout"
     to: "status_metrics"
     grouping:
-      type: SHUFFLE     
+      type: SHUFFLE
 
   - from: "partitioner"
     to: "fetcher"
@@ -104,8 +104,7 @@ streams:
       args: ["url"]
       streamId: "status"
 
-  - from: "index"
+  - from: "parse"
     to: "html_store"
     grouping:
       type: LOCAL_OR_SHUFFLE
-      streamId: "storage"

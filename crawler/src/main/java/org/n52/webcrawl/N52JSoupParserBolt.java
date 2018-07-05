@@ -174,7 +174,7 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
                         "content-type checking", errorMessage);
             } else {
                 LOG.info("Incorrect mimetype - passing on : {}", url);
-                collector.emit(tuple, new Values(url, content, metadata, ""));
+                collector.emit(tuple, new Values(url, content, metadata, "wrong mime"));
                 collector.ack(tuple);
             }
             return;
@@ -349,10 +349,14 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
 
         for (Map.Entry<String, ParseData> doc : parse) {
             ParseData parseDoc = doc.getValue();
+            String txt = parseDoc.getText();
+            if (txt == null) {
+                txt = "empty";
+            }
             collector.emit(
                     tuple,
                     new Values(doc.getKey(), parseDoc.getContent(), parseDoc
-                            .getMetadata(), parseDoc.getText()));
+                            .getMetadata(), txt));
         }
 
         collector.ack(tuple);

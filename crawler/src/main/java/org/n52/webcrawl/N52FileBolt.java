@@ -2,6 +2,7 @@
 
 package org.n52.webcrawl;
 
+import com.digitalpebble.stormcrawler.Metadata;
 import com.digitalpebble.stormcrawler.util.ConfUtils;
 //import com.google.common.annotations.VisibleForTesting;
 import org.apache.storm.task.OutputCollector;
@@ -9,13 +10,18 @@ import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Tuple;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Date;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class N52FileBolt extends BaseRichBolt {
+    private static final org.slf4j.Logger LOG = LoggerFactory
+            .getLogger(N52FileBolt.class);
+
     private String baseFolder;
     private OutputCollector _collector;
 
@@ -39,19 +45,32 @@ public class N52FileBolt extends BaseRichBolt {
      */
     @Override
     public void execute(Tuple tuple) {
-        String language = tuple.getStringByField("language");
-        String category = tuple.getStringByField("category");
-        long fetchedDate = tuple.getLongByField("fetchedDate");
-        String url = tuple.getStringByField("url");
-        String content = tuple.getStringByField("content");
+        String url = (String) tuple.getValueByField("url");
+        Metadata metadata = (Metadata) tuple.getValueByField("metadata");
+        String language = metadata.getFirstValue("language");
+        String category = metadata.getFirstValue("category");
+
+        // "content" contains HTML, "text" extracted text...
+//        String content = new String(tuple.getBinaryByField("content"));
+        String content = "";
+        try {
+            content = (String) tuple.getValueByField("text");
+        } catch (Exception e) {
+            LOG.error("could not get text from Parser bolt?!", e);
+        }
+
+        //TODO extract the fetchedTime from metadata (the field name is date)
+        long fetchedDate = new Date().getTime();
+
 
         try {
             if (language == null) language = "unknown";
             store(language, category, fetchedDate,url,content);
+            _collector.ack(tuple);
         } catch (Exception e) {
             e.printStackTrace();
+            _collector.fail(tuple);
         }
-        _collector.ack(tuple);
     }
 
     @Override
