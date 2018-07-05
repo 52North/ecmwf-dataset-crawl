@@ -4,6 +4,7 @@ import logging
 import numpy as np
 from optparse import OptionParser
 import sys
+from os import path
 from time import time
 import matplotlib.pyplot as plt
 
@@ -24,8 +25,9 @@ from sklearn.neighbors import NearestCentroid
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils.extmath import density
 from sklearn import metrics
-
 from sklearn.model_selection import train_test_split
+
+from classifier.CustomVectorizer import EnglishAnalyzer
 
 # Display progress logs on stdout
 logging.basicConfig(level=logging.INFO,
@@ -57,7 +59,7 @@ data = load_files("./trainingdata/" + opts.dataset, encoding='utf-8', shuffle=Tr
 target_names = data.target_names # TODO: scrape more categories / page types
 
 print("splitting dataset")
-X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.15)
 print('data loaded')
 
 # print("extracting and visualising term frequency")
@@ -70,6 +72,10 @@ print('data loaded')
 # visualizer.fit(docs)
 # visualizer.poof()
 
+print("reading stopword list..")
+with open(path.join("./classifier/stopwords/en.txt")) as f:
+    extra_stopwords = f.read().split()
+
 print("Extracting features from the training data using a sparse vectorizer")
 t0 = time()
 if opts.use_hashing:
@@ -78,7 +84,7 @@ if opts.use_hashing:
     X_train = vectorizer.transform(X_train)
 else:
     vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
-                                 stop_words='english')
+                                 analyzer=EnglishAnalyzer(extra_stopwords).analyze)
     X_train = vectorizer.fit_transform(X_train)
 duration = time() - t0
 print("n_samples: %d, n_features: %d" % X_train.shape)

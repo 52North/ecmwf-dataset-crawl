@@ -84,11 +84,11 @@ with (open("./dataset_vectorized.dat", "rb")) as openfile:
 X_train, X_test, y_train, y_test, class_names, feature_names = saved_objects[0]
 print('data loaded')
 
-# print("building term clusters via TSNE, this will take a while")
-# from yellowbrick.text import TSNEVisualizer
-# tsne = TSNEVisualizer(labels = class_names)
-# tsne.fit(X_train, y_train)
-# tsne.poof()
+print("building term clusters via TSNE, this will take a while")
+from yellowbrick.text import TSNEVisualizer
+tsne = TSNEVisualizer(labels = class_names)
+tsne.fit(X_train, y_train)
+tsne.poof()
 
 if opts.select_chi2: # wow, this extracts (mostly) the right keywords magically. how? whats happening here?
     # idea: this is a feature selection technique, try dimensionality reduction instead, maybe we don't loose as much info? (LDA?)

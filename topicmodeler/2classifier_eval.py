@@ -171,15 +171,15 @@ def benchmark(clf):
 
 
 results = []
-for clf, name in (
-        (RidgeClassifier(tol=1e-2, solver="lsqr"), "Ridge Classifier"),
-        (Perceptron(n_iter=50), "Perceptron"),
-        (PassiveAggressiveClassifier(n_iter=50), "Passive-Aggressive")):
-        # (KNeighborsClassifier(n_neighbors=10), "kNN"),
-        # (RandomForestClassifier(n_estimators=100), "Random forest")):
-    print('=' * 80)
-    print(name)
-    results.append(benchmark(clf))
+# for clf, name in (
+#         (RidgeClassifier(tol=1e-2, solver="lsqr"), "Ridge Classifier"),
+#         (Perceptron(n_iter=50), "Perceptron"),
+#         (PassiveAggressiveClassifier(n_iter=50), "Passive-Aggressive"),
+#         (KNeighborsClassifier(n_neighbors=10), "kNN"),
+#         (RandomForestClassifier(n_estimators=100), "Random forest")):
+#     print('=' * 80)
+#     print(name)
+#     results.append(benchmark(clf))
 
 for penalty in ["l2", "l1"]:
     print('=' * 80)
@@ -193,21 +193,21 @@ for penalty in ["l2", "l1"]:
                                            penalty=penalty)))
 
 # Train SGD with Elastic Net penalty
-print('=' * 80)
-print("Elastic-Net penalty")
-results.append(benchmark(SGDClassifier(alpha=.0001, n_iter=50,
-                                       penalty="elasticnet")))
+# print('=' * 80)
+# print("Elastic-Net penalty")
+# results.append(benchmark(SGDClassifier(alpha=.0001, n_iter=50,
+#                                        penalty="elasticnet")))
 
 # Train NearestCentroid without threshold
-print('=' * 80)
-print("NearestCentroid (aka Rocchio classifier)")
-results.append(benchmark(NearestCentroid()))
+# print('=' * 80)
+# print("NearestCentroid (aka Rocchio classifier)")
+# results.append(benchmark(NearestCentroid()))
 
 # Train sparse Naive Bayes classifiers
 print('=' * 80)
 print("Naive Bayes")
 results.append(benchmark(MultinomialNB(alpha=.01)))
-results.append(benchmark(BernoulliNB(alpha=.01)))
+# results.append(benchmark(BernoulliNB(alpha=.01)))
 
 print('=' * 80)
 print("LinearSVC with L1-based feature selection")
@@ -218,8 +218,20 @@ results.append(benchmark(Pipeline([
                                                   tol=1e-3))),
   ('classification', LinearSVC(penalty="l2"))])))
 
-# make some plots
 
+print('=' * 80)
+print("LinearSVC as we use it")
+results.append(benchmark(LinearSVC()))
+
+print('=' * 80)
+print("LinearSVC with C=0.05")
+results.append(benchmark(LinearSVC(C=0.05)))
+
+print('=' * 80)
+print("LinearSVC with balanced class weight")
+results.append(benchmark(LinearSVC(class_weight='balanced')))
+
+# make some plots
 indices = np.arange(len(results))
 
 results = [[x[i] for x in results] for i in range(4)]
