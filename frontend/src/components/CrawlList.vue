@@ -2,26 +2,16 @@
   <v-container grid-list-xl :fill-height="!crawls.length">
     <v-layout column>
 
-      <v-alert
-        :value="!!info"
-        v-model="infoOpen"
-        dismissible
-        outline
-        color="info"
-        icon="info"
+      <v-snackbar
+        v-model="snackbar.status"
+        :color="snackbar.type"
+        multi-line
+        top
+        :timeout="8000"
       >
-        {{ info }}
-      </v-alert>
-      <v-alert
-        :value="!!error"
-        v-model="errorOpen"
-        dismissible
-        outline
-        color="error"
-        icon="error"
-      >
-        {{ error }}
-      </v-alert>
+        {{ snackbar.text }}
+        <v-btn dark flat @click="snackbar.status = false">Close</v-btn>
+      </v-snackbar>
 
       <!-- crawl list -->
       <v-flex
@@ -131,12 +121,20 @@ import { getCrawls, stopCrawl, deleteResults } from '@/api'
 
 export default {
   mounted () {
-    this.info = this.$route.params.info
+    this.snackbar = {
+      text: this.$route.params.info,
+      type: 'accent',
+      status: !!this.$route.params.info,
+    }
   },
   data () {
     return {
       crawls: [],
-      info: '',
+      snackbar: {
+        text: '',
+        type: 'info',
+        status: false,
+      },
       infoOpen: !!this.$route.params.info,
       error: '',
       errorOpen: false,
@@ -150,28 +148,37 @@ export default {
       try {
         await stopCrawl(crawl)
         crawl.completed = new Date()
-        this.info = `Stopped Crawl ${crawl.name}`
+        this.snackbar = {
+          text: `Stopped Crawl ${crawl.name}`,
+          type: 'info',
+          status: true,
+        }
       } catch (e) {
         const msg = e.response.data
-        this.error = `Could not stop crawl ${crawl.name}: ${msg}`
-        this.errorOpen = true
+        this.snackbar = {
+          text: `Could not stop crawl ${crawl.name}: ${msg}`,
+          type: 'error',
+          status: true,
+        }
       }
     },
     async deleteResults (crawl) {
-      const res = await deleteResults({ crawls: [crawl.id] })
-      this.info = `Deleted ${res.deleted} Search Results`
-    },
-  },
-  watch: {
-    info (newVal, oldVal) {
-      if (newVal) {
-        this.infoOpen = true
-        setTimeout(() => {
-          this.info = ''
-          this.infoOpen = false
-        }, 8000)
+      try {
+        const res = await deleteResults({ crawls: [crawl.id] })
+        this.snackbar = {
+          text: `Deleted ${res.deleted} Search Results`,
+          type: 'info',
+          status: true,
+        }
+      } catch (e) {
+        const msg = e.response.data
+        this.snackbar = {
+          text: `Could not delete results: ${msg}`,
+          type: 'error',
+          status: true,
+        }
       }
-    }
+    },
   },
   name: 'CrawlList',
 }
