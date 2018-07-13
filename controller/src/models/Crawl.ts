@@ -167,13 +167,18 @@ export default class Crawl implements CrawlResponse {
     }
   }
 
-  async startCrawling (): Promise<Crawl> {
+  async startCrawling (force = false): Promise<Crawl> {
     if (!this.id)
       throw new Error(`Can't start crawl ${this.name}: save first.`)
     if (this.started)
       throw new Error(`Can't start crawl ${this.id}: already running.`)
     if (!this.seedUrls)
       throw new Error(`Can't start crawl ${this.id}: fetch seed URLs first.`)
+
+    const { duration, resultCount } = this.crawlOptions.terminationCondition
+    if (!force && !duration && !resultCount) {
+      throw new Error(`Will not start crawl ${this.id} without termination condition! Use "force" flag if you know what you are doing.`)
+    }
 
     // insert seed URLs in new crawl status index
     await addToStatusIndex(this, this.seedUrls)

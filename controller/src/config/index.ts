@@ -23,6 +23,9 @@ const cfg = {
       subscriptionKey: e.AZURE_SUBKEY
     } as AzureTextTranslatorOpts,
   },
+  watchdog: {
+    checkInterval: e.WATCHDOG_INTERVAL || 15, // seconds between checks to stop crawls
+  }
 }
 
 // validate that params without default are set

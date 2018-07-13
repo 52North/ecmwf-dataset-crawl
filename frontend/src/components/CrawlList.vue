@@ -149,6 +149,7 @@ export default {
     async stopCrawl (crawl) {
       try {
         await stopCrawl(crawl)
+        crawl.completed = new Date()
         this.info = `Stopped Crawl ${crawl.name}`
       } catch (e) {
         const msg = e.response.data

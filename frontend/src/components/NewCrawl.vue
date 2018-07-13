@@ -149,7 +149,7 @@
                       thumb-label
                       label="Crawl Depth (Recursion)"
                       min="0"
-                      max="10"
+                      max="5"
                     />
                   </v-flex>
                   <v-flex xs3 md1>
@@ -178,6 +178,40 @@
                     />
                   </v-flex>
                 </v-layout>
+                <v-layout row wrap>
+                  <v-flex>
+                    <v-slider
+                      v-model="terminationCondition.duration"
+                      thumb-label
+                      label="Terminate after (minutes)"
+                      min="1"
+                      max="600"
+                    />
+                  </v-flex>
+                  <v-flex xs3 md1>
+                    <v-text-field
+                      v-model="terminationCondition.duration"
+                      type="number"
+                      min="1"
+                    />
+                  </v-flex>
+                  <v-flex>
+                    <v-slider
+                      v-model="terminationCondition.resultCount"
+                      thumb-label
+                      label="Terminate after (number of results)"
+                      min="1"
+                      max="10000"
+                    />
+                  </v-flex>
+                  <v-flex xs3 md1>
+                    <v-text-field
+                      v-model="terminationCondition.resultCount"
+                      type="number"
+                      min="1"
+                    />
+                  </v-flex>
+                </v-layout>
               </v-container>
             </v-card-text>
           </v-card>
@@ -187,11 +221,21 @@
 
       <v-alert :value="!!error" dismissible outline color="error" icon="error" v-html="error"/>
 
-      <v-layout row justify-center>
-        <v-btn large @click="submit" :disabled="!valid" color="primary">
-          <v-icon>flight_takeoff</v-icon>&nbsp;&nbsp;&nbsp;&nbsp;launch crawl
-        </v-btn>
-      </v-layout>
+      <v-container>
+        <v-layout row>
+            <v-progress-linear
+              v-if="loading"
+              indeterminate
+              style="margin-top: 0"
+              height="3"
+            ></v-progress-linear>
+        </v-layout>
+        <v-layout row justify-center>
+            <v-btn large @click="submit" :disabled="!valid || loading" color="primary">
+              <v-icon>flight_takeoff</v-icon>&nbsp;&nbsp;&nbsp;&nbsp;launch crawl
+            </v-btn>
+        </v-layout>
+      </v-container>
 
     </v-form>
   </v-container>
@@ -206,10 +250,11 @@ export default {
       availableCountries: [],
       error: '',
       valid: false,
+      loading: false,
 
       name: '',
-      crawldepth: 3,
-      seedurls: 10,
+      crawldepth: 2,
+      seedurls: 20,
       domainBlacklist: '',
       domainWhitelist: '',
       commonKeywords: {
@@ -219,6 +264,10 @@ export default {
         { keywords: [], translate: true }
       ],
       countries: ['de'],
+      terminationCondition: {
+        duration: 180,
+        resultCount: 5000,
+      },
     }
   },
   asyncData: {
@@ -243,6 +292,7 @@ export default {
         domainBlacklist,
         seedurls,
         crawldepth,
+        terminationCondition,
       } = this.$data
 
       const crawlRequest = {
@@ -255,17 +305,19 @@ export default {
           seedUrlsPerKeywordGroup: seedurls,
           domainWhitelist: domainWhitelist.split('\n'),
           domainBlacklist: domainBlacklist.split('\n'),
-          terminationCondition: {}, // TODO
+          terminationCondition,
         },
       }
 
       try {
-        // TODO: loading spinner, scroll to top
+        this.loading = true
         await addCrawl(crawlRequest)
         await getCrawls(false)
+        this.loading = false
         this.$emit('new-crawl')
         this.$router.push({ name: 'Crawls', params: { info: `Crawl ${name} started!` } })
       } catch (e) {
+        this.loading = false
         this.error = e.response.data
         return false
       }
