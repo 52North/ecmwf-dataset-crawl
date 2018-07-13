@@ -46,7 +46,6 @@ def report(results, n_top=5):
 
 print("Loading dataset")
 data = load_files("../trainingdata/traintest3_lots_bin", encoding='utf-8', shuffle=True)
-target_names = data.target_names
 
 print("splitting dataset")
 X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.3)
@@ -66,13 +65,13 @@ pipeline = Pipeline([
 
 
 param_dist = {
-    "vectorizer__min_df": [0.0, 0.15],
-    "vectorizer__max_df": [0.2, 0.5, 0.8],
+    "vectorizer__min_df": [0.05, 0.2],
+    "vectorizer__max_df": [0.7, 1.0],
     "dim_reduce__k": sp_randint(10, 60),
     "classifier__C": [0.05, 0.5, 1.0],
     "classifier__class_weight": [None, 'balanced'],
 }
-n_iter_search = 1
+n_iter_search = 25
 random_search = RandomizedSearchCV(pipeline, param_distributions=param_dist,
                                    n_iter=n_iter_search, n_jobs=-1)
 random_search.fit(X_train, y_train)
@@ -80,6 +79,15 @@ random_search.fit(X_train, y_train)
 print("optimal hyperparams:")
 report(random_search.cv_results_)
 optim_clf = random_search.best_estimator_
+print("Top 10 keywords per class:")
+feature_names = optim_clf.named_steps["vectorizer"].get_feature_names()
+feature_names = [feature_names[i] for i in optim_clf.named_steps["dim_reduce"].get_support(indices=True)]
+try: # when only using two classes, a single classifier is made, so the second class has no coefficients.
+    for i, label in enumerate(data.target_names):
+        coefsSorted = np.argsort(optim_clf.coef_[i])
+        print("%s: %s" % (label, " ".join(feature_names[coefsSorted])))
+except Exception:
+    pass
 
 print("evaluating resulting model with test dataset")
 from sklearn import metrics
