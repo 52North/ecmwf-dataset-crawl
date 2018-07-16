@@ -124,6 +124,7 @@
                 item-text="name"
                 item-value="iso3166_a2"
                 v-model="countries"
+                @change="searchUntranslated = !!countries.length"
               />
               <h4 class="headline">Languages</h4>
               <v-select
