@@ -3,11 +3,22 @@
     <v-form ref="form" v-model="valid">
       <v-stepper v-model="stepper">
         <v-stepper-header>
-          <v-stepper-step step="1" :complete="stepper > 1">Keywords</v-stepper-step>
+          <v-stepper-step
+            step="1"
+            :complete="stepper > 1"
+            :rules="stepValidators[1]"
+          >Keywords</v-stepper-step>
           <v-divider></v-divider>
-          <v-stepper-step :complete="stepper > 2" step="2">Languages</v-stepper-step>
+          <v-stepper-step
+            step="2"
+            :complete="stepper > 2"
+            :rules="stepper > 1 ? stepValidators[2] : []"
+          >Languages</v-stepper-step>
           <v-divider></v-divider>
-          <v-stepper-step step="3">Settings</v-stepper-step>
+          <v-stepper-step
+            step="3"
+            :rules="stepper > 2 ? stepValidators[3] : []"
+          >Settings</v-stepper-step>
         </v-stepper-header>
 
         <v-stepper-items>
@@ -98,27 +109,35 @@
 
           <!-- countries / languages TODO: map view -->
           <v-stepper-content step="2">
-            <v-card>
-              <v-card-title>
-                <v-flex>
-                  <h4 class="headline">Countries</h4>
-                </v-flex>
-              </v-card-title>
-              <v-card-text>
-                <v-flex>
-                  <v-select
-                    chips
-                    deletable-chips
-                    multiple
-                    autocomplete
-                    :items="availableCountries"
-                    item-text="name"
-                    item-value="iso3166_a2"
-                    v-model="countries"
-                  />
-                </v-flex>
-              </v-card-text>
-            </v-card>
+            <v-container>
+              <h4 class="headline">Countries</h4>
+              <p>
+                Select countries and their languages for translation of your keywords.
+                When no languages are specified, keywords will not be translated.
+              </p>
+              <v-select
+                chips
+                deletable-chips
+                multiple
+                autocomplete
+                :items="availableCountries"
+                item-text="name"
+                item-value="iso3166_a2"
+                v-model="countries"
+              />
+              <h4 class="headline">Languages</h4>
+              <v-select
+                chips
+                deletable-chips
+                multiple
+                item-text="name"
+                item-value="iso639_1"
+                :items="availableLanguages"
+                :rules="stepValidators[2]"
+                v-model="languages"
+              />
+              <v-checkbox v-model="searchUntranslated" label="also search with untranslated keywords"></v-checkbox>
+            </v-container>
           </v-stepper-content>
 
           <!-- crawl config -->
@@ -235,6 +254,17 @@
 
       <!-- back/next, launch buttons -->
       <v-container>
+        <v-alert
+          :value="resultingSearchRequestsWarn"
+          :color="resultingSearchRequestsError ? 'error' : 'warning'"
+          icon="priority_high"
+        >
+          {{
+            resultingSearchRequestsError
+              ? 'This query will use more than the available daily search quota of 100 queries. Reduce the amount of keyword groups or selected languages.'
+              : 'This query will use more than 60% of the daily google search quota!'
+          }}
+        </v-alert>
         <v-alert :value="!!error" dismissible outline color="error" icon="error" v-html="error"/>
         <v-layout row>
             <v-progress-linear
@@ -246,7 +276,7 @@
         <v-layout row justify-center>
             <v-btn large @click="stepper--" color="gray" v-if="stepper !== 1">back</v-btn>
             <v-btn large @click="stepper++" :disabled="!currentStepValid()" color="primary" v-if="stepper !== 3">next</v-btn>
-            <v-btn large @click="submit" :disabled="!valid || loading" color="primary" v-if="stepper === 3">
+            <v-btn large @click="submit" :disabled="!valid || resultingSearchRequestsError || loading" color="primary" v-if="stepper === 3">
               <v-icon>flight_takeoff</v-icon>&nbsp;&nbsp;&nbsp;&nbsp;launch crawl
             </v-btn>
         </v-layout>
@@ -263,13 +293,17 @@ export default {
   data () {
     return {
       availableCountries: [],
+      availableLanguages: [],
       error: '',
       valid: false,
       loading: false,
       stepper: 1,
       stepValidators: {
         1: [() => this.keywordGroups.every(k => !!k.keywords.length) || 'at least one keyword required'],
-        2: [],
+        2: [
+          () => (this.countries.length === 0 || this.languages.length !== 0) || 'at least one language required',
+          () => !(!this.searchUntranslated && !this.languages.length) || 'must use untranslated keywords when no languages are specified',
+        ],
         3: [() => !!this.name || 'crawl name is required'],
       },
 
@@ -284,9 +318,11 @@ export default {
       keywordGroups: [
         { keywords: [], translate: true }
       ],
-      countries: ['de'],
+      countries: [],
+      languages: [],
+      searchUntranslated: true,
       terminationCondition: {
-        duration: 180,
+        duration: 30,
         resultCount: 5000,
       },
     }
@@ -302,8 +338,9 @@ export default {
       })
     },
     removeKeywordGroup (i) {
-      if (this.keywordGroups.length > 1)
+      if (this.keywordGroups.length > 1) {
         this.keywordGroups.splice(i, 1)
+      }
     },
     currentStepValid () {
       return this.stepValidators[this.stepper].every(x => x() === true)
@@ -314,6 +351,8 @@ export default {
       const {
         name,
         countries,
+        languages,
+        searchUntranslated,
         commonKeywords,
         keywordGroups,
         domainWhitelist,
@@ -326,9 +365,11 @@ export default {
       const crawlRequest = {
         name,
         countries,
+        languages,
         commonKeywords,
         keywordGroups,
         crawlOptions: {
+          searchUntranslated,
           recursion: crawldepth,
           seedUrlsPerKeywordGroup: seedurls,
           domainWhitelist: domainWhitelist.split('\n'),
@@ -349,6 +390,24 @@ export default {
         this.error = e.response.data
         return false
       }
+    },
+  },
+  computed: {
+    resultingSearchRequestsWarn: function () {
+      return this.keywordGroups.length * this.languages.length * Math.ceil(this.seedurls / 10) >= 60
+    },
+    resultingSearchRequestsError: function () {
+      return this.keywordGroups.length * this.languages.length * Math.ceil(this.seedurls / 10) >= 100
+    },
+  },
+  watch: {
+    countries: function (val) {
+      const langs = this.availableCountries
+        .filter(c => this.countries.indexOf(c.iso3166_a2) >= 0)
+        .map(c => c.languages)
+
+      this.availableLanguages = [].concat(...langs) // flatten arrays
+      this.languages = this.availableLanguages.map(l => l.iso639_1)
     },
   },
   name: 'NewCrawl',

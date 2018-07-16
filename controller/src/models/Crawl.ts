@@ -19,6 +19,7 @@ export default class Crawl implements CrawlResponse {
 
   name: string
   countries: string[]
+  languages: string[]
   commonKeywords: KeywordGroup
   keywordGroups: KeywordGroup[]
   crawlOptions: CrawlOptions
@@ -34,6 +35,7 @@ export default class Crawl implements CrawlResponse {
     const {
       name,
       countries,
+      languages,
       commonKeywords,
       keywordGroups,
       crawlOptions,
@@ -46,6 +48,7 @@ export default class Crawl implements CrawlResponse {
 
     this.name = name
     this.countries = countries
+    this.languages = languages
     this.commonKeywords = commonKeywords
     this.keywordGroups = keywordGroups
     this.crawlOptions = crawlOptions
@@ -74,9 +77,11 @@ export default class Crawl implements CrawlResponse {
       return this
     }
 
-    if (clearResults && this.started) {
-      await deleteResults([this.id])
+    if (this.started) {
       await clearStatusIndex(this)
+      if (clearResults) {
+        await deleteResults([this.id])
+      }
     }
     await deleteCrawl(this)
     return this
@@ -90,12 +95,14 @@ export default class Crawl implements CrawlResponse {
       // TODO: allow to exclude default lang from processedKeywords?
       // TODO: filter duplicate languages
       for (const group of this.keywordGroups) {
-        // add default language: just merge keywordGroups with common keywords
-        // dont set a country for the default language, to avoid incorrect geofilter
-        this.processedKeywords.push({
-          language: defaultLang.iso639_1,
-          keywords: Array.from(group.keywords.concat(this.commonKeywords.keywords)),
-        })
+        if (this.crawlOptions.searchUntranslated) {
+          // add default language: just merge keywordGroups with common keywords
+          // dont set a country for the default language, to avoid incorrect geofilter
+          this.processedKeywords.push({
+            language: defaultLang.iso639_1,
+            keywords: Array.from(group.keywords.concat(this.commonKeywords.keywords)),
+          })
+        }
 
         if (!group.translate) continue
 
@@ -108,18 +115,26 @@ export default class Crawl implements CrawlResponse {
             ? Array.from(group.keywords.concat(this.commonKeywords.keywords))
             : Array.from(group.keywords)
 
-          // ignore all languages but the first for a country
-          const language = languagesFromCountry({ iso3166_a2: country })[0]
-          keywords = await translator.translate(keywords, defaultLang, language)
+          // get languages from countries, filter by submitted languages list
+          const availableLangs = (await translator.availableLanguages(defaultLang))
+            .map(l => l.iso639_1)
+          const languages = languagesFromCountry({ iso3166_a2: country })
+            .filter(lang => this.languages.indexOf(lang.iso639_1) >= 0)
+            .filter(lang => availableLangs.indexOf(lang.iso639_1) >= 0)
 
-          if (!this.commonKeywords.translate)
-            keywords = keywords.concat(this.commonKeywords.keywords)
+          for (const lang of languages) {
+            // TODO: deduplicate languages by country, so we save some API quota..?
+            keywords = await translator.translate(keywords, defaultLang, lang)
 
-          this.processedKeywords.push({
-            language: language.iso639_1,
-            country,
-            keywords
-          })
+            if (!this.commonKeywords.translate)
+              keywords = keywords.concat(this.commonKeywords.keywords)
+
+            this.processedKeywords.push({
+              language: lang.iso639_1,
+              country,
+              keywords
+            })
+          }
         }
       }
 
@@ -226,12 +241,14 @@ interface CrawlResponse extends CrawlRequest {
 type CrawlRequest = {
   name: string
   countries: string[]
+  languages: string[]
   commonKeywords: KeywordGroup
   keywordGroups: KeywordGroup[]
   crawlOptions: CrawlOptions
 }
 
 type CrawlOptions = {
+  searchUntranslated: boolean
   recursion: number
   seedUrlsPerKeywordGroup: number
   domainBlacklist: string[]

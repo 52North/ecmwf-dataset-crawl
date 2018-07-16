@@ -54,10 +54,10 @@ export default class TranslationApiAzure implements TranslationApi {
       })
   }
 
-  private async parseTranslationResponse (res: AxiosResponse): Promise<string[]> {
+  private async parseTranslationResponse ({ data, config }: AxiosResponse): Promise<string[]> {
     const result = []
-    this.log.debug(res)
-    for (const phrase of res.data) {
+    this.log.debug({ res: { data, config } })
+    for (const phrase of data) {
       try {
         result.push(phrase.translations[0].text)
       } catch (err) {

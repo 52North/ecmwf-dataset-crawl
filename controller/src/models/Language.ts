@@ -31,16 +31,27 @@ export function languagesFromCountry (country: { iso3166_a2?: string }): Languag
 type Country = {
   name: string
   iso3166_a2: string
+  languages: Language[]
 }
 
+/**
+ * returns all countries where one of the given languages is first spoken lang
+ * @param langs list of iso639_1 language (two-letter) codes
+ * @returns Country[]
+ */
 export function countriesFromLanguages (langs: string[]): Country[] {
   const codes = Object.keys(countries)
   const res = []
   for (const c of codes) {
     // @ts-ignore
     const country = countries[c]
+    // only add when first language matches
     if (langs.indexOf(country.languages[0]) >= 0) {
-      res.push({ name: country.name, iso3166_a2: c.toLowerCase() })
+      res.push({
+        name: country.name,
+        iso3166_a2: c.toLowerCase(),
+        languages: languagesFromCountry({ iso3166_a2: c })
+      })
     }
   }
 
