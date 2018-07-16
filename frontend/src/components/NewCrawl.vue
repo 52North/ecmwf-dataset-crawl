@@ -62,6 +62,11 @@
                     <v-flex xs4 sm3 md2 xl1>
                       <v-checkbox class="translated" v-model="group.translate" label="translate"></v-checkbox>
                     </v-flex>
+                    <v-flex v-if="keywordGroups.length > 1">
+                      <v-btn @click="removeKeywordGroup(i)" flat>
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-flex>
                   </v-layout>
                   <v-flex>
                     <v-btn @click="addKeywordGroup" color="accent">
@@ -295,6 +300,10 @@ export default {
         keywords: [],
         translate: true
       })
+    },
+    removeKeywordGroup (i) {
+      if (this.keywordGroups.length > 1)
+        this.keywordGroups.splice(i, 1)
     },
     currentStepValid () {
       return this.stepValidators[this.stepper].every(x => x() === true)
