@@ -40,6 +40,14 @@ bolts:
   - id: "status_metrics"
     className: "com.digitalpebble.stormcrawler.elasticsearch.metrics.StatusMetricsBolt"
     parallelism: 1
+  - id: "classifier_prep"
+    className: "org.n52.webcrawl.TupleSubsetBolt"
+    constructorArgs:
+      - ["text"]
+    parallelism: 1
+  - id: "classifier"
+    className: "org.n52.webcrawl.DatasetClassifierBolt"
+    parallelism: 1
 
 streams:
   - from: "spout"
@@ -70,6 +78,16 @@ streams:
 
   - from: "parse"
     to: "index"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "parse"
+    to: "classifier_prep"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "classifier_prep"
+    to: "classifier"
     grouping:
       type: LOCAL_OR_SHUFFLE
 

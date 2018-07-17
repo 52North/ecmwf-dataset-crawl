@@ -92,6 +92,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.storm</groupId>
+			<artifactId>multilang-python</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.storm</groupId>
 			<artifactId>flux-core</artifactId>
 			<version>1.0.2</version>
 		</dependency>
