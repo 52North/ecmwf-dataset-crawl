@@ -40,13 +40,22 @@ bolts:
   - id: "status_metrics"
     className: "com.digitalpebble.stormcrawler.elasticsearch.metrics.StatusMetricsBolt"
     parallelism: 1
-  - id: "classifier_prep"
-    className: "org.n52.webcrawl.TupleSubsetBolt"
+
+  - id: "classifier_pre"
+    className: "org.n52.webcrawl.MultilangPreprocessBolt"
     constructorArgs:
-      - ["text"]
+      - ["url", "metadata", "text"]
     parallelism: 1
   - id: "classifier"
-    className: "org.n52.webcrawl.DatasetClassifierBolt"
+    className: "org.apache.storm.flux.wrappers.bolts.FluxShellBolt"
+    constructorArgs:
+      - ["python3", "dataset_classifier_bolt.py"]
+      - ["url", "metadata", "text"]
+    parallelism: 1
+  - id: "classifier_post"
+    className: "org.n52.webcrawl.MultilangPostprocessBolt"
+    constructorArgs:
+      - ["url", "metadata", "text"]
     parallelism: 1
 
 streams:
@@ -76,18 +85,28 @@ streams:
     grouping:
       type: LOCAL_OR_SHUFFLE
 
+#  - from: "parse"
+#    to: "index"
+#    grouping:
+#      type: LOCAL_OR_SHUFFLE
+
   - from: "parse"
-    to: "index"
+    to: "classifier_pre"
     grouping:
       type: LOCAL_OR_SHUFFLE
 
-  - from: "parse"
-    to: "classifier_prep"
-    grouping:
-      type: LOCAL_OR_SHUFFLE
-
-  - from: "classifier_prep"
+  - from: "classifier_pre"
     to: "classifier"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "classifier"
+    to: "classifier_post"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "classifier_post"
+    to: "index"
     grouping:
       type: LOCAL_OR_SHUFFLE
 
