@@ -22,15 +22,16 @@
               clearable
             ></v-text-field>
 
-            <v-tooltip bottom :disabled="searchExpanded">
-              <v-btn slot="activator" icon @click.stop="searchExpanded = !searchExpanded">
-                <v-icon v-html="searchExpanded ? 'expand_less' : 'expand_more'"/>
+            <v-tooltip bottom :disabled="helpExpanded">
+              <v-btn slot="activator" :style="!helpExpanded || { 'background-color': 'rgba(1,1,1,0.1)' }" icon @click.stop="helpExpanded = !helpExpanded">
+                <v-icon>help_outline</v-icon>
               </v-btn>
-              More Options &amp; Export
+              Query Syntax Help
             </v-tooltip>
           </v-toolbar>
 
-          <v-toolbar card v-if="searchExpanded">
+          <!-- crawl selector -->
+          <v-toolbar card>
             <v-select
               chips
               deletable-chips
@@ -46,6 +47,30 @@
             />
             <export-dialog :crawls="crawls" :query="query"/>
           </v-toolbar>
+
+          <!-- query help -->
+          <v-flex v-if="helpExpanded">
+            <v-container>
+              <v-subheader>Query Syntax</v-subheader>
+              <v-container>
+                By entering keywords you can search for terms within the document title.
+                You can subset the results to specific crawls separately.
+                The search bar also supports advanced queries using
+                <a target="_blank" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.x/query-dsl-query-string-query.html#query-string-syntax">Lucene Query Syntax</a>.
+                Fields you can query are:
+              </v-container>
+              <v-container>
+                <v-btn round small @click="query += ' text:*'">text</v-btn>
+                <v-btn round small @click="query += ' language:*'">language</v-btn>
+                <v-btn round small @click="query += ' classify.class:*'">classify.class</v-btn>
+                <v-btn round small @click="query += ' classify.confidence:*'">classify.confidence</v-btn>
+                <v-btn round small @click="query += ' host:*'">host</v-btn>
+                <v-btn round small @click="query += ' domain:*'">domain</v-btn>
+                <v-btn round small @click="query += ' topics.contact:*'">topics.contact</v-btn>
+              </v-container>
+            </v-container>
+          </v-flex>
+
         </v-card>
       </v-flex>
     </v-layout>
@@ -121,7 +146,7 @@ export default {
         { text: 'Dataset Score', value: 'scores.dataset', align: 'right' },
         { text: 'Dataportal Score', value: 'scores.dataportal', align: 'right' },
       ],
-      searchExpanded: true,
+      helpExpanded: false,
     }
   },
   asyncData: {
@@ -158,7 +183,7 @@ export default {
     }
   },
   mounted () {
-    return this.results$now()
+    return this.results$resolver()
   },
   methods: {
     updateUrl () {
