@@ -38,6 +38,7 @@ config:
   # these are not transfered to the outlinks
   metadata.persist:
    - crawl
+   - language
    - "parse.title"
    - "topics.contact.xpath"
    - "topics.data.api.xpath"
@@ -98,7 +99,7 @@ config:
   # configuration for the classes extending AbstractIndexerBolt
   # indexer.md.filter: "someKey=aValue"
   indexer.url.fieldname: "url"
-  indexer.text.fieldname: "content"
+  indexer.text.fieldname: "text"
   indexer.canonical.name: "canonical"
   indexer.md.mapping:
   - crawl=crawl
@@ -106,6 +107,9 @@ config:
   - parse.keywords=keywords
   - parse.description=description
   - host=host
+  - language=language
+  - classify.class=classify.class
+  - classify.confidence=classify.confidence
   - topics.data.portal.xpath=topics.data.portal.xpath
   - topics.data.link.xpath=topics.data.link.xpath
   - topics.data.api.xpath=topics.data.api.xpath

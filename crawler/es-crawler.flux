@@ -29,7 +29,7 @@ bolts:
     className: "com.digitalpebble.stormcrawler.bolt.SiteMapParserBolt"
     parallelism: 1
   - id: "parse"
-    className: "com.digitalpebble.stormcrawler.bolt.JSoupParserBolt"
+    className: "org.n52.webcrawl.N52JSoupParserBolt"
     parallelism: 5
   - id: "index"
     className: "com.digitalpebble.stormcrawler.elasticsearch.bolt.IndexerBolt"
@@ -51,7 +51,7 @@ bolts:
     constructorArgs:
       - ["python3", "dataset_classifier_bolt.py"]
       - ["url", "metadata", "text"]
-    parallelism: 1
+    parallelism: 5
   - id: "classifier_post"
     className: "org.n52.webcrawl.MultilangPostprocessBolt"
     constructorArgs:
@@ -84,11 +84,6 @@ streams:
     to: "parse"
     grouping:
       type: LOCAL_OR_SHUFFLE
-
-#  - from: "parse"
-#    to: "index"
-#    grouping:
-#      type: LOCAL_OR_SHUFFLE
 
   - from: "parse"
     to: "classifier_pre"

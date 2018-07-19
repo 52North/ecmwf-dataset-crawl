@@ -67,6 +67,11 @@
         "key": "host",
         "byHost": true
        }
+    },
+    {
+      "class": "org.n52.webcrawl.LanguageDetectionFilter",
+      "name": "LanguageDetectionFilter",
+      "params": {}
     }
   ]
 }

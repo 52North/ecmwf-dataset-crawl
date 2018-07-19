@@ -1,6 +1,6 @@
 import logging
 logging.basicConfig(filename='/tmp/pythonbolt.log',level=logging.DEBUG)
-#logging.disable(logging.ERROR)
+logging.disable(logging.ERROR)
 
 import os.path
 import sys
@@ -17,7 +17,7 @@ class Metadata(dict):
     def __setitem__(self, key, value):
         if type(value) != list:
             value = [value]
-        x = list(map(str, value,))
+        x = list(map(str, value))
         super(Metadata, self).__setitem__(key, x)
 
 import storm
@@ -28,8 +28,8 @@ class DatasetClassifierBolt(storm.BasicBolt):
     Classifies ENGLISH language website text using a LinearSVC into
     "contains/references a dataset" or "unrelated"
     
-    input:  [ document_text: string, language: iso639-1 string ]
-    output: [ classifier_class: string, classifier_confidence: float ]
+    input:  [ url: string, metadata: dict, text: string ]
+    output: [ url: string, metadata: dict, text: string ]
     '''
 
     clf = None
@@ -49,10 +49,13 @@ class DatasetClassifierBolt(storm.BasicBolt):
 
         url, metadata, text = tup.values
         metadata = Metadata(metadata)
-        language = 'en' # TODO: get from metadata
+        try:
+            lang = metadata['language'][0]
+        except KeyError:
+            lang = 'unknown'
 
-        if language is not 'en':
-            msg = 'ignoring tuple, as document language {} is not supported'.format(language)
+        if lang != 'en':
+            msg = 'ignoring tuple, as document language {} is not supported'.format(lang)
             logging.debug(msg)
             storm.logDebug(msg)
             return storm.emit([url, metadata, text], anchors=[tup])

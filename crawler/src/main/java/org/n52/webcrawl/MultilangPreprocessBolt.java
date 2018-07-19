@@ -3,7 +3,6 @@ package org.n52.webcrawl;
 import java.util.*;
 
 import com.digitalpebble.stormcrawler.Metadata;
-import org.apache.storm.shade.org.json.simple.JSONObject;
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
