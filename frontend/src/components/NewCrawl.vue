@@ -277,7 +277,13 @@
         <v-layout row justify-center>
             <v-btn large @click="stepper--" color="gray" v-if="stepper !== 1">back</v-btn>
             <v-btn large @click="stepper++" :disabled="!currentStepValid()" color="primary" v-if="stepper !== 3">next</v-btn>
-            <v-btn large @click="submit" :disabled="!valid || resultingSearchRequestsError || loading" color="primary" v-if="stepper === 3">
+            <v-btn large
+              @click="submit"
+              :loading="loading"
+              :disabled="!valid || resultingSearchRequestsError"
+              color="primary"
+              v-if="stepper === 3"
+            >
               <v-icon>flight_takeoff</v-icon>&nbsp;&nbsp;&nbsp;&nbsp;launch crawl
             </v-btn>
         </v-layout>

@@ -53,20 +53,27 @@
             <v-container>
               <v-subheader>Query Syntax</v-subheader>
               <v-container>
-                By entering keywords you can search for terms within the document title.
-                You can subset the results to specific crawls separately.
+                By entering keywords you can search for terms within any field.
                 The search bar also supports advanced queries using
                 <a target="_blank" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.x/query-dsl-query-string-query.html#query-string-syntax">Lucene Query Syntax</a>.
                 Fields you can query are:
               </v-container>
               <v-container>
-                <v-btn round small @click="query += ' text:*'">text</v-btn>
-                <v-btn round small @click="query += ' language:*'">language</v-btn>
-                <v-btn round small @click="query += ' classify.class:*'">classify.class</v-btn>
-                <v-btn round small @click="query += ' classify.confidence:*'">classify.confidence</v-btn>
+                <v-btn round small @click="query += ' title:*'">title</v-btn>
+                <v-btn round small @click="query += ' content:*'">content</v-btn>
                 <v-btn round small @click="query += ' host:*'">host</v-btn>
-                <v-btn round small @click="query += ' domain:*'">domain</v-btn>
-                <v-btn round small @click="query += ' topics.contact:*'">topics.contact</v-btn>
+                <v-btn round small @click="query += ' language:*'">language</v-btn>
+                <v-btn round small @click="query += ' classify.class:dataset'">classify.class</v-btn>
+                <v-btn round small @click="query += ' classify.confidence:*'">classify.confidence</v-btn>
+                <v-btn round small @click="query += ' topics.contact.xpath:*'">topics.contact.xpath</v-btn>
+              </v-container>
+
+              <v-subheader>Filter</v-subheader>
+              <v-container>
+                You can subset the results to specific crawls through the select bar above.
+                <br/> <br/>
+                <v-checkbox label="hide results manually classified as unrelated"></v-checkbox>
+                <v-checkbox label="hide results automatically classified as unrelated"></v-checkbox>
               </v-container>
             </v-container>
           </v-flex>
@@ -90,6 +97,7 @@
       </v-layout>
 
       <!-- results listing -->
+      <!-- TODO: think of proper metadata schema -->
       <v-card v-if="!!results.length">
         <v-data-table
           :headers="resultTable"
@@ -103,20 +111,61 @@
           :rows-per-page-items="[25,50,100,200,{text: 'All', value: 10000}]"
         >
           <template slot="items" slot-scope="props">
-            <tr @click="props.expanded = !props.expanded" class="searchresult">
+            <tr @click="props.expanded = !props.expanded" :class="{ 'accent': props.expanded }" class="searchresult">
+              <td>
+                <v-tooltip bottom>
+                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'data')" depressed :flat="props.item.manualLabel !== 'data'" :loading="manualLabelPending" color="success"><v-icon>thumb_up</v-icon></v-btn>
+                  label this as "data"
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'unrelated')" depressed :flat="props.item.manualLabel !== 'unrelated'" :loading="manualLabelPending" color="error"><v-icon>thumb_down</v-icon></v-btn>
+                  label this as "unrelated"
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <v-btn slot="activator" fab small flat @click.stop="" :href="props.item.url" target="_blank"><v-icon>link</v-icon></v-btn>
+                  open page in new tab
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <v-btn slot="activator" fab small flat v-if="props.item.extra.language !== 'en'" @click.stop="openTranslationUrl(props.item)"><v-icon>translate</v-icon></v-btn>
+                  open translated page
+                </v-tooltip>
+              </td>
               <td>{{ props.item.title | shortstring(80) }}</td>
               <td>{{ props.item.url | domain }}</td>
               <td class="text-xs-right">{{ props.item.scores.dataset }}</td>
               <td class="text-xs-right">{{ props.item.scores.dataportal }}</td>
             </tr>
           </template>
+
+          <!-- display additional information in expand panel -->
           <template slot="expand" slot-scope="props">
-            <v-card dense color="secondary" v-if="props.item.metadata">
+            <v-card color="secondary">
               <v-card-text>
-                <v-subheader>Contact</v-subheader>
-                <v-container>
-                  {{ props.item.metadata.contact }}
-                </v-container>
+                <v-layout justify-space-around wrap>
+
+                  <v-flex v-if="props.item.extra['classify.class']">
+                    <v-subheader>Class</v-subheader>
+                    <v-container>
+                      {{ props.item.extra['classify.class'] }}
+                      (Confidence: {{ props.item.extra['classify.confidence'] }})
+                    </v-container>
+                  </v-flex>
+
+                  <v-flex v-if="props.item.extra.language">
+                    <v-subheader>Language</v-subheader>
+                    <v-container>
+                      {{ props.item.extra.language }}
+                    </v-container>
+                  </v-flex>
+
+                  <v-flex v-if="props.item.extra['topics.contact.xpath']">
+                    <v-subheader>Contact</v-subheader>
+                    <v-container>
+                      {{ props.item.extra['topics.contact.xpath'].toString() | shortstring(180) }}
+                    </v-container>
+                  </v-flex>
+
+                </v-layout>
               </v-card-text>
             </v-card>
           </template>
@@ -137,10 +186,12 @@ export default {
   },
   data () {
     return {
+      manualLabelPending: false,
       allCrawls: [],
       pagination: {}, // set through data table
       totalResults: 0,
       resultTable: [
+        { width: '290px' }, // placeholder for the buttons in each row
         { text: 'Title', value: 'title', align: 'left', sortable: false },
         { text: 'Host', value: 'host', align: 'left' },
         { text: 'Dataset Score', value: 'scores.dataset', align: 'right' },
@@ -191,7 +242,18 @@ export default {
       this.$router.replace({
         query: { crawls: this.crawls.join(','), q: this.query },
       })
-    }
+    },
+    openTranslationUrl (resultItem) {
+      const { url, extra: { language } } = resultItem
+      window.open(`https://translate.google.com/translate?hl=en&sl=${language}&tl=en&u=${encodeURI(url)}`)
+    },
+    async manualLabel (resultItem, label) {
+      resultItem.manualLabel = label
+      this.manualLabelPending = true
+      // TODO
+      // await api.submitManualLabel(resultItem.url, label)
+      setTimeout(() => this.manualLabelPending = false, 800)
+    },
   },
   components: {
     'export-dialog': ExportDialog,
