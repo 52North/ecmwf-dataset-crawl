@@ -8,4 +8,7 @@ module.exports = merge(prodEnv, {
   API_URL: process.env.API_URL
     ? `"${process.env.API_URL}"`
     : '"http://localhost:9000"',
+  KIBANA_URL: process.env.KIBANA_URL
+    ? `"${process.env.KIBANA_URL}"`
+    : '"http://localhost:5601"',
 })

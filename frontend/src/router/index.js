@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import CrawlList from '@/components/CrawlList'
 import NewCrawl from '@/components/NewCrawl'
 import SearchResultList from '@/components/SearchResultList'
+import CrawlerMetrics from '@/components/CrawlerMetrics'
 
 Vue.use(Router)
 
@@ -32,7 +33,13 @@ export const routes = [
     path: '/crawls/new',
     name: 'New Crawl',
     component: NewCrawl,
-  }
+  },
+  {
+    icon: 'timeline',
+    path: '/metrics',
+    name: 'Crawler Metrics',
+    component: CrawlerMetrics,
+  },
 ]
 
 export default new Router({
