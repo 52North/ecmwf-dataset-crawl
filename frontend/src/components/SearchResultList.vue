@@ -16,7 +16,7 @@
               placeholder="Filter Results"
               append-icon="search"
               :loading="results$loading || results$pending"
-              :append-icon-cb="results$now"
+              :append-icon-cb="results$resolver"
               hide-details
               single-line
               clearable

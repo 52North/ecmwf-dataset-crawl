@@ -41,6 +41,9 @@
                     <v-list-tile>
                       Each Keyword Group may be translated into the official language of the selected countries.
                     </v-list-tile>
+                    <v-list-tile>
+                      Common Keywords will be appended to each Keyword Group.
+                    </v-list-tile>
                   </v-list>
                 </v-flex>
               </v-card-title>
@@ -50,7 +53,13 @@
             <v-card>
               <v-card-title>
                 <v-flex>
-                  <h4 class="headline">Keywords</h4>
+                  <h4 class="headline">
+                    Keywords
+                    <v-tooltip right>
+                      <v-btn slot="activator" @click="addKeywordGroup" fab small color="primary"><v-icon>add</v-icon></v-btn>
+                      add new keyword group
+                    </v-tooltip>
+                  </h4>
                 </v-flex>
               </v-card-title>
               <v-card-text>
@@ -59,6 +68,11 @@
                     v-for="(group, i) in keywordGroups"
                     :key="i"
                   >
+                    <v-flex v-if="keywordGroups.length > 1">
+                      <v-btn @click="removeKeywordGroup(i)" flat fab small>
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-flex>
                     <v-flex xs8 sm9 md10 xl12 >
                       <v-select
                         tags
@@ -73,18 +87,7 @@
                     <v-flex xs4 sm3 md2 xl1>
                       <v-checkbox class="translated" v-model="group.translate" label="translate"></v-checkbox>
                     </v-flex>
-                    <v-flex v-if="keywordGroups.length > 1">
-                      <v-btn @click="removeKeywordGroup(i)" flat>
-                        <v-icon>clear</v-icon>
-                      </v-btn>
-                    </v-flex>
                   </v-layout>
-                  <v-flex>
-                    <v-btn @click="addKeywordGroup" color="accent">
-                      <v-icon>add</v-icon>
-                      add Keyword Group
-                    </v-btn>
-                  </v-flex>
                 </v-container>
                 <v-container>
                   <v-layout>
@@ -315,8 +318,8 @@ export default {
       },
 
       name: '',
-      crawldepth: 2,
-      seedurls: 20,
+      crawldepth: 1,
+      seedurls: 30,
       domainBlacklist: '',
       domainWhitelist: '',
       commonKeywords: {
@@ -329,8 +332,8 @@ export default {
       languages: [],
       searchUntranslated: true,
       terminationCondition: {
-        duration: 30,
-        resultCount: 5000,
+        duration: 300,
+        resultCount: 3000,
       },
     }
   },

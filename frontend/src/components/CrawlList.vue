@@ -86,9 +86,9 @@
 
           <v-card-actions justify-end>
             <v-spacer/>
-            <v-btn flat color="grey" v-if="!crawl.completed" @click.stop="stopCrawl(crawl)">stop crawl</v-btn>
+            <v-btn flat color="red" v-if="!crawl.completed" @click.stop="stopCrawl(crawl)">stop crawl</v-btn>
+            <v-btn flat color="red" v-if="crawl.resultCount" @click.stop="deleteResults(crawl)">delete results</v-btn>
             <v-btn flat color="blue" :to="{ name: 'Search Results', query: { crawls: crawl.id } }">view results</v-btn>
-            <v-btn flat color="red" @click.stop="deleteResults(crawl)">delete results</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>

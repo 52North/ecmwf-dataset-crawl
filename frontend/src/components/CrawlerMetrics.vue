@@ -2,7 +2,7 @@
   <v-container grid-list-xl>
     <v-layout column>
       <v-flex>
-        <h1>Ongoing crawls</h1>
+        <h1>Ongoing Crawls</h1>
         <iframe
           :src="`${kibanaHost}/app/kibana#/dashboard/crawl-metrics-dash?embed=true&_g=(${dashboardConf})`"
           height="1600px"

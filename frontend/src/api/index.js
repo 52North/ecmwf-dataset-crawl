@@ -55,12 +55,14 @@ export async function exportResults (parameters) {
     download: true
   }, parameters)
 
-  const res = await axios.get('/results', { params })
   if (params.download) {
-    // TODO: hacky solution will end up with 2 requests.. need to find a way to build the URL
-    triggerDownload(res.request.responseURL)
+    const { download, format, size, query, crawls } = params
+    const paramString = `size=${size}&format=${format}&download=${download}&query=${query}&crawls[]=${crawls}`
+    triggerDownload(`${axios.defaults.baseURL}/results?${paramString}`)
+  } else {
+    const res = await axios.get('/results', { params })
+    return res.data
   }
-  return res.data
 }
 
 export async function deleteResults (params) {
@@ -98,5 +100,5 @@ function triggerDownload (url) {
   iframe.style.display = 'none'
 
   document.body.insertBefore(iframe, document.body.firstChild)
-  setTimeout(() => { document.body.removeChild(iframe) }, 1000)
+  setTimeout(() => { document.body.removeChild(iframe) }, 100000)
 }
