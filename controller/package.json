@@ -21,6 +21,7 @@
     "bunyan": "^1.8.12",
     "connect": "~3.6.6",
     "countries-list": "^2.3.2",
+    "dataobject-parser": "^1.2.1",
     "elasticsearch": "^15.0.0",
     "es-mapping-ts": "^0.0.8",
     "js-yaml": "~3.11.0",

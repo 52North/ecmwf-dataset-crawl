@@ -82,11 +82,12 @@ export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
 }
 
 export async function clearStatusIndex (crawl: Crawl) {
+  // FIXME: can't delete crawls ID starting with "-". DELETE /crawlstatus--..... works though!
   return client.indices.delete({ index: getCrawlStatusId(crawl) })
 }
 
 function getCrawlStatusId (crawl: Crawl) {
-  if (!crawl.id) throw new Error(`Crawl needs an ID before creating a Status Index`)
+  if (!crawl.id) throw new Error(`Crawl needs an ID before resolving to a status index`)
   return `crawlstatus-${crawl.id.toLowerCase()}`
 }
 

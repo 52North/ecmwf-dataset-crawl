@@ -5,7 +5,7 @@
         <h1>Ongoing crawls</h1>
         <iframe
           :src="`${kibanaHost}/app/kibana#/dashboard/crawl-metrics-dash?embed=true&_g=(${dashboardConf})`"
-          height="1700px"
+          height="1600px"
           width="100%"
         ></iframe>
       </v-flex>
@@ -13,7 +13,7 @@
         <h1>Result Distribution</h1>
         <iframe
           :src="`${kibanaHost}/app/kibana#/dashboard/crawl-results-dash?embed=true&_g=(${dashboardConf})`"
-          height="920px"
+          height="2000px"
           width="100%"
         ></iframe>
       </v-flex>

@@ -13,7 +13,7 @@ export async function getResults (crawls?: string[], query?: string, from?: numb
   })
   return {
     total: res.hits.total,
-    hits: res.hits.hits.map(d => new Result(d._source as Result)),
+    hits: res.hits.hits.map(d => Result.fromElastic(d._source)),
   }
 }
 
@@ -29,6 +29,7 @@ export async function deleteResults (crawls?: string[], query?: string): Promise
   const { deleted } = await client.deleteByQuery({
     index: resultsMapping.index,
     body: buildQueryBody(crawls, query),
+    refresh: true,
   })
   return { deleted }
 }

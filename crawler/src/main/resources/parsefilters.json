@@ -35,9 +35,7 @@
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'lizenz')]]/../normalize-space(.)"
         ],
         "extracted.contact": [
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(., '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}')]/normalize-space(.)",
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'contact')]]/../normalize-space(.)",
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'kontakt')]]/../normalize-space(.)"
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(., '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}')]/normalize-space(.)"
         ]
       }
     },

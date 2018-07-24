@@ -54,6 +54,8 @@
               <v-subheader>Query Syntax</v-subheader>
               <v-container>
                 By entering keywords you can search for terms within any field.
+                You can subset the results to specific crawls through the select bar above.
+                <br/>
                 The search bar also supports advanced queries using
                 <a target="_blank" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.x/query-dsl-query-string-query.html#query-string-syntax">Lucene Query Syntax</a>.
                 Fields you can query are:
@@ -63,17 +65,13 @@
                 <v-btn round small @click="query += ' content:*'">content</v-btn>
                 <v-btn round small @click="query += ' host:*'">host</v-btn>
                 <v-btn round small @click="query += ' language:*'">language</v-btn>
-                <v-btn round small @click="query += ' classify.class:dataset'">classify.class</v-btn>
-                <v-btn round small @click="query += ' classify.confidence:*'">classify.confidence</v-btn>
-                <v-btn round small @click="query += ' topics.contact.xpath:*'">topics.contact.xpath</v-btn>
-              </v-container>
-
-              <v-subheader>Filter</v-subheader>
-              <v-container>
-                You can subset the results to specific crawls through the select bar above.
-                <br/> <br/>
-                <v-checkbox label="hide results manually classified as unrelated"></v-checkbox>
-                <v-checkbox label="hide results automatically classified as unrelated"></v-checkbox>
+                <v-btn round small @click="query += ' keywords:*'">keywords</v-btn>
+                <v-btn round small @click="query += ' classification.auto:dataset'">classification.auto</v-btn>
+                <v-btn round small @click="query += ' classification.confidence:*'">classification.confidence</v-btn>
+                <v-btn round small @click="query += ' classification.manual:dataset'">classification.manual</v-btn>
+                <v-btn round small @click="query += ' extracted.contact:*@*'">extracted.contact</v-btn>
+                <v-btn round small @click="query += ' extracted.license:*'">extracted.license</v-btn>
+                <v-btn round small @click="query += ' extracted.data_portal:*'">extracted.data_portal</v-btn>
               </v-container>
             </v-container>
           </v-flex>
@@ -132,39 +130,80 @@
               </td>
               <td>{{ props.item.title | shortstring(80) }}</td>
               <td>{{ props.item.url | domain }}</td>
-              <td class="text-xs-right">{{ props.item.scores.dataset }}</td>
-              <td class="text-xs-right">{{ props.item.scores.dataportal }}</td>
+              <td>
+                <v-chip small :key="keyword" v-for="keyword in props.item.keywords" v-if="keyword">
+                  {{ keyword | shortstring(40) }}
+                </v-chip>
+              </td>
             </tr>
           </template>
 
           <!-- display additional information in expand panel -->
           <template slot="expand" slot-scope="props">
-            <v-card color="secondary">
+            <v-card color="secondary" class="result-details">
               <v-card-text>
+                <!-- <pre>{{ JSON.stringify(props.item.extracted, null, 2) }}</pre> -->
                 <v-layout justify-space-around wrap>
-
-                  <v-flex v-if="props.item.extra['classify.class']">
-                    <v-subheader>Class</v-subheader>
-                    <v-container>
-                      {{ props.item.extra['classify.class'] }}
-                      (Confidence: {{ props.item.extra['classify.confidence'] }})
-                    </v-container>
-                  </v-flex>
-
-                  <v-flex v-if="props.item.extra.language">
+                  <v-flex v-if="props.item.language">
                     <v-subheader>Language</v-subheader>
                     <v-container>
-                      {{ props.item.extra.language }}
+                      {{ props.item.language }}
                     </v-container>
                   </v-flex>
+                  <v-flex v-if="props.item.classification.auto">
+                    <v-subheader>Class</v-subheader>
+                    <v-container>
+                      {{ props.item.classification.auto }} (confidence: {{ props.item.classification.confidence }})
+                    </v-container>
+                  </v-flex>
+                </v-layout>
 
-                  <v-flex v-if="props.item.extra['topics.contact.xpath']">
+                <v-layout justify-space-around wrap>
+                  <v-flex v-if="props.item.extracted.data_portal">
+                    <v-subheader>Dataportal</v-subheader>
+                    <v-container>
+                      {{ props.item.extracted.data_portal.join(', ') | shortstring(60) }}
+                    </v-container>
+                  </v-flex>
+                  <v-flex v-if="props.item.extracted.data_pdf">
+                    <v-subheader>PDF Data</v-subheader>
+                    <v-container>
+                      <ul>
+                        <li v-for="link in props.item.extracted.data_pdf" :key="link"><a :href="link">{{ link | shortstring(100) }}</a></li>
+                      </ul>
+                    </v-container>
+                  </v-flex>
+                  <v-flex v-if="props.item.extracted.data_link">
+                    <v-subheader>Data Link</v-subheader>
+                    <v-container>
+                      <ul>
+                        <li v-for="link in props.item.extracted.data_link" :key="link"><a :href="link">{{ link | shortstring(100) }}</a></li>
+                      </ul>
+                    </v-container>
+                  </v-flex>
+                  <v-flex v-if="props.item.extracted.data_api">
+                    <v-subheader>Data API</v-subheader>
+                    <v-container>
+                      <ul>
+                        <li v-for="link in props.item.extracted.data_api" :key="link"><a :href="link">{{ link | shortstring(100) }}</a></li>
+                      </ul>
+                    </v-container>
+                  </v-flex>
+                </v-layout>
+
+                <v-layout justify-space-around wrap>
+                  <v-flex v-if="props.item.extracted.contact">
                     <v-subheader>Contact</v-subheader>
                     <v-container>
-                      {{ props.item.extra['topics.contact.xpath'].toString() | shortstring(180) }}
+                      {{ props.item.extracted.contact.toString() | shortstring(180) }}
                     </v-container>
                   </v-flex>
-
+                  <v-flex v-if="props.item.extracted.license">
+                    <v-subheader>License</v-subheader>
+                    <v-container>
+                      {{ props.item.extracted.license.toString() | shortstring(180) }}
+                    </v-container>
+                  </v-flex>
                 </v-layout>
               </v-card-text>
             </v-card>
@@ -191,11 +230,10 @@ export default {
       pagination: {}, // set through data table
       totalResults: 0,
       resultTable: [
-        { width: '290px' }, // placeholder for the buttons in each row
+        { width: '290px', sortable: false }, // placeholder for the buttons in each row
         { text: 'Title', value: 'title', align: 'left', sortable: false },
-        { text: 'Host', value: 'host', align: 'left' },
-        { text: 'Dataset Score', value: 'scores.dataset', align: 'right' },
-        { text: 'Dataportal Score', value: 'scores.dataportal', align: 'right' },
+        { text: 'Host', value: 'host', align: 'left', sortable: false },
+        { text: 'Keywords', value: 'keywords', align: 'left', sortable: false },
       ],
       helpExpanded: false,
     }
@@ -274,5 +312,9 @@ export default {
 
 .searchresult {
   cursor: pointer;
+}
+
+.result-details li {
+  list-style-type: none;
 }
 </style>
