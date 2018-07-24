@@ -55,7 +55,7 @@ public class SimpleTopicScoreParseFilter extends ParseFilter {
                 }
             }
 
-            md.addValue("topicscores." + topic, Double.toString(topicScore));
+            md.addValue(topic, Double.toString(topicScore));
         }
 
         parse.set(URL, md);

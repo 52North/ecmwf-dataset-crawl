@@ -8,7 +8,7 @@ config:
   topology.workers: 1
   topology.message.timeout.secs: 300
   topology.max.spout.pending: 250
-  topology.debug: true
+  topology.debug: false
 
   topology.worker.childopts: "-Djava.net.preferIPv4Stack=true"
 
@@ -38,18 +38,7 @@ config:
   # these are not transfered to the outlinks
   metadata.persist:
    - crawl
-   - language
    - "parse.title"
-   - "topics.contact.xpath"
-   - "topics.data.api.xpath"
-   - "topics.data.license.xpath"
-   - "topics.data.link.xpath"
-   - "topics.data.pdf.xpath"
-   - "topics.data.portal.xpath"
-   - "topics.data.historic.keywords"
-   - "topics.data.portal.keywords"
-   - "topics.data.realtime.keywords"
-   - microdata
    - _redirTo
    - error.cause
    - error.source
@@ -99,27 +88,31 @@ config:
   # configuration for the classes extending AbstractIndexerBolt
   # indexer.md.filter: "someKey=aValue"
   indexer.url.fieldname: "url"
-  indexer.text.fieldname: "text"
+  indexer.text.fieldname: "content"
   indexer.canonical.name: "canonical"
   indexer.md.mapping:
-  - crawl=crawl
+  - crawl=crawl # from init
+
+  # storm crawler default filters
   - parse.title=title
-  - parse.keywords=keywords
   - parse.description=description
   - host=host
-  - language=language
-  - classify.class=classify.class
-  - classify.confidence=classify.confidence
-  - topics.data.portal.xpath=topics.data.portal.xpath
-  - topics.data.link.xpath=topics.data.link.xpath
-  - topics.data.api.xpath=topics.data.api.xpath
-  - topics.data.inline.xpath=topics.data.inline.xpath
-  - topics.data.pdf.xpath=topics.data.pdf.xpath
-  - topics.data.license.xpath=topics.data.license.xpath
-  - topics.contact.xpath=topics.contact.xpath
-  - topics.data.portal.keywords=topics.data.portal.keywords
-  - topics.data.realtime.keywords=topics.data.realtime.keywords
-  - topics.data.historic.keywords=topics.data.historic.keywords
+
+  - language=language # from LanguageDetectionFilter
+
+  - classify.class=classification.auto
+  - classify.confidence=classification.confidence
+
+  # directly from parsefilters.json (XPath3Filter)
+  - extracted.data_portal=extracted.data_portal
+  - extracted.data_api=extracted.data_api
+  - extracted.data_link=extracted.data_link
+  - extracted.data_pdf=extracted.data_pdf
+  - extracted.license=extracted.license
+  - extracted.contact=extracted.contact
+
+  - keywords=keywords # merged keyword list from ScoringBolt
+  - score=score # from ScoringBolt
 
   status.updater.cache.spec: "maximumSize=500000,expireAfterAccess=1h"
 

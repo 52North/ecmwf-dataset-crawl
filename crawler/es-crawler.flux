@@ -58,6 +58,10 @@ bolts:
       - ["url", "metadata", "text"]
     parallelism: 1
 
+  - id: "scoring"
+    className: "org.n52.webcrawl.ScoringBolt"
+    parallelism: 1
+
 streams:
   - from: "spout"
     to: "partitioner"
@@ -101,6 +105,11 @@ streams:
       type: LOCAL_OR_SHUFFLE
 
   - from: "classifier_post"
+    to: "scoring"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "scoring"
     to: "index"
     grouping:
       type: LOCAL_OR_SHUFFLE

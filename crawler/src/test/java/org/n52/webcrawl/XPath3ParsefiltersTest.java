@@ -65,8 +65,7 @@ public class XPath3ParsefiltersTest extends ParsingTester {
         expectedMd.put("topics.contact.xpath",
                 new String[] {
                         "max@mustermann.de",
-                        "Contact: ",
-                        "max@mustermann.de",
+                        "Contact: max@mustermann.de",
                 });
     }
 

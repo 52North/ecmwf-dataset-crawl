@@ -5,39 +5,39 @@
       "name": "XPath3Filter",
       "params": {
         "parse.title": [
-            "/HTML/HEAD/TITLE",
-            "/HTML/HEAD/META[@name='title']/@content"
+            "/HTML/HEAD/TITLE"
         ],
         "parse.keywords": [
           "/HTML/HEAD/META[@name='keywords']/@content"
         ],
-        "topics.data.portal.xpath": [
+        "extracted.data_portal": [
           "/HTML/HEAD/META[@name='generator']/@content[matches(., 'ckan')]",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(lower-case(.), 'ckan')]",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(lower-case(.), 'dkan')]",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(lower-case(.), 'geoportal')]",
           "//SCRIPT[contains(text(), 'entryscape-catalog-portal')]"
         ],
-        "topics.data.api.xpath": [
-          "//A[matches(lower-case(@href), '(getcapabilities|wfs|wms|wmts|wss)')]/@href",
-          "//*[not(matches(name(), '(SCRIPT|LINK)'))]/text()[matches(lower-case(.), '(getcapabilities|wfs|wms|wmts|wss)')]",
-          "//A[text()[contains(lower-case(.), 'xml')] or contains(lower-case(@href), 'xml') and not(matches(lower-case(@href), '(sitemap|feed|atom|rss)'))]/@href"
+        "extracted.data_api": [
+          "//resolve-uri(A[matches(lower-case(@href), '(getcapabilities|wfs|wms|wmts)')]/@href)",
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))]/text()[matches(lower-case(.), '(getcapabilities|wfs|wms|wmts)')]",
+          "//*[not(matches(name(), '(SCRIPT|LINK)'))]/text()[contains(., 'API')]",
+          "//resolve-uri(A[text()[contains(lower-case(.), 'xml')] or contains(lower-case(@href), 'xml') and not(matches(lower-case(@href), '(sitemap|feed|atom|rss)'))]/@href)"
         ],
-        "topics.data.link.xpath": [
+        "extracted.data_link": [
           "//SCRIPT[@type='application/ld+json']/text()[matches(., '\"@type\":\\s?\"(\\S+[:/])?(Dataset|DataCatalog)\"')]",
-          "//A[text()[matches(lower-case(.), '(dataset|csv|json|\\.zip)')] or matches(lower-case(@href), '(dataset|csv|json|\\.zip)')]/@href"
+          "//resolve-uri(A[text()[matches(lower-case(.), '(dataset|csv|json|\\.zip)')] or matches(lower-case(@href), '(dataset|csv|json|\\.zip)')]/@href)"
         ],
-        "topics.data.pdf.xpath": [
-          "//A[text()[contains(lower-case(.), 'pdf')] or contains(lower-case(@href), 'pdf')]/@href"
+        "extracted.data_pdf": [
+          "//resolve-uri(A[text()[contains(lower-case(.), 'pdf')] or contains(lower-case(@href), 'pdf')]/@href)"
         ],
-        "topics.data.license.xpath": [
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'license')]]/../descendant::text()",
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'lizenz')]]/../descendant::text()"
+        "extracted.license": [
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'license')]]/../normalize-space(.)",
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'lizenz')]]/../normalize-space(.)"
         ],
-        "topics.contact.xpath": [
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(., '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}')]",
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'contact')]]/../descendant::text()",
-          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'kontakt')]]/../descendant::text()"
+        "extracted.contact": [
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(., '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}')]/normalize-space(.)",
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'contact')]]/../normalize-space(.)",
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'kontakt')]]/../normalize-space(.)"
         ]
       }
     },
@@ -45,17 +45,17 @@
       "class": "org.n52.webcrawl.SimpleTopicScoreParseFilter",
       "name": "SimpleTopicScoreParseFilter",
       "params": {
-        "topics.data.dataset.keywords": [
+        "keywords.dataset": [
           "datasets~",
           "data-set"
         ],
-        "topics.data.portal.keywords": [
+        "keywords.dataportal": [
           "ckan"
         ],
-        "topics.data.realtime.keywords": [
+        "keywords.realtime": [
           "realtime~"
         ],
-        "topics.data.historic.keywords": [
+        "keywords.historic": [
           "historic~"
         ]
       }
