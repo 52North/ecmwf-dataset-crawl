@@ -1,7 +1,7 @@
 <template>
   <v-flex>
     <!-- fake header -->
-    <v-toolbar color="primary" flat :extended="!results.length" extension-height="120">
+    <v-toolbar color="primary" flat extended extension-height="100">
       <v-spacer></v-spacer>
     </v-toolbar>
 
@@ -50,7 +50,7 @@
 
           <!-- query help -->
           <v-flex v-if="helpExpanded">
-            <v-container>
+            <v-container class="query-help">
               <v-subheader>Query Syntax</v-subheader>
               <v-container>
                 By entering keywords you can search for terms within any field.
@@ -72,6 +72,24 @@
                 <v-btn round small @click="query += ' extracted.contact:*@*'">extracted.contact</v-btn>
                 <v-btn round small @click="query += ' extracted.license:*'">extracted.license</v-btn>
                 <v-btn round small @click="query += ' extracted.data_portal:*'">extracted.data_portal</v-btn>
+                <v-btn round small @click="query += ' extracted.data_api:*'">extracted.data_api</v-btn>
+              </v-container>
+              <v-subheader>Example Queries</v-subheader>
+                <v-container>
+              <v-layout column>
+                  <v-flex>
+                    Only results in german, classified as data
+                    <v-btn round small @click="query = 'classification.auto:dataset AND language:de'">classification.auto:dataset AND language:de</v-btn>
+                  </v-flex>
+                  <v-flex>
+                    Manual Result classification:
+                    <v-btn round small @click="query = 'classification.auto:* -classification.manual:*'">classification.auto:* -classification.manual:*</v-btn>
+                  </v-flex>
+                  <v-flex>
+                    Manual Result classification (focussed):
+                    <v-btn round small @click="query = '(classification.auto:dataset -classification.manual:*) AND classification.confidence:[-0.5 TO 0.5]'">(classification.auto:dataset -classification.manual:*) AND classification.confidence:[-0.5 TO 0.5]</v-btn>
+                  </v-flex>
+                </v-layout>
               </v-container>
             </v-container>
           </v-flex>
@@ -80,22 +98,22 @@
       </v-flex>
     </v-layout>
 
-    <v-container mt-2>
+    <v-container>
       <!-- no results hint -->
       <v-layout
         class="grey--text"
         column
         justify-center
         align-center
-        mt-3
-        v-if="!results.length && !results$pending && !results$loading"
       >
-        <h1 class="headline">No Results Found! :^(</h1>
-        <p>refine your query, or <router-link class="subheading" :to="{ name: 'New Crawl' }">start a new crawl</router-link></p>
+        <v-flex v-if="!results$pending && !results$loading">
+          <h1 v-if="!results.length" class="headline">No Results Found! :^(</h1>
+          <p v-if="!results.length">refine your query, or <router-link class="subheading" :to="{ name: 'New Crawl' }">start a new crawl</router-link></p>
+          <p v-if="results.length">{{ totalResults }} results found.</p>
+        </v-flex>
       </v-layout>
 
       <!-- results listing -->
-      <!-- TODO: think of proper metadata schema -->
       <v-card v-if="!!results.length">
         <v-data-table
           :headers="resultTable"
@@ -142,7 +160,6 @@
           <template slot="expand" slot-scope="props">
             <v-card color="secondary" class="result-details">
               <v-card-text>
-                <!-- <pre>{{ JSON.stringify(props.item.extracted, null, 2) }}</pre> -->
                 <v-layout justify-space-around wrap>
                   <v-flex v-if="props.item.language">
                     <v-subheader>Language</v-subheader>
@@ -320,5 +337,9 @@ export default {
 
 .result-details li {
   list-style-type: none;
+}
+
+.query-help button {
+  text-transform: none;
 }
 </style>

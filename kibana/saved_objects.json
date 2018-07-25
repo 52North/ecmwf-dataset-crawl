@@ -19,13 +19,32 @@
     }
   },
   {
+    "_id": "classifier-metrics-dash",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Classifier Metrics",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":3,\"h\":3,\"i\":\"1\"},\"id\":\"ea46b150-8fee-11e8-a5b3-518d59c13402\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":0,\"y\":10,\"w\":12,\"h\":4,\"i\":\"2\"},\"embeddableConfig\":{\"vis\":{\"colors\":{\"Count\":\"#629E51\"},\"legendOpen\":true}},\"id\":\"b1a08bf0-8f4e-11e8-bd41-0bdcc016dd41\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":0,\"y\":5,\"w\":12,\"h\":5,\"i\":\"3\"},\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"id\":\"f77ab770-8e51-11e8-bd41-0bdcc016dd41\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":0,\"y\":3,\"w\":12,\"h\":2,\"i\":\"4\"},\"id\":\"c03d5c90-8ff0-11e8-a5b3-518d59c13402\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"5\",\"gridData\":{\"x\":3,\"y\":0,\"w\":3,\"h\":3,\"i\":\"5\"},\"id\":\"d88b8fd0-8ff3-11e8-a5b3-518d59c13402\",\"type\":\"visualization\",\"version\":\"6.2.3\"}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":false}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[],\"highlightAll\":true,\"version\":true}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  },
+  {
     "_id": "crawl-results-dash",
     "_type": "dashboard",
     "_source": {
       "title": "Crawl Result Metrics",
       "hits": 0,
       "description": "",
-      "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":3,\"y\":5,\"w\":3,\"h\":14,\"i\":\"1\"},\"embeddableConfig\":{\"vis\":{\"colors\":{\"dataset\":\"#F2C96D\",\"unrelated\":\"#BADFF4\"},\"legendOpen\":false}},\"id\":\"f77ab770-8e51-11e8-bd41-0bdcc016dd41\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":0,\"y\":0,\"w\":12,\"h\":5,\"i\":\"2\"},\"embeddableConfig\":{\"vis\":{\"legendOpen\":true}},\"id\":\"7045b550-8e4e-11e8-bd41-0bdcc016dd41\",\"title\":\"Results by Host per Crawl\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":6,\"y\":5,\"w\":3,\"h\":14,\"i\":\"4\"},\"id\":\"df7eb410-8f18-11e8-bd41-0bdcc016dd41\",\"type\":\"visualization\",\"version\":\"6.2.3\",\"embeddableConfig\":{\"vis\":{\"colors\":{\"en\":\"#64B0C8\"},\"legendOpen\":true}}},{\"panelIndex\":\"5\",\"gridData\":{\"x\":0,\"y\":5,\"w\":3,\"h\":14,\"i\":\"5\"},\"id\":\"b1a08bf0-8f4e-11e8-bd41-0bdcc016dd41\",\"type\":\"visualization\",\"version\":\"6.2.3\"}]",
+      "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":7,\"w\":12,\"h\":4,\"i\":\"1\"},\"embeddableConfig\":{\"vis\":{\"colors\":{\"dataset\":\"#F2C96D\",\"unrelated\":\"#BADFF4\"},\"legendOpen\":false}},\"id\":\"f77ab770-8e51-11e8-bd41-0bdcc016dd41\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":0,\"y\":0,\"w\":12,\"h\":5,\"i\":\"2\"},\"embeddableConfig\":{\"vis\":{\"legendOpen\":true}},\"id\":\"7045b550-8e4e-11e8-bd41-0bdcc016dd41\",\"title\":\"Results by Host per Crawl\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":0,\"y\":11,\"w\":12,\"h\":4,\"i\":\"4\"},\"embeddableConfig\":{\"vis\":{\"colors\":{\"en\":\"#64B0C8\"},\"legendOpen\":false}},\"id\":\"df7eb410-8f18-11e8-bd41-0bdcc016dd41\",\"type\":\"visualization\",\"version\":\"6.2.3\"},{\"panelIndex\":\"6\",\"gridData\":{\"x\":0,\"y\":5,\"w\":12,\"h\":2,\"i\":\"6\"},\"version\":\"6.2.3\",\"type\":\"visualization\",\"id\":\"e2f9e850-8fed-11e8-a5b3-518d59c13402\"}]",
       "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":false}",
       "version": 1,
       "timeRestore": false,
@@ -208,12 +227,63 @@
     }
   },
   {
-    "_id": "df7eb410-8f18-11e8-bd41-0bdcc016dd41",
+    "_id": "ea46b150-8fee-11e8-a5b3-518d59c13402",
     "_type": "visualization",
     "_source": {
-      "title": "Result Language Distribution by Crawl",
-      "visState": "{\"title\":\"Result Language Distribution by Crawl\",\"type\":\"pie\",\"params\":{\"type\":\"pie\",\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"top\",\"isDonut\":true,\"labels\":{\"show\":true,\"values\":true,\"last_level\":true,\"truncate\":100}},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"crawl\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":6,\"order\":\"desc\",\"orderBy\":\"_term\",\"row\":true}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"language\",\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":true,\"missingBucketLabel\":\"Unknown\",\"size\":8,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Languages of Crawled Pages\"}}]}",
-      "uiStateJSON": "{\"vis\":{\"colors\":{\"en\":\"#64B0C8\"}}}",
+      "title": "Classifier Confusion Matrix",
+      "visState": "{\"title\":\"Classifier Confusion Matrix\",\"type\":\"heatmap\",\"params\":{\"type\":\"heatmap\",\"addTooltip\":true,\"addLegend\":true,\"enableHover\":false,\"legendPosition\":\"right\",\"times\":[],\"colorsNumber\":4,\"colorSchema\":\"Greens\",\"setColorRange\":false,\"colorsRange\":[],\"invertColors\":false,\"percentageMode\":false,\"valueAxes\":[{\"show\":false,\"id\":\"ValueAxis-1\",\"type\":\"value\",\"scale\":{\"type\":\"linear\",\"defaultYExtents\":false},\"labels\":{\"show\":true,\"rotate\":0,\"color\":\"#000\"}}]},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"classification.manual\",\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"_term\",\"customLabel\":\"Correct Label\"}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"classification.auto\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"_term\",\"customLabel\":\"Predicted Label\"}}]}",
+      "uiStateJSON": "{\"vis\":{\"defaultColors\":{\"0 - 20\":\"rgb(247,252,245)\",\"20 - 40\":\"rgb(199,233,192)\",\"40 - 60\":\"rgb(116,196,118)\",\"60 - 80\":\"rgb(35,139,69)\"}}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"88f8a4d0-6965-11e8-bc87-a7df2c3f0e53\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  },
+  {
+    "_id": "17a06230-8ff0-11e8-a5b3-518d59c13402",
+    "_type": "visualization",
+    "_source": {
+      "title": "Median Classifier Confidence by Crawl",
+      "visState": "{\"title\":\"Median Classifier Confidence by Crawl\",\"type\":\"metric\",\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":37}}},\"aggs\":[{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"crawl\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":6,\"order\":\"desc\",\"orderBy\":\"_term\",\"customLabel\":\"\"}},{\"id\":\"4\",\"enabled\":true,\"type\":\"median\",\"schema\":\"metric\",\"params\":{\"field\":\"classification.confidence\",\"percents\":[50]}}]}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"88f8a4d0-6965-11e8-bc87-a7df2c3f0e53\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  },
+  {
+    "_id": "b1a08bf0-8f4e-11e8-bd41-0bdcc016dd41",
+    "_type": "visualization",
+    "_source": {
+      "title": "Classifier Confidence Distribution by Crawl",
+      "visState": "{\"title\":\"Classifier Confidence Distribution by Crawl\",\"type\":\"area\",\"params\":{\"addLegend\":true,\"addTimeMarker\":false,\"addTooltip\":true,\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"labels\":{\"show\":true,\"truncate\":100},\"position\":\"bottom\",\"scale\":{\"type\":\"linear\"},\"show\":true,\"style\":{},\"title\":{},\"type\":\"category\"}],\"grid\":{\"categoryLines\":false,\"style\":{\"color\":\"#eee\"},\"valueAxis\":\"ValueAxis-1\"},\"legendPosition\":\"top\",\"seriesParams\":[{\"data\":{\"id\":\"1\",\"label\":\"Count\"},\"drawLinesBetweenPoints\":true,\"interpolate\":\"linear\",\"mode\":\"stacked\",\"show\":\"true\",\"showCircles\":true,\"type\":\"histogram\",\"valueAxis\":\"ValueAxis-1\"}],\"times\":[],\"type\":\"area\",\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"labels\":{\"filter\":false,\"rotate\":0,\"show\":true,\"truncate\":100},\"name\":\"LeftAxis-1\",\"position\":\"left\",\"scale\":{\"mode\":\"normal\",\"type\":\"linear\"},\"show\":true,\"style\":{},\"title\":{\"text\":\"Count\"},\"type\":\"value\"}],\"orderBucketsBySum\":false},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"crawl\",\"otherBucket\":true,\"otherBucketLabel\":\"Other Crawls\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":4,\"order\":\"desc\",\"orderBy\":\"_term\",\"row\":false}},{\"id\":\"2\",\"enabled\":true,\"type\":\"histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"classification.confidence\",\"interval\":0.25,\"min_doc_count\":true,\"extended_bounds\":{\"min\":-6,\"max\":6}}}]}",
+      "uiStateJSON": "{\"vis\":{\"legendOpen\":false}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"88f8a4d0-6965-11e8-bc87-a7df2c3f0e53\",\"filter\":[],\"query\":{\"language\":\"lucene\",\"query\":\"\"}}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  },
+  {
+    "_id": "c03d5c90-8ff0-11e8-a5b3-518d59c13402",
+    "_type": "visualization",
+    "_source": {
+      "title": "Manually Labeled Results by Crawl",
+      "visState": "{\"title\":\"Manually Labeled Results by Crawl\",\"type\":\"metric\",\"params\":{\"addLegend\":false,\"addTooltip\":true,\"metric\":{\"colorSchema\":\"Green to Red\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"invertColors\":false,\"labels\":{\"show\":false},\"metricColorMode\":\"None\",\"percentageMode\":false,\"style\":{\"bgColor\":false,\"bgFill\":\"#000\",\"fontSize\":40,\"labelColor\":false,\"subText\":\"\"},\"useRanges\":false},\"type\":\"metric\"},\"aggs\":[{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"crawl\",\"otherBucket\":true,\"otherBucketLabel\":\"Other Crawls\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":4,\"order\":\"desc\",\"orderBy\":\"_term\",\"customLabel\":\"\"}},{\"id\":\"1\",\"enabled\":true,\"type\":\"sum_bucket\",\"schema\":\"metric\",\"params\":{\"customBucket\":{\"id\":\"1-bucket\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucketAgg\",\"params\":{\"field\":\"classification.manual\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"_term\",\"customLabel\":\"\"}},\"customMetric\":{\"id\":\"1-metric\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metricAgg\",\"params\":{\"customLabel\":\"\"}},\"customLabel\":\"Manually Labeled Results\"}}]}",
+      "uiStateJSON": "{}",
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
@@ -229,7 +299,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Result Classification by Host and Crawl",
-      "visState": "{\"title\":\"Result Classification by Host and Crawl\",\"type\":\"pie\",\"params\":{\"addLegend\":true,\"addTooltip\":true,\"isDonut\":false,\"labels\":{\"last_level\":true,\"show\":true,\"truncate\":100,\"values\":false},\"legendPosition\":\"top\",\"type\":\"pie\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"crawl\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":6,\"order\":\"desc\",\"orderBy\":\"_term\",\"row\":true}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"classification.auto\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Classifier Result\"}},{\"id\":\"4\",\"enabled\":true,\"type\":\"significant_terms\",\"schema\":\"segment\",\"params\":{\"field\":\"host\",\"size\":5,\"customLabel\":\"by host\"}}]}",
+      "visState": "{\"title\":\"Result Classification by Host and Crawl\",\"type\":\"pie\",\"params\":{\"addLegend\":true,\"addTooltip\":true,\"isDonut\":false,\"labels\":{\"last_level\":true,\"show\":true,\"truncate\":100,\"values\":false},\"legendPosition\":\"right\",\"type\":\"pie\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"crawl\",\"otherBucket\":true,\"otherBucketLabel\":\"Other Crawls\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":4,\"order\":\"desc\",\"orderBy\":\"_term\",\"row\":false}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"classification.auto\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Classifier Result\"}},{\"id\":\"4\",\"enabled\":true,\"type\":\"significant_terms\",\"schema\":\"segment\",\"params\":{\"field\":\"host\",\"size\":5,\"customLabel\":\"by host\"}}]}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -242,16 +312,50 @@
     }
   },
   {
-    "_id": "b1a08bf0-8f4e-11e8-bd41-0bdcc016dd41",
+    "_id": "df7eb410-8f18-11e8-bd41-0bdcc016dd41",
     "_type": "visualization",
     "_source": {
-      "title": "Classifier Confidence Distribution by Crawl",
-      "visState": "{\"title\":\"Classifier Confidence Distribution by Crawl\",\"type\":\"area\",\"params\":{\"addLegend\":true,\"addTimeMarker\":false,\"addTooltip\":true,\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"labels\":{\"show\":true,\"truncate\":100},\"position\":\"bottom\",\"scale\":{\"type\":\"linear\"},\"show\":true,\"style\":{},\"title\":{},\"type\":\"category\"}],\"grid\":{\"categoryLines\":false,\"style\":{\"color\":\"#eee\"},\"valueAxis\":\"ValueAxis-1\"},\"legendPosition\":\"top\",\"seriesParams\":[{\"data\":{\"id\":\"1\",\"label\":\"Count\"},\"drawLinesBetweenPoints\":true,\"interpolate\":\"linear\",\"mode\":\"stacked\",\"show\":\"true\",\"showCircles\":true,\"type\":\"histogram\",\"valueAxis\":\"ValueAxis-1\"}],\"times\":[],\"type\":\"area\",\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"labels\":{\"filter\":false,\"rotate\":0,\"show\":true,\"truncate\":100},\"name\":\"LeftAxis-1\",\"position\":\"left\",\"scale\":{\"mode\":\"normal\",\"type\":\"linear\"},\"show\":true,\"style\":{},\"title\":{\"text\":\"Count\"},\"type\":\"value\"}],\"orderBucketsBySum\":false},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"crawl\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"_term\",\"row\":true}},{\"id\":\"2\",\"enabled\":true,\"type\":\"histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"classification.confidence\",\"interval\":0.25,\"min_doc_count\":true,\"extended_bounds\":{\"min\":-6,\"max\":6}}}]}",
-      "uiStateJSON": "{\"vis\":{\"legendOpen\":false}}",
+      "title": "Result Language Distribution by Crawl",
+      "visState": "{\"title\":\"Result Language Distribution by Crawl\",\"type\":\"pie\",\"params\":{\"type\":\"pie\",\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"right\",\"isDonut\":true,\"labels\":{\"show\":true,\"values\":true,\"last_level\":true,\"truncate\":100}},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"split\",\"params\":{\"field\":\"crawl\",\"otherBucket\":true,\"otherBucketLabel\":\"Other Crawls\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"size\":64,\"order\":\"desc\",\"orderBy\":\"_term\",\"row\":false}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"language\",\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":true,\"missingBucketLabel\":\"Unknown\",\"size\":8,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Languages of Crawled Pages\"}}]}",
+      "uiStateJSON": "{\"vis\":{\"colors\":{\"en\":\"#64B0C8\"}}}",
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"88f8a4d0-6965-11e8-bc87-a7df2c3f0e53\",\"filter\":[],\"query\":{\"language\":\"lucene\",\"query\":\"\"}}"
+        "searchSourceJSON": "{\"index\":\"88f8a4d0-6965-11e8-bc87-a7df2c3f0e53\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  },
+  {
+    "_id": "d88b8fd0-8ff3-11e8-a5b3-518d59c13402",
+    "_type": "visualization",
+    "_source": {
+      "title": "Count of manually labeled Results by Classifier Label",
+      "visState": "{\"aggs\":[{\"enabled\":true,\"id\":\"1\",\"params\":{\"customBucket\":{\"enabled\":true,\"id\":\"1-bucket\",\"params\":{\"field\":\"classification.manual\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"order\":\"desc\",\"orderBy\":\"_term\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"size\":5},\"schema\":{\"aggFilter\":[],\"deprecate\":false,\"editor\":false,\"group\":\"none\",\"max\":null,\"min\":0,\"name\":\"bucketAgg\",\"params\":[],\"title\":\"Bucket Agg\"},\"type\":\"terms\"},\"customLabel\":\"label from classifier\",\"customMetric\":{\"enabled\":true,\"id\":\"1-metric\",\"params\":{},\"schema\":{\"aggFilter\":[\"!top_hits\",\"!percentiles\",\"!percentile_ranks\",\"!median\",\"!std_dev\",\"!sum_bucket\",\"!avg_bucket\",\"!min_bucket\",\"!max_bucket\",\"!derivative\",\"!moving_avg\",\"!serial_diff\",\"!cumulative_sum\"],\"deprecate\":false,\"editor\":false,\"group\":\"none\",\"max\":null,\"min\":0,\"name\":\"metricAgg\",\"params\":[],\"title\":\"Metric Agg\"},\"type\":\"count\"}},\"schema\":\"metric\",\"type\":\"sum_bucket\"},{\"enabled\":true,\"id\":\"2\",\"params\":{\"field\":\"classification.auto\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"order\":\"desc\",\"orderBy\":\"_term\",\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"size\":5},\"schema\":\"group\",\"type\":\"terms\"}],\"params\":{\"addLegend\":false,\"addTooltip\":true,\"metric\":{\"colorSchema\":\"Green to Red\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"invertColors\":false,\"labels\":{\"show\":true},\"metricColorMode\":\"None\",\"percentageMode\":false,\"style\":{\"bgColor\":false,\"bgFill\":\"#000\",\"fontSize\":40,\"labelColor\":false,\"subText\":\"\"},\"useRanges\":false},\"type\":\"metric\"},\"title\":\"Count of manually labeled Results by Classifier Label\",\"type\":\"metric\"}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"88f8a4d0-6965-11e8-bc87-a7df2c3f0e53\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+      }
+    },
+    "_meta": {
+      "savedObjectVersion": 2
+    }
+  },
+  {
+    "_id": "e2f9e850-8fed-11e8-a5b3-518d59c13402",
+    "_type": "visualization",
+    "_source": {
+      "title": "Dataset Result Count by Crawl",
+      "visState": "{\"aggs\":[{\"enabled\":true,\"id\":\"2\",\"params\":{\"customLabel\":\"\",\"field\":\"crawl\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"order\":\"desc\",\"orderBy\":\"_term\",\"otherBucket\":true,\"otherBucketLabel\":\"Other Crawls\",\"size\":4},\"schema\":\"group\",\"type\":\"terms\"},{\"enabled\":true,\"id\":\"1\",\"params\":{\"customBucket\":{\"enabled\":true,\"id\":\"1-bucket\",\"params\":{\"filters\":[{\"input\":{\"query\":\"classification.auto:dataset classification.manual:dataset\"},\"label\":\"\"}]},\"schema\":{\"aggFilter\":[],\"deprecate\":false,\"editor\":false,\"group\":\"none\",\"max\":null,\"min\":0,\"name\":\"bucketAgg\",\"params\":[],\"title\":\"Bucket Agg\"},\"type\":\"filters\"},\"customLabel\":\"Results labeled as \\\"dataset\\\"\",\"customMetric\":{\"enabled\":true,\"id\":\"1-metric\",\"params\":{},\"schema\":{\"aggFilter\":[\"!top_hits\",\"!percentiles\",\"!percentile_ranks\",\"!median\",\"!std_dev\",\"!sum_bucket\",\"!avg_bucket\",\"!min_bucket\",\"!max_bucket\",\"!derivative\",\"!moving_avg\",\"!serial_diff\",\"!cumulative_sum\"],\"deprecate\":false,\"editor\":false,\"group\":\"none\",\"max\":null,\"min\":0,\"name\":\"metricAgg\",\"params\":[],\"title\":\"Metric Agg\"},\"type\":\"count\"}},\"schema\":\"metric\",\"type\":\"sum_bucket\"}],\"params\":{\"addLegend\":false,\"addTooltip\":true,\"metric\":{\"colorSchema\":\"Green to Red\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"invertColors\":false,\"labels\":{\"show\":true},\"metricColorMode\":\"None\",\"percentageMode\":false,\"style\":{\"bgColor\":false,\"bgFill\":\"#000\",\"fontSize\":40,\"labelColor\":false,\"subText\":\"\"},\"useRanges\":false},\"type\":\"metric\"},\"title\":\"Dataset Result Count by Crawl\",\"type\":\"metric\"}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"88f8a4d0-6965-11e8-bc87-a7df2c3f0e53\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
       }
     },
     "_meta": {

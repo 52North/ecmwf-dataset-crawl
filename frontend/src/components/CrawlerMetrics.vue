@@ -2,7 +2,7 @@
   <v-container grid-list-xl>
     <v-layout column>
       <v-flex>
-        <h1>Ongoing Crawls</h1>
+        <h1>Crawler Performance</h1>
         <iframe
           :src="`${kibanaHost}/app/kibana#/dashboard/crawl-metrics-dash?embed=true&_g=(${dashboardConf})`"
           height="1600px"
@@ -13,7 +13,15 @@
         <h1>Result Distribution</h1>
         <iframe
           :src="`${kibanaHost}/app/kibana#/dashboard/crawl-results-dash?embed=true&_g=(${dashboardConf})`"
-          height="2000px"
+          height="1600px"
+          width="100%"
+        ></iframe>
+      </v-flex>
+      <v-flex>
+        <h1>Classifier Metrics</h1>
+        <iframe
+          :src="`${kibanaHost}/app/kibana#/dashboard/classifier-metrics-dash?embed=true&_g=(${dashboardConf})`"
+          height="1500px"
           width="100%"
         ></iframe>
       </v-flex>
