@@ -4,15 +4,19 @@ import { client } from './'
 import resultsMapping from './index-definitions/results'
 import Result from '../models/Result'
 
-export async function getResults (crawls?: string[], query?: string, from?: number, size?: number): Promise<{ total: number, hits: Result[] }> {
+export async function getResults (crawls?: string[], query?: string, from?: number, size?: number): Promise<{ took: number, total: number, hits: Result[] }> {
   const res = await client.search({
     index: resultsMapping.index,
     from,
     size,
-    body: buildQueryBody(crawls, query),
+    body: buildQueryBody(crawls, query, [
+      { 'score': 'desc' },
+      '_score',
+    ]),
   })
   return {
     total: res.hits.total,
+    took: res.took,
     hits: res.hits.hits.map(d => Result.fromElastic(d._source)),
   }
 }
@@ -49,8 +53,8 @@ export async function classifyUrls (urls: string[], label: string): Promise<any>
   return { updated }
 }
 
-function buildQueryBody(crawls?: string[], query?: string) {
-  const body = { query: {} } as any
+function buildQueryBody (crawls?: string[], query?: string, sort?: (string | object)[]) {
+  const body = { query: {}, sort } as any
   const crawlFilter = crawls && crawls.length
     ? { terms: { crawl: crawls } }
     : null
