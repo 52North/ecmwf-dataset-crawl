@@ -13,6 +13,7 @@ import { hostname } from './utils'
 Vue.filter('datestring', string => new Date(string).toLocaleString())
 Vue.filter('shortstring', (s, length = 50) => (s && s.length > length) ? `${s.substring(0, length - 4)} ...` : s)
 Vue.filter('domain', hostname)
+Vue.filter('round', (val, digits = 2) => Math.round(val * 10 ** digits) / 10 ** digits)
 
 Vue.use(AsyncProperties, { transform: null })
 Vue.use(Vuetify, {

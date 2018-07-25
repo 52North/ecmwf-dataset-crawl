@@ -19,8 +19,8 @@
         ],
         "extracted.data_api": [
           "//resolve-uri(A[matches(lower-case(@href), '(getcapabilities|wfs|wms|wmts)')]/@href)",
-          "//*[not(matches(name(), '(SCRIPT|LINK)'))]/text()[matches(lower-case(.), '(getcapabilities|wfs|wms|wmts)')]",
-          "//*[not(matches(name(), '(SCRIPT|LINK)'))]/text()[contains(., 'API')]",
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(lower-case(.), '(getcapabilities|wfs|wms|wmts)')]",
+          "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(., 'API')]",
           "//resolve-uri(A[text()[contains(lower-case(.), 'xml')] or contains(lower-case(@href), 'xml') and not(matches(lower-case(@href), '(sitemap|feed|atom|rss)'))]/@href)"
         ],
         "extracted.data_link": [

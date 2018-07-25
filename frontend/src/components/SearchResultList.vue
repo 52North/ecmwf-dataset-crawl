@@ -87,7 +87,7 @@
                   </v-flex>
                   <v-flex>
                     Manual Result classification (focussed):
-                    <v-btn round small @click="query = '(classification.auto:dataset -classification.manual:*) AND classification.confidence:[-0.5 TO 0.5]'">(classification.auto:dataset -classification.manual:*) AND classification.confidence:[-0.5 TO 0.5]</v-btn>
+                    <v-btn round small @click="query = 'classification.confidence:[-0.5 TO 0.5] -classification.manual:*'">classification.confidence:[-0.5 TO 0.5] -classification.manual:*</v-btn>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -109,7 +109,7 @@
         <v-flex v-if="!results$pending && !results$loading">
           <h1 v-if="!results.length" class="headline">No Results Found! :^(</h1>
           <p v-if="!results.length">refine your query, or <router-link class="subheading" :to="{ name: 'New Crawl' }">start a new crawl</router-link></p>
-          <p v-if="results.length">{{ totalResults }} results found.</p>
+          <p v-if="results.length">{{ totalResults }} results found in {{ queryTime + 1 }}ms.</p>
         </v-flex>
       </v-layout>
 
@@ -124,17 +124,29 @@
           expand
           :pagination.sync="pagination"
           :total-items="totalResults"
-          :rows-per-page-items="[25,50,100,200,{text: 'All', value: 10000}]"
+          :rows-per-page-items="[25,50,100]"
         >
           <template slot="items" slot-scope="props">
             <tr @click="props.expanded = !props.expanded" :class="{ 'accent': props.expanded }" class="searchresult">
               <td>
                 <v-tooltip bottom>
-                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'dataset')" depressed :flat="props.item.classification.manual !== 'dataset'" :loading="manualLabelPending" color="success"><v-icon>thumb_up</v-icon></v-btn>
+                  <v-btn fab small depressed
+                    slot="activator"
+                    :flat="props.item.classification.manual !== 'dataset'"
+                    :color="(props.item.classification.auto === 'dataset' || props.item.classification.manual === 'dataset') ? 'success' : 'grey'"
+                    :loading="manualLabelPending"
+                    @click.stop="manualLabel(props.item, 'dataset')"
+                  ><v-icon>thumb_up</v-icon></v-btn>
                   label this as "data"
                 </v-tooltip>
                 <v-tooltip bottom>
-                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'unrelated')" depressed :flat="props.item.classification.manual !== 'unrelated'" :loading="manualLabelPending" color="error"><v-icon>thumb_down</v-icon></v-btn>
+                  <v-btn fab small depressed
+                    slot="activator"
+                    :flat="props.item.classification.manual !== 'unrelated'"
+                    :color="(props.item.classification.auto === 'unrelated' || props.item.classification.manual === 'unrelated') ? 'error' : 'grey'"
+                    :loading="manualLabelPending"
+                    @click.stop="manualLabel(props.item, 'unrelated')"
+                  ><v-icon>thumb_down</v-icon></v-btn>
                   label this as "unrelated"
                 </v-tooltip>
                 <v-tooltip bottom>
@@ -142,7 +154,7 @@
                   open page in new tab
                 </v-tooltip>
                 <v-tooltip bottom>
-                  <v-btn slot="activator" fab small flat v-if="props.item.extra.language !== 'en'" @click.stop="openTranslationUrl(props.item)"><v-icon>translate</v-icon></v-btn>
+                  <v-btn slot="activator" fab small flat v-if="props.item.language !== 'en'" @click.stop="openTranslationUrl(props.item)"><v-icon>translate</v-icon></v-btn>
                   open translated page
                 </v-tooltip>
               </td>
@@ -168,9 +180,9 @@
                     </v-container>
                   </v-flex>
                   <v-flex v-if="props.item.classification.auto">
-                    <v-subheader>Class</v-subheader>
+                    <v-subheader>Label</v-subheader>
                     <v-container>
-                      {{ props.item.classification.auto }} (confidence: {{ props.item.classification.confidence }})
+                      {{ props.item.classification.auto }} (confidence: {{ props.item.classification.confidence | round }})
                     </v-container>
                   </v-flex>
                 </v-layout>
@@ -246,6 +258,7 @@ export default {
       allCrawls: [],
       pagination: {}, // set through data table
       totalResults: 0,
+      queryTime: 0,
       resultTable: [
         { width: '290px', sortable: false }, // placeholder for the buttons in each row
         { text: 'Title', value: 'title', align: 'left', sortable: false },
@@ -275,8 +288,9 @@ export default {
         }
 
         this.updateUrl()
-        return getResults(params).then(({ total, hits }) => {
+        return getResults(params).then(({ total, took, hits }) => {
           this.totalResults = total
+          this.queryTime = took
           return hits
         })
       },
@@ -299,7 +313,7 @@ export default {
       })
     },
     openTranslationUrl (resultItem) {
-      const { url, extra: { language } } = resultItem
+      const { url, language } = resultItem
       window.open(`https://translate.google.com/translate?hl=en&sl=${language}&tl=en&u=${encodeURI(url)}`)
     },
     async manualLabel (resultItem, label) {
