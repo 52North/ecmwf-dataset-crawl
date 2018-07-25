@@ -60,6 +60,21 @@ module.exports.getResults = function getResults (req, res, next) {
     })
 }
 
+module.exports.classifyResults = function classifyResults (req, res, next) {
+  const params = req.swagger.params['classifyRequest'].value
+  const { urls, label } = params
+  Results.classifyResults(urls, label)
+    .then(function (response) {
+      writeJson(res, respondWithCode(200, response))
+      const { count } = response
+      log.info({ req, res, count, urls, label }, 'classifyResults()')
+    })
+    .catch(function (err) {
+      writeJson(res, respondWithCode(500, err.message))
+      log.error({ err, req, res, urls, label }, 'could not get classify results')
+    })
+}
+
 module.exports.handlePreflight3 = function handlePreflight3 (req, res, next) {
   Results.handlePreflight3()
     .then(function (response) {

@@ -2,6 +2,7 @@ import {
   deleteResults as deleteResultsFromDb,
   getResults as getResultsFromDb,
   getResultCount as getResultCountFromDb,
+  classifyUrls,
 } from '../../elastic'
 
 /**
@@ -42,6 +43,10 @@ export async function getResultCount (crawls?: string[], query?: string) {
  **/
 export async function getResults (crawls?: string[], query?: string, from?: number, size?: number) {
   return getResultsFromDb(crawls, query, from, size)
+}
+
+export async function classifyResults (urls: string[], label: string) {
+  return classifyUrls(urls, label)
 }
 
 /**

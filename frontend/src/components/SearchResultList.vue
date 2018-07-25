@@ -112,11 +112,11 @@
             <tr @click="props.expanded = !props.expanded" :class="{ 'accent': props.expanded }" class="searchresult">
               <td>
                 <v-tooltip bottom>
-                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'data')" depressed :flat="props.item.manualLabel !== 'data'" :loading="manualLabelPending" color="success"><v-icon>thumb_up</v-icon></v-btn>
+                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'dataset')" depressed :flat="props.item.classification.manual !== 'dataset'" :loading="manualLabelPending" color="success"><v-icon>thumb_up</v-icon></v-btn>
                   label this as "data"
                 </v-tooltip>
                 <v-tooltip bottom>
-                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'unrelated')" depressed :flat="props.item.manualLabel !== 'unrelated'" :loading="manualLabelPending" color="error"><v-icon>thumb_down</v-icon></v-btn>
+                  <v-btn slot="activator" fab small @click.stop="manualLabel(props.item, 'unrelated')" depressed :flat="props.item.classification.manual !== 'unrelated'" :loading="manualLabelPending" color="error"><v-icon>thumb_down</v-icon></v-btn>
                   label this as "unrelated"
                 </v-tooltip>
                 <v-tooltip bottom>
@@ -216,7 +216,7 @@
 
 <script>
 import ExportDialog from '@/components/ExportDialog'
-import { getResults, getCrawls } from '@/api'
+import { getResults, getCrawls, classifyResults } from '@/api'
 
 export default {
   props: {
@@ -286,11 +286,15 @@ export default {
       window.open(`https://translate.google.com/translate?hl=en&sl=${language}&tl=en&u=${encodeURI(url)}`)
     },
     async manualLabel (resultItem, label) {
-      resultItem.manualLabel = label
+      // IDEA: submit manual labels in batches every 5 seconds so user is not interupted as often
+      resultItem.classification.manual = undefined
       this.manualLabelPending = true
-      // TODO
-      // await api.submitManualLabel(resultItem.url, label)
-      setTimeout(() => this.manualLabelPending = false, 800)
+      try {
+        await classifyResults([resultItem.url], label)
+        resultItem.classification.manual = label
+      } finally {
+        this.manualLabelPending = false
+      }
     },
   },
   components: {

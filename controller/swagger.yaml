@@ -238,6 +238,57 @@ paths:
         200:
           description: "Success"
       x-swagger-router-controller: "Results"
+  /results/classify:
+    post:
+      tags:
+      - "results"
+      summary: "Manually classify one or more results"
+      description: ""
+      operationId: "classifyResults"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "classifyRequest"
+        in: "body"
+        schema:
+          type: "object"
+          required:
+          - "urls"
+          - "label"
+          properties:
+            urls:
+              description: "URLs to classify"
+              type: "array"
+              items:
+                type: "string"
+            label:
+              description: "The class to assign to the URLs"
+              type: "string"
+              enum:
+              - "dataset"
+              - "related"
+              - "unrelated"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "integer"
+        500:
+          description: "Internal Error"
+      x-swagger-router-controller: "Results"
+    options:
+      tags:
+      - "results"
+      summary: "Only defined to handle preflight CORS requests"
+      operationId: "handlePreflight3"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+      x-swagger-router-controller: "Results"
+
   /results/counts:
     get:
       tags:

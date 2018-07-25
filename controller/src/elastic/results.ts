@@ -34,6 +34,21 @@ export async function deleteResults (crawls?: string[], query?: string): Promise
   return { deleted }
 }
 
+export async function classifyUrls (urls: string[], label: string): Promise<any> {
+  const { updated } = await client.updateByQuery({
+    index: resultsMapping.index,
+    type: 'doc',
+    df: 'url',
+    q: urls.map(u => `"${u}"`).join(' '),
+    refresh: true,
+    body: {
+      script: `ctx._source['classification.manual'] = '${label}'`,
+    },
+  })
+
+  return { updated }
+}
+
 function buildQueryBody(crawls?: string[], query?: string) {
   const body = { query: {} } as any
   const crawlFilter = crawls && crawls.length

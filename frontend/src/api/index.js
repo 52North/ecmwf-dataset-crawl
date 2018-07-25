@@ -48,6 +48,11 @@ export async function getTotalResults (cache = false) {
   return store.totalResults
 }
 
+export async function classifyResults (urls, label) {
+  const res = await axios.post('/results/classify', { urls, label })
+  return res.data.updated
+}
+
 export async function exportResults (parameters) {
   const params = Object.assign({
     size: 10000,
