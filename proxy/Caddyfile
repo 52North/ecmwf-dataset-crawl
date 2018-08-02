@@ -1,4 +1,9 @@
 {$WEB_DOMAIN} {
+  # the frontend must be served with a trailing slash
+  redir {path}/
+}
+
+{$WEB_DOMAIN}/ {
   root /srv/frontend
 
   # some security headers
