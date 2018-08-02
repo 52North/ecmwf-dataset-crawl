@@ -24,3 +24,5 @@ yarn start:dev
 # lint code
 yarn lint
 ```
+
+> note that for a successful build, the app may not have any type errors, as `npm run build:types` will fail otherwise!

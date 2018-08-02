@@ -14,7 +14,7 @@ import Crawl from '../models/Crawl'
 
 export type Testcase = Crawl
 
-function testCrawl(id: string, keywordGroups: any, countries: string[], options = {}) {
+function testCrawl (id: string, keywordGroups: any, countries: string[], languages: string[], options = {}) {
   const crawlDef = {
     id,
     name: id,
@@ -24,9 +24,11 @@ function testCrawl(id: string, keywordGroups: any, countries: string[], options 
       domainBlacklist: [],
       domainWhitelist: [],
       terminationCondition: {},
+      searchUntranslated: false,
     },
     commonKeywords: { keywords: [], translate: true },
     keywordGroups,
+    languages,
     countries,
   }
 
@@ -38,7 +40,7 @@ const test1KnownData = testCrawl('testcase-known', [
   { keywords: ['hydrological', 'realtime', 'data'], translate: true },
   { keywords: ['environmental', 'geo-data', 'catalog'], translate: true },
   { keywords: ['precipitation', 'timeseries', 'open', 'data-set'], translate: true },
-], ['de'])
+], ['de'], ['de'])
 
 // low scores expected
 const test2Unrelated = testCrawl('testcase-unrelated', [
@@ -60,14 +62,14 @@ const test2Unrelated = testCrawl('testcase-unrelated', [
   { keywords: ['kernel', 'development'], translate: true },
   { keywords: ['springfield', 'news'], translate: true },
   { keywords: ['cute', 'cat', 'pictures'], translate: true },
-], ['de'])
+], ['de'], ['de'])
 
 // unknown scores
 const test3UnknownData = testCrawl('testcase-unknown', [
   { keywords: ['hydrological', 'realtime', 'data'], translate: true },
   { keywords: ['environmental', 'geo-data', 'catalog'], translate: true },
   { keywords: ['precipitation', 'timeseries', 'open', 'data-set'], translate: true },
-], ['gh', 'ng', 'ml', 'sd', 'dz', 'tz', 'sn'])
+], ['gh', 'ng', 'ml', 'sd', 'dz', 'tz', 'sn'], [])
 
 const testcases: Testcase[] = [
   test1KnownData,

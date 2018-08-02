@@ -1,3 +1,4 @@
+// @ts-ignore
 import DataObjectParser from 'dataobject-parser'
 
 export default class Result {
