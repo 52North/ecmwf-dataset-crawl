@@ -59,9 +59,9 @@ class EnglishAnalyzer(object):
             tokens_append = tokens.append
             space_join = " ".join
 
-            for n in xrange(min_n,
+            for n in range(min_n,
                             min(max_n + 1, n_original_tokens + 1)):
-                for i in xrange(n_original_tokens - n + 1):
+                for i in range(n_original_tokens - n + 1):
                     tokens_append(space_join(original_tokens[i: i + n]))
 
         return tokens
