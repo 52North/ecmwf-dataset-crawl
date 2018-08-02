@@ -1,0 +1,32 @@
+Mean validation score: 0.864 (std: 0.023)
+Parameters: {'classifier__C': 0.8076228658190558, 'dim_reduce__k': 30, 'vectorizer__analyzer': <bound method EnglishAnalyzer.analyze of <EnglishAnalyzer.EnglishAnalyzer object at 0x7f21b5722710>>, 'vectorizer__max_df': 0.7, 'vectorizer__min_df': 0.05}
+
+Top 15 keywords per class:
+                data                            unrelated
+        -3.9695 dataset                 2.5490  com
+        -3.3058 water                   1.6815  video
+        -3.2097 data                    1.2970  tv
+        -2.7449 river                   0.3274  satellit
+        -2.2918 forecast                0.1086  precipit
+        -2.0541 ministri                -0.1084 temperatur
+        -1.6882 meteorolog              -0.1286 basin
+        -1.4244 station                 -0.1621 rainfal
+        -1.3329 weather                 -0.4052 observ
+        -1.1843 monitor                 -0.5268 radar
+        -1.1222 marin                   -0.5375 hydrolog
+        -1.0906 wind                    -0.5710 drought
+        -0.9819 flood                   -0.6427 climat
+        -0.9496 tsunami                 -0.7687 snow
+        -0.8342 earthquak               -0.7845 warn
+
+evaluating resulting model with test dataset
+             precision    recall  f1-score   support
+
+       data       0.89      0.87      0.88       193
+  unrelated       0.89      0.91      0.90       233
+
+avg / total       0.89      0.89      0.89       426
+
+[[168  25]
+ [ 20 213]]
+
