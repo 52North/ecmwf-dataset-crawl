@@ -8,12 +8,12 @@ module.exports.addCrawl = function addCrawl (req, res, next) {
   var crawl = req.swagger.params['crawl'].value
   Crawls.addCrawl(crawl)
     .then(function (response) {
-      writeJson(res, respondWithCode(201, response))
       log.info({ req, res, crawl: response }, 'crawl added')
+      writeJson(res, respondWithCode(201, response))
     })
     .catch(function (err) {
-      writeJson(res, respondWithCode(500, err.message))
       log.error({ err, req, res, crawl }, 'could not add crawl')
+      writeJson(res, respondWithCode(500, err.message))
     })
 }
 
@@ -26,11 +26,11 @@ module.exports.getCrawl = function getCrawl (req, res, next) {
     })
     .catch(function (err) {
       if (err.message.match('not found')) {
-        writeJson(res, respondWithCode(404, err.message))
         log.warn({ req, res, crawlId }, 'could not get crawl: not found')
+        writeJson(res, respondWithCode(404, err.message))
       } else {
-        writeJson(res, respondWithCode(500, err.message))
         log.error({ err, req, res, crawlId }, 'could not get crawl')
+        writeJson(res, respondWithCode(500, err.message))
       }
     })
 }
@@ -38,12 +38,12 @@ module.exports.getCrawl = function getCrawl (req, res, next) {
 module.exports.getCrawls = function getCrawls (req, res, next) {
   Crawls.getCrawls()
     .then(function (crawls) {
-      writeJson(res, crawls)
       log.info({ req, res, crawls: crawls.length }, `getCrawls()`)
+      writeJson(res, crawls)
     })
     .catch(function (err) {
-      writeJson(res, respondWithCode(500, err.message))
       log.error({ err, req, res }, 'could not get crawls')
+      writeJson(res, respondWithCode(500, err.message))
     })
 }
 
@@ -65,17 +65,17 @@ module.exports.handlePreflight2 = function handlePreflight2 (req, res, next) {
 module.exports.stopCrawl = function stopCrawl (req, res, next) {
   var crawlId = req.swagger.params['crawlid'].value
   Crawls.stopCrawl(crawlId)
-    .then(function (response) {
-      writeJson(res, response)
+    .then(function (crawl) {
       log.info({ req, res, crawl }, `stopCrawl(${crawlId})`)
+      writeJson(res, crawl)
     })
     .catch(function (err) {
       if (err.message.match('not found')) {
-        writeJson(res, respondWithCode(404, err.message))
         log.warn({ req, res, crawlId }, 'could not stop crawl: not found')
+        writeJson(res, respondWithCode(404, err.message))
       } else {
-        writeJson(res, respondWithCode(500, err.message))
         log.error({ err, req, res, crawlId }, 'could not stop crawl')
+        writeJson(res, respondWithCode(500, err.message))
       }
     })
 }

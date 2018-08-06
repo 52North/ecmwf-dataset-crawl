@@ -323,7 +323,7 @@ export default {
       domainBlacklist: '',
       domainWhitelist: '',
       commonKeywords: {
-        keywords: [], translate: false,
+        keywords: [], translate: true,
       },
       keywordGroups: [
         { keywords: [], translate: true }

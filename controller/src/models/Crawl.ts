@@ -111,7 +111,7 @@ export default class Crawl implements CrawlResponse {
           if (country === defaultLang.iso3166_a2)
             continue // default lang was already added
 
-          let keywords = this.commonKeywords.translate
+          const keywords = this.commonKeywords.translate
             ? Array.from(group.keywords.concat(this.commonKeywords.keywords))
             : Array.from(group.keywords)
 
@@ -124,15 +124,16 @@ export default class Crawl implements CrawlResponse {
 
           for (const lang of languages) {
             // TODO: deduplicate languages by country, so we save some API quota..?
-            keywords = await translator.translate(keywords, defaultLang, lang)
+            // TODO: query for all languages at once? Azure supports this..
+            let translated = await translator.translate(keywords, defaultLang, lang)
 
             if (!this.commonKeywords.translate)
-              keywords = keywords.concat(this.commonKeywords.keywords)
+              translated = translated.concat(this.commonKeywords.keywords)
 
             this.processedKeywords.push({
               language: lang.iso639_1,
               country,
-              keywords
+              keywords: translated,
             })
           }
         }

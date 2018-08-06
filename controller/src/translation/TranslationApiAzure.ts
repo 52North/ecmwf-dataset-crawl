@@ -9,25 +9,29 @@ export default class TranslationApiAzure implements TranslationApi {
   private RESULTS_PER_PAGE = 25
   private opts: AzureTextTranslatorOpts
   private log: any
+  private availableLangs: Language[]
 
   constructor (options: AzureTextTranslatorOpts) {
     this.opts = options
     this.log = createLogger('TranslationApiAzure')
+    this.availableLangs = []
   }
 
-  async init () { /* no init required */ }
-
-  async availableLanguages (fromLang?: Language): Promise<Language[]> {
+  async init () {
+    // fetch available languages
     const reqOpts = this.requestParams({ scope: 'translation' })
     const res = await axios.get(`${this.ENDPOINT}/languages`, reqOpts)
-    const result: Language[] = []
     for (const lang in res.data.translation) {
-      result.push({
+      this.availableLangs.push({
         name: res.data['translation'][lang].name,
         iso639_1: lang,
       })
     }
-    return result
+    this.log.debug({ langs: this.availableLangs }, 'fetched languages available for translation')
+  }
+
+  async availableLanguages (fromLang?: Language): Promise<Language[]> {
+    return this.availableLangs
   }
 
   async translate (terms: string[], from: Language, to: Language, options?: TranslationQueryOptions): Promise<string[]> {
@@ -35,8 +39,9 @@ export default class TranslationApiAzure implements TranslationApi {
     // generate requests for each 25 phrases (limited per request)
     const reqOpts = this.requestParams({
       from: from.iso639_1,
-      to: to.iso639_1,
+      to: to.iso639_1, // is this correct? are we using the country ID here by accident?
     })
+    this.log.error({ from, to }, `${from.iso639_1} -> ${to.iso639_1}`)
     const requests = []
     for (let i = 0; i < terms.length; i += this.RESULTS_PER_PAGE) {
       const phrases = terms.slice(i, i + this.RESULTS_PER_PAGE)
@@ -75,7 +80,7 @@ export default class TranslationApiAzure implements TranslationApi {
     } catch (err) {
       // catch rate limit for better msg
       if (err.response.data.error.code === 403000)
-        throw new Error('Monthly (?) rate limit exceeded, returning without results')
+        throw new Error('Monthly rate limit exceeded, returning without results')
 
       throw new Error(err.response.data.error.message)
     }

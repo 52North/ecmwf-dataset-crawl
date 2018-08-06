@@ -1,9 +1,12 @@
+import { promisify } from 'util'
+
 import api from './api'
 import cfg from './config'
 import { initializeIndizes, client } from './elastic'
 import createLogger from './logging'
+import { searcher } from './search'
+import { translator } from './translation'
 import CrawlWatchdog from './watchdog'
-import { promisify } from 'util'
 
 const log = createLogger('main')
 const goodBoy = new CrawlWatchdog(cfg)
@@ -22,6 +25,9 @@ async function main ({ retries = 0, timeout = 10 }): Promise<any> {
     return wait(timeout * 1000)
       .then(() => main({ retries: retries - 1, timeout }))
   }
+
+  await searcher.init()
+  await translator.init()
 }
 
 main({ retries: 6, timeout: 5 }).catch(err => {

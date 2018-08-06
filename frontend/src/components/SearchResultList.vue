@@ -208,7 +208,10 @@
                     <v-subheader>PDF Data</v-subheader>
                     <v-container>
                       <ul>
-                        <li v-for="link in props.item.extracted.data_pdf" :key="link"><a :href="link">{{ link | shortstring(100) }}</a></li>
+                        <li v-for="link in props.item.extracted.data_pdf" :key="link">
+                          <a v-if="isAbsoluteUrl(link)" :href="link" target="_blank">{{ link | shortstring(100) }}</a>
+                          <span v-if="!isAbsoluteUrl(link)">{{ link | shortstring(100) }}</span>
+                        </li>
                       </ul>
                     </v-container>
                   </v-flex>
@@ -216,7 +219,10 @@
                     <v-subheader>Data Link</v-subheader>
                     <v-container>
                       <ul>
-                        <li v-for="link in props.item.extracted.data_link" :key="link"><a :href="link">{{ link | shortstring(100) }}</a></li>
+                        <li v-for="link in props.item.extracted.data_link" :key="link">
+                          <a v-if="isAbsoluteUrl(link)" :href="link" target="_blank">{{ link | shortstring(100) }}</a>
+                          <span v-if="!isAbsoluteUrl(link)">{{ link | shortstring(100) }}</span>
+                        </li>
                       </ul>
                     </v-container>
                   </v-flex>
@@ -224,7 +230,10 @@
                     <v-subheader>Data API</v-subheader>
                     <v-container>
                       <ul>
-                        <li v-for="link in props.item.extracted.data_api" :key="link"><a :href="link">{{ link | shortstring(100) }}</a></li>
+                        <li v-for="link in props.item.extracted.data_api" :key="link">
+                          <a v-if="isAbsoluteUrl(link)" :href="link" target="_blank">{{ link | shortstring(100) }}</a>
+                          <span v-if="!isAbsoluteUrl(link)">{{ link | shortstring(100) }}</span>
+                        </li>
                       </ul>
                     </v-container>
                   </v-flex>
@@ -325,6 +334,15 @@ export default {
     openTranslationUrl (resultItem) {
       const { url, language } = resultItem
       window.open(`https://translate.google.com/translate?hl=en&sl=${language}&tl=en&u=${encodeURI(url)}`)
+    },
+    isAbsoluteUrl (string) {
+      const pattern = new RegExp('^(https?:\\/\\/)'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+      return pattern.test(string)
     },
     async manualLabel (resultItem, label) {
       // IDEA: submit manual labels in batches every 5 seconds so user is not interupted as often

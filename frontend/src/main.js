@@ -19,6 +19,7 @@ Vue.use(AsyncProperties, { transform: null })
 Vue.use(Vuetify, {
   theme: {
     primary: colors.red.darken2,
+    error: colors.red.darken2,
     secondary: colors.blueGrey.lighten4,
     accent: colors.blueGrey.lighten1,
   }

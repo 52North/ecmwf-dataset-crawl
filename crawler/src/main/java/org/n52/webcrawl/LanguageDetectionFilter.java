@@ -54,7 +54,6 @@ public class LanguageDetectionFilter extends ParseFilter {
 //            if (result.getConfidence().compareTo(LanguageConfidence.LOW) > 0) {
 //                metadata.addValue("language", result.getLanguage());
 //            }
-            LOG.debug(URL, result.toString());
         } catch (Exception e) {
             LOG.error("Unable to detect language: {}", e.getMessage());
         }

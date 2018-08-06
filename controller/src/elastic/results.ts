@@ -44,6 +44,7 @@ export async function classifyUrls (urls: string[], label: string): Promise<any>
     type: 'doc',
     df: 'url',
     q: urls.map(u => `"${u}"`).join(' '),
+    conflicts: 'proceed',
     refresh: true,
     body: {
       script: `ctx._source['classification.manual'] = '${label}'`,
