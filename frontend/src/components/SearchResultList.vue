@@ -142,6 +142,16 @@
                 <v-tooltip bottom>
                   <v-btn fab small depressed
                     slot="activator"
+                    :flat="props.item.classification.manual !== 'related'"
+                    :color="(props.item.classification.auto === 'related' || props.item.classification.manual === 'related') ? 'accent' : 'grey'"
+                    :loading="manualLabelPending"
+                    @click.stop="manualLabel(props.item, 'related')"
+                  ><v-icon>check_circle</v-icon></v-btn>
+                  label this as "related"
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <v-btn fab small depressed
+                    slot="activator"
                     :flat="props.item.classification.manual !== 'unrelated'"
                     :color="(props.item.classification.auto === 'unrelated' || props.item.classification.manual === 'unrelated') ? 'error' : 'grey'"
                     :loading="manualLabelPending"
@@ -260,7 +270,7 @@ export default {
       totalResults: 0,
       queryTime: 0,
       resultTable: [
-        { width: '290px', sortable: false }, // placeholder for the buttons in each row
+        { width: '222px', sortable: false }, // placeholder for the buttons in each row
         { text: 'Title', value: 'title', align: 'left', sortable: false },
         { text: 'Host', value: 'host', align: 'left', sortable: false },
         { text: 'Keywords', value: 'keywords', align: 'left', sortable: false },
