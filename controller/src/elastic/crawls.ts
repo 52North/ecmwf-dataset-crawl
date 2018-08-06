@@ -7,7 +7,7 @@ import { client, ensureIndex } from './'
 export async function getCrawl (crawl: Crawl | any): Promise<Crawl> {
   const res = await client.search({
     index: crawlsMapping.index,
-    q: `_id:${crawl.id}`,
+    q: `_id:"${crawl.id}"`,
   })
 
   if (!res.hits.total)
@@ -82,7 +82,6 @@ export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
 }
 
 export async function clearStatusIndex (crawl: Crawl) {
-  // FIXME: can't delete crawls ID starting with "-". DELETE /crawlstatus--..... works though!
   return client.indices.delete({ index: getCrawlStatusId(crawl) })
 }
 
