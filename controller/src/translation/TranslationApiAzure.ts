@@ -39,9 +39,8 @@ export default class TranslationApiAzure implements TranslationApi {
     // generate requests for each 25 phrases (limited per request)
     const reqOpts = this.requestParams({
       from: from.iso639_1,
-      to: to.iso639_1, // is this correct? are we using the country ID here by accident?
+      to: to.iso639_1,
     })
-    this.log.error({ from, to }, `${from.iso639_1} -> ${to.iso639_1}`)
     const requests = []
     for (let i = 0; i < terms.length; i += this.RESULTS_PER_PAGE) {
       const phrases = terms.slice(i, i + this.RESULTS_PER_PAGE)

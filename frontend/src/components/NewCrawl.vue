@@ -137,10 +137,14 @@
                 item-text="name"
                 item-value="iso639_1"
                 :items="availableLanguages"
-                :rules="stepValidators[2]"
+                :rules="[stepValidators[2][0]]"
                 v-model="languages"
               />
-              <v-checkbox v-model="searchUntranslated" label="also search with untranslated keywords"></v-checkbox>
+              <v-checkbox
+                v-model="searchUntranslated"
+                label="also search with untranslated keywords"
+                :rules="[stepValidators[2][1], stepValidators[2][2]]"
+              ></v-checkbox>
             </v-container>
           </v-stepper-content>
 
@@ -313,6 +317,7 @@ export default {
         2: [
           () => (this.countries.length === 0 || this.languages.length !== 0) || 'at least one language required',
           () => !(!this.searchUntranslated && !this.languages.length) || 'must use untranslated keywords when no languages are specified',
+          () => (this.searchUntranslated || this.keywordGroups.some(g => g.translate)) || 'must use untranslated keywords when no keywords are to be translated',
         ],
         3: [() => !!this.name || 'crawl name is required'],
       },
