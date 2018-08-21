@@ -10,51 +10,51 @@
         "parse.keywords": [
           "/HTML/HEAD/META[@name='keywords']/@content"
         ],
-        "extracted.data_portal": [
+        "n52.extracted.data_portal": [
           "/HTML/HEAD/META[@name='generator']/@content[matches(., 'ckan')]",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(lower-case(.), 'ckan')]",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(lower-case(.), 'dkan')]",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(lower-case(.), 'geoportal')]",
           "//SCRIPT[contains(text(), 'entryscape-catalog-portal')]"
         ],
-        "extracted.data_api": [
+        "n52.extracted.data_api": [
           "//resolve-uri(A[matches(lower-case(@href), '(getcapabilities|wfs|wms|wmts)')]/@href)",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(lower-case(.), '(getcapabilities|wfs|wms|wmts)')]",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[contains(., 'API')]",
           "//resolve-uri(A[text()[contains(lower-case(.), 'xml')] or contains(lower-case(@href), 'xml') and not(matches(lower-case(@href), '(sitemap|feed|atom|rss)'))]/@href)"
         ],
-        "extracted.data_link": [
+        "n52.extracted.data_link": [
           "//SCRIPT[@type='application/ld+json']/text()[matches(., '\"@type\":\\s?\"(\\S+[:/])?(Dataset|DataCatalog)\"')]",
           "//resolve-uri(A[text()[matches(lower-case(.), '(dataset|csv|json|\\.zip)')] or matches(lower-case(@href), '(dataset|csv|json|\\.zip)')]/@href)"
         ],
-        "extracted.data_pdf": [
+        "n52.extracted.data_pdf": [
           "//resolve-uri(A[text()[contains(lower-case(.), 'pdf')] or contains(lower-case(@href), 'pdf')]/@href)"
         ],
-        "extracted.license": [
+        "n52.extracted.license": [
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'license')]]/../normalize-space(.)",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))][text()[contains(lower-case(.), 'lizenz')]]/../normalize-space(.)"
         ],
-        "extracted.contact": [
+        "n52.extracted.contact": [
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(., '[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}')]/normalize-space(.)",
           "//*[not(matches(name(), '(SCRIPT|STYLE)'))]/text()[matches(., 'phone')]/normalize-space(.)"
         ]
       }
     },
     {
-      "class": "org.n52.webcrawl.SimpleTopicScoreParseFilter",
-      "name": "SimpleTopicScoreParseFilter",
+      "class": "org.n52.webcrawl.LuceneScoreFilter",
+      "name": "LuceneScoreFilter",
       "params": {
-        "keywords.dataset": [
+        "n52.keywords.dataset": [
           "datasets~",
           "data-set"
         ],
-        "keywords.dataportal": [
+        "n52.keywords.dataportal": [
           "ckan"
         ],
-        "keywords.realtime": [
+        "n52.keywords.realtime": [
           "realtime~"
         ],
-        "keywords.historic": [
+        "n52.keywords.historic": [
           "historic~"
         ]
       }

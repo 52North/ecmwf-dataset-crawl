@@ -15,7 +15,7 @@ public class CrawlStatusUpdaterBoltTest {
         CrawlStatusUpdaterBolt bolt = new CrawlStatusUpdaterBolt(statusIndex);
 
         Metadata md = new Metadata();
-        md.setValue("crawl", "tEstCrawl");
+        md.setValue("n52.crawl.id", "tEstCrawl");
 
         assertEquals(bolt.getIndexName(md), "crawlstatus-testcrawl");
         assertEquals(bolt.getIndexName(md), "crawlstatus-testcrawl");
@@ -27,7 +27,7 @@ public class CrawlStatusUpdaterBoltTest {
         CrawlStatusUpdaterBolt bolt = new CrawlStatusUpdaterBolt(statusIndex);
         Metadata md = new Metadata();
 
-        md.setValue("crawl", "tEstCrawl");
+        md.setValue("n52.crawl.id", "tEstCrawl");
         assertEquals(bolt.getIndexName(md), "crawlstatus");
     }
 

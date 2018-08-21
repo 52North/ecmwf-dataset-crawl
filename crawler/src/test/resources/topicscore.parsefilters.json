@@ -1,14 +1,14 @@
 {
   "com.digitalpebble.stormcrawler.parse.ParseFilters": [
     {
-      "class": "org.n52.webcrawl.SimpleTopicScoreParseFilter",
-      "name": "SimpleTopicScoreParseFilter",
+      "class": "org.n52.webcrawl.LuceneScoreFilter",
+      "name": "LuceneScoreFilter",
       "params": {
-        "download": [
+        "topicscores.download": [
           "download~",
           "herunter?lad~"
         ],
-        "dataset": [
+        "topicscores.dataset": [
           "dataset~",
           "datens?tz~"
         ]

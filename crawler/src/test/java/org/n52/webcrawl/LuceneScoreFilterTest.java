@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleTopicScoreParseFilterTest extends ParsingTester {
+public class LuceneScoreFilterTest extends ParsingTester {
 
     @Before
     public void setupParserBolt() {
@@ -43,7 +43,7 @@ public class SimpleTopicScoreParseFilterTest extends ParsingTester {
 
     @Test
     public void testMatch() throws ParseException {
-        SimpleTopicScoreParseFilter filter = new SimpleTopicScoreParseFilter();
+        LuceneScoreFilter filter = new LuceneScoreFilter();
         filter.createIndex("This text is all about testing.");
         Assert.assertTrue("match returns > 0", filter.search("te?t") > 0);
         Assert.assertTrue("no match returns 0", filter.search("no match") == 0);
@@ -51,7 +51,7 @@ public class SimpleTopicScoreParseFilterTest extends ParsingTester {
 
     @Test(expected = ParseException.class)
     public void testQueryException() throws ParseException {
-        SimpleTopicScoreParseFilter filter = new SimpleTopicScoreParseFilter();
+        LuceneScoreFilter filter = new LuceneScoreFilter();
         filter.createIndex("asdf");
         filter.search("wat90)(&*r23j4kewelhfla38w??#@?!$3");
     }
@@ -98,7 +98,7 @@ public class SimpleTopicScoreParseFilterTest extends ParsingTester {
     }
 
     float printQuery(String text, String query) throws ParseException {
-        SimpleTopicScoreParseFilter filter = new SimpleTopicScoreParseFilter();
+        LuceneScoreFilter filter = new LuceneScoreFilter();
         filter.createIndex(text);
         float score = filter.search(query);
         System.out.println("\ntext:\t" + text + "\nquery:\t" + query + "\nscore:\t" + score);

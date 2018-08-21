@@ -50,7 +50,7 @@ class DatasetClassifierBolt(storm.BasicBolt):
         url, metadata, text = tup.values
         metadata = Metadata(metadata)
         try:
-            lang = metadata['language'][0]
+            lang = metadata['n52.language'][0]
         except KeyError:
             lang = 'unknown'
 
@@ -65,8 +65,8 @@ class DatasetClassifierBolt(storm.BasicBolt):
         logging.debug(metadata)
 
         confidence, clazz = self.classify([text])[0]
-        metadata["classify.class"] = clazz
-        metadata["classify.confidence"] = confidence
+        metadata["n52.classify.class"] = clazz
+        metadata["n52.classify.confidence"] = confidence
 
         logging.debug([text[100:200], confidence, clazz])
         storm.emit([url, metadata, text], anchors=[tup])

@@ -22,9 +22,9 @@ import java.util.*;
  * Topic definitions are retrieved from a JSON file
  * TODO: in SC 1.10 we can use JSONResourceWrapper to get them from an Elasticsearch index!
  */
-public class SimpleTopicScoreParseFilter extends ParseFilter {
+public class LuceneScoreFilter extends ParseFilter {
     private static final org.slf4j.Logger LOG = LoggerFactory
-            .getLogger(SimpleTopicScoreParseFilter.class);
+            .getLogger(LuceneScoreFilter.class);
 
     private MemoryIndex index;
 

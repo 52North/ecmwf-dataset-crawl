@@ -40,7 +40,7 @@ public class LanguageDetectionFilter extends ParseFilter {
             if (text == null) return;
             LanguageIdentifier result = new LanguageIdentifier(text);
 //            if (result.isReasonablyCertain()) {
-                metadata.addValue("language", result.getLanguage());
+                metadata.addValue("n52.language", result.getLanguage());
 //            }
 
             // new tika method, considering the whole document? "fails with no language detectors available"

@@ -36,6 +36,7 @@ config:
 
   # lists the metadata to persist to storage
   # these are not transfered to the outlinks
+  # only values with unchanged names are listed here, remaining in indexer.md.mapping
   metadata.persist:
    - crawl
    - "parse.title"
@@ -44,6 +45,7 @@ config:
    - error.source
    - isSitemap
    - isFeed
+   - host
 
   http.agent.name: "ECMWF Dataset Crawler"
   http.agent.version: "0.1-alpha"
@@ -90,29 +92,30 @@ config:
   indexer.url.fieldname: "url"
   indexer.text.fieldname: "content"
   indexer.canonical.name: "canonical"
-  indexer.md.mapping:
-  - crawl=crawl # from init
 
+  # map internal metadata names to indexed attribute names
+  # syntax: internal=indexed
+  indexer.md.mapping:
   # storm crawler default filters
   - parse.title=title
   - parse.description=description
-  - host=host
 
   - language=language # from LanguageDetectionFilter
 
-  - classify.class=classification.auto
-  - classify.confidence=classification.confidence
+  - n52.language=language
+  - n52.classify.class=classification.auto
+  - n52.classify.confidence=classification.confidence
 
   # directly from parsefilters.json (XPath3Filter)
-  - extracted.data_portal=extracted.data_portal
-  - extracted.data_api=extracted.data_api
-  - extracted.data_link=extracted.data_link
-  - extracted.data_pdf=extracted.data_pdf
-  - extracted.license=extracted.license
-  - extracted.contact=extracted.contact
+  - n52.extracted.data_portal=extracted.data_portal
+  - n52.extracted.data_api=extracted.data_api
+  - n52.extracted.data_link=extracted.data_link
+  - n52.extracted.data_pdf=extracted.data_pdf
+  - n52.extracted.license=extracted.license
+  - n52.extracted.contact=extracted.contact
 
-  - keywords=keywords # merged keyword list from ScoringBolt
-  - score=score # from ScoringBolt
+  - n52.keywords=keywords # merged keyword list from ScoringBolt
+  - n52.score=score # from ScoringBolt
 
   status.updater.cache.spec: "maximumSize=500000,expireAfterAccess=1h"
 
