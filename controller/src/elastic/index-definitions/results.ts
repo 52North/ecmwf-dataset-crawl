@@ -48,6 +48,19 @@ export default {
               },
             },
           },
+          crawl: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'keyword',
+                index: true,
+              },
+              languages: {
+                type: 'keyword',
+                index: true,
+              },
+            },
+          },
           language: {
             type: 'keyword',
             index: true,
@@ -58,10 +71,6 @@ export default {
           },
           content: {
             type: 'text',
-            index: true,
-          },
-          crawl: {
-            type: 'keyword',
             index: true,
           },
           host: {

@@ -57,7 +57,7 @@ export async function classifyUrls (urls: string[], label: string): Promise<any>
 function buildQueryBody (crawls?: string[], query?: string, sort?: (string | object)[]) {
   const body = { query: {}, sort } as any
   const crawlFilter = crawls && crawls.length
-    ? { terms: { crawl: crawls } }
+    ? { terms: { 'crawl.id': crawls } }
     : null
 
   if (query) {

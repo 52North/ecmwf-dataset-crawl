@@ -5,7 +5,10 @@ export default class Result {
   url: string
   host: string
   title: string
-  crawl: string
+  crawl: {
+    id: string,
+    languages?: string[],
+  }
   content: string // page text
   language?: string
 

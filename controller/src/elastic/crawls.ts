@@ -70,9 +70,10 @@ export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
       // TODO: see how we can provide domain white / blacklist to crawl
       // seems to be impossible as long as https://github.com/DigitalPebble/storm-crawler/issues/399 is open
       metadata: {
-        'crawl': crawl.id,                  // used to identify the crawl this was fetched by
+        'n52%2Ecrawl%2Eid': crawl.id,               // used to identify the crawl this was fetched by
+        'n52%2Ecrawl%2Elanguages': crawl.languages, // passed all the way through the crawler, to allow checking if results have one of the languages queried originally (as replacement for a join ;))
         'hostname': urlParse(url).hostname, // required by stormcrawler's CollapsingSpout for polite fetching
-        'max.depth': `${crawl.crawlOptions.recursion}`, // https://github.com/DigitalPebble/storm-crawler/issues/399#issuecomment-270874934
+        'max%2Edepth': `${crawl.crawlOptions.recursion}`, // https://github.com/DigitalPebble/storm-crawler/issues/399#issuecomment-270874934
       },
     }
   ]))

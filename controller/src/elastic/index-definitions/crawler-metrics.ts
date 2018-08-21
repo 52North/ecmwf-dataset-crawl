@@ -1,7 +1,7 @@
 export default {
   index: 'crawler-metrics',
   body: {
-    template: 'metrics*',
+    index_patterns: 'metrics*',
     settings: {
       index: {
         number_of_shards: 1,

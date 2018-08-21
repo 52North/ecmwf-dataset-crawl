@@ -29,7 +29,8 @@ config:
   # used by Fetcher for redirections, sitemapparser, etc...
   # these are also persisted for the parent document (see below)
   metadata.transfer:
-   - crawl
+   - n52.crawl.id
+   - n52.crawl.languages
 
   metadata.track.path: false
   metadata.track.depth: true
@@ -38,7 +39,6 @@ config:
   # these are not transfered to the outlinks
   # only values with unchanged names are listed here, remaining in indexer.md.mapping
   metadata.persist:
-   - crawl
    - "parse.title"
    - _redirTo
    - error.cause
@@ -90,7 +90,7 @@ config:
   # configuration for the classes extending AbstractIndexerBolt
   # indexer.md.filter: "someKey=aValue"
   indexer.url.fieldname: "url"
-  indexer.text.fieldname: "content"
+  indexer.text.fieldname: "content" # set to null to skip indexing page content
   indexer.canonical.name: "canonical"
 
   # map internal metadata names to indexed attribute names
@@ -100,7 +100,8 @@ config:
   - parse.title=title
   - parse.description=description
 
-  - language=language # from LanguageDetectionFilter
+  - n52.crawl.id=crawl.id
+  - n52.crawl.languages=crawl.languages
 
   - n52.language=language
   - n52.classify.class=classification.auto
