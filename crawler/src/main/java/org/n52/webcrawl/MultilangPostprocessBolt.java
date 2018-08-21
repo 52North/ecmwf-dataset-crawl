@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * fix types broken from multilang JSON-serialization for further processing with stormcrawler
+ */
 public class MultilangPostprocessBolt extends BaseBasicBolt {
     protected String[] fields;
 
@@ -22,7 +25,6 @@ public class MultilangPostprocessBolt extends BaseBasicBolt {
         for (String fieldName : this.fields) {
             Object value = input.getValueByField(fieldName);
 
-            // convert Map<String, List<String>> back to Metadata for further processing with stormcrawler
             // JSONObject -> Map<String, List<String> -> Metadata
             if (fieldName.equals("metadata")) {
                 Map<String, List<String>> m1 = (Map<String, List<String>>) value;

@@ -30,6 +30,7 @@ config:
   # these are also persisted for the parent document (see below)
   metadata.transfer:
    - crawl
+   - parentWasRelated # set, if automatic classification returned less than -0.8
 
   metadata.track.path: false
   metadata.track.depth: true
@@ -38,7 +39,7 @@ config:
   # these are not transfered to the outlinks
   metadata.persist:
    - crawl
-   - "parse.title"
+   - parse.title
    - _redirTo
    - error.cause
    - error.source

@@ -58,6 +58,14 @@ bolts:
       - ["url", "metadata", "text"]
     parallelism: 1
 
+  - id: "unrelated_filter"
+    className: "org.n52.webcrawl.ClassificationThresholdBolt"
+    constructorArgs:
+      - "parentWasRelated"
+      - "classify.confidence"
+      - -0.7
+    parallelism: 1
+
   - id: "scoring"
     className: "org.n52.webcrawl.ScoringBolt"
     parallelism: 1
@@ -105,6 +113,11 @@ streams:
       type: LOCAL_OR_SHUFFLE
 
   - from: "classifier_post"
+    to: "unrelated_filter"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "unrelated_filter"
     to: "scoring"
     grouping:
       type: LOCAL_OR_SHUFFLE
