@@ -65,29 +65,34 @@ import java.util.Map;
 import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
 
 /**
- * Parser for HTML documents only which uses ICU4J to detect the charset
- * encoding. Kindly donated to storm-crawler by shopstyle.com.
+ * This bolt parses fetched HTML content via JSoup, and passes on the DocumentFragment
+ * as well as Outlinks and text.
+ *
+ * It is extracted from JSoupParserBolt from com.digitalpebble.stormcrawler v1.9.
+ * Splitting this component into two bolts enables to plug in additional bolts that
+ * can't be implemented as ParseFilters between the parsing and ParseFilter stages
+ * (such as components called via Storm's MultiLang protocol).
+ *
+ * Some minor changes in behaviour:
+ * - extracted text is added to metadata
+ * - non-html content types are always errors
  */
 @SuppressWarnings("serial")
-public class N52JSoupParserBolt extends StatusEmitterBolt {
+public class ParserBolt extends StatusEmitterBolt {
 
     /** Metadata key name for tracking the anchors */
     public static final String ANCHORS_KEY_NAME = "anchors";
 
     private static final org.slf4j.Logger LOG = LoggerFactory
-            .getLogger(N52JSoupParserBolt.class);
+            .getLogger(ParserBolt.class);
 
     private MultiCountMetric eventCounter;
-
-    private ParseFilter parseFilters = null;
 
     private Detector detector = TikaConfig.getDefaultConfig().getDetector();
 
     private boolean detectMimeType = true;
 
     private boolean trackAnchors = true;
-
-    private boolean emitOutlinks = true;
 
     private boolean robots_noFollow_strict = true;
 
@@ -113,10 +118,6 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
 
         eventCounter = context.registerMetric(this.getClass().getSimpleName(),
                 new MultiCountMetric(), 10);
-
-        parseFilters = ParseFilters.fromConf(conf);
-
-        emitOutlinks = ConfUtils.getBoolean(conf, "parser.emitOutlinks", true);
 
         trackAnchors = ConfUtils.getBoolean(conf, "track.anchors", true);
 
@@ -172,17 +173,18 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
         }
 
         if (!CT_OK) {
-            if (this.treat_non_html_as_error) {
+            // always raise an error when non html (as such content is not used by us anyway, and it complicates all further bolts)
+//            if (this.treat_non_html_as_error) {
                 String errorMessage = "Exception content-type " + mimeType
                         + " for " + url;
                 RuntimeException e = new RuntimeException(errorMessage);
                 handleException(url, e, metadata, tuple,
                         "content-type checking", errorMessage);
-            } else {
-                LOG.info("Incorrect mimetype - passing on : {}", url);
-                collector.emit(tuple, new Values(url, content, metadata, ""));
-                collector.ack(tuple);
-            }
+//            } else {
+//                LOG.info("Incorrect mimetype - passing on : {}", url);
+////                collector.emit(tuple, new Values(url, content, metadata, ""));
+//                collector.ack(tuple);
+//            }
             return;
         }
 
@@ -302,10 +304,11 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
                 }
 
                 // Mark URL as redirected
-                collector
-                        .emit(Constants.StatusStreamName,
-                                tuple, new Values(url, metadata,
-                                        Status.REDIRECTION));
+                collector.emit(
+                    Constants.StatusStreamName,
+                    tuple,
+                    new Values(url, metadata, Status.REDIRECTION)
+                );
                 collector.ack(tuple);
                 eventCounter.scope("tuple_success").incr();
                 return;
@@ -324,43 +327,10 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
         parseData.setText(text);
         parseData.setContent(content);
 
-        // apply the parse filters if any
-        try {
-            DocumentFragment fragment = null;
-            // lazy building of fragment
-            if (parseFilters.needsDOM()) {
-                fragment = JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
-            }
-            parseFilters.filter(url, content, fragment, parse);
-        } catch (RuntimeException e) {
-            String errorMessage = "Exception while running parse filters on "
-                    + url + ": " + e;
-            handleException(url, e, metadata, tuple, "content filtering",
-                    errorMessage);
-            return;
-        }
+        DocumentFragment fragment = JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
 
-        if (emitOutlinks) {
-            for (Outlink outlink : parse.getOutlinks()) {
-                collector.emit(
-                        StatusStreamName,
-                        tuple,
-                        new Values(outlink.getTargetURL(), outlink
-                                .getMetadata(), Status.DISCOVERED));
-            }
-        }
-
-        // emit each document/subdocument in the ParseResult object
-        // there should be at least one ParseData item for the "parent" URL
-
-        for (Map.Entry<String, ParseData> doc : parse) {
-            ParseData parseDoc = doc.getValue();
-            collector.emit(
-                    tuple,
-                    new Values(doc.getKey(), parseDoc.getContent(), parseDoc
-                            .getMetadata(), parseDoc.getText()));
-        }
-
+        // emit the whole ParseResult including all outlinks for the parent URL
+        collector.emit(tuple, new Values(url, parse, fragment));
         collector.ack(tuple);
         eventCounter.scope("tuple_success").incr();
     }
@@ -385,9 +355,11 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         super.declareOutputFields(declarer);
-        // output of this module is the list of fields to index
-        // with at least the URL, text content
-        declarer.declare(new Fields("url", "content", "metadata", "text"));
+
+        // this bolt outputs the fetched URL, and for a map of URLs (outlinks),
+        // each with their own metadata and extracted text content.
+        // to access the original fetched URL, use parsedata.get(URL).getMetadata()
+        declarer.declare(new Fields("url", "parsedata", "docfragment"));
     }
 
     public String guessMimeType(String URL, String httpCT, byte[] content) {

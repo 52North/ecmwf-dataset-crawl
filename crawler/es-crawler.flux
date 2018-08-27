@@ -29,7 +29,10 @@ bolts:
     className: "com.digitalpebble.stormcrawler.bolt.SiteMapParserBolt"
     parallelism: 1
   - id: "parse"
-    className: "org.n52.webcrawl.N52JSoupParserBolt"
+    className: "org.n52.webcrawl.ParserBolt"
+    parallelism: 5
+  - id: "parsefilter"
+    className: "org.n52.webcrawl.ParseFilterBolt"
     parallelism: 5
   - id: "index"
     className: "com.digitalpebble.stormcrawler.elasticsearch.bolt.IndexerBolt"
@@ -98,6 +101,11 @@ streams:
       type: LOCAL_OR_SHUFFLE
 
   - from: "parse"
+    to: "parsefilter"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "parsefilter"
     to: "classifier_pre"
     grouping:
       type: LOCAL_OR_SHUFFLE
@@ -142,6 +150,13 @@ streams:
       streamId: "status"
 
   - from: "parse"
+    to: "status"
+    grouping:
+      type: FIELDS
+      args: ["url"]
+      streamId: "status"
+
+  - from: "parsefilter"
     to: "status"
     grouping:
       type: FIELDS
