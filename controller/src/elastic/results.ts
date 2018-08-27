@@ -4,7 +4,23 @@ import { client } from './'
 import resultsMapping from './index-definitions/results'
 import Result from '../models/Result'
 
-export async function getResults (crawls?: string[], query?: string, from?: number, size?: number): Promise<{ took: number, total: number, hits: Result[] }> {
+interface ResultQuery {
+  crawls?: string[]
+  query?: string
+  from?: number
+  size?: number
+  onlyCrawlLanguages?: boolean
+}
+
+interface ResultResponse {
+  took?: number
+  total?: number
+  hits?: Result[]
+}
+
+export async function getResults (queryOpts: ResultQuery): Promise<ResultResponse> {
+  const { crawls, query, from, size, onlyCrawlLanguages } = queryOpts
+
   const res = await client.search({
     index: resultsMapping.index,
     from,
@@ -12,8 +28,9 @@ export async function getResults (crawls?: string[], query?: string, from?: numb
     body: buildQueryBody(crawls, query, [
       { 'score': 'desc' },
       '_score',
-    ]),
+    ], onlyCrawlLanguages),
   })
+
   return {
     total: res.hits.total,
     took: res.took,
@@ -54,19 +71,27 @@ export async function classifyUrls (urls: string[], label: string): Promise<any>
   return { updated }
 }
 
-function buildQueryBody (crawls?: string[], query?: string, sort?: (string | object)[]) {
-  const body = { query: {}, sort } as any
-  const crawlFilter = crawls && crawls.length
-    ? { terms: { 'crawl.id': crawls } }
-    : null
+function buildQueryBody (crawls?: string[], query?: string, sort?: (string | object)[], langFilter = false) {
+  const body = {
+    query: { bool: { must: [], filter: [] } },
+    sort,
+  } as any
 
-  if (query) {
-    body.query.bool = {
-      must: { query_string: { query } }
-    }
-    body.query.bool.filter = crawlFilter
-  } else {
-    body.query = crawlFilter || { match_all: {} }
+  if (query)
+    body.query.bool.must.push({ query_string: { query } })
+
+  if (crawls && crawls.length)
+    body.query.bool.filter.push({ terms: { 'crawl.id': crawls } })
+
+  if (langFilter) {
+    body.query.bool.filter.push({
+      script: {
+        script: `
+          def langs = doc['crawl.languages'];
+          if (langs.length == 0) return true;
+          return langs.contains(doc['language'][0]);`
+      }
+    })
   }
 
   return body

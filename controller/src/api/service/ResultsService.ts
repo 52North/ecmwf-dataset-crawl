@@ -41,8 +41,8 @@ export async function getResultCount (crawls?: string[], query?: string) {
  * download Boolean Whether to send an attachment header (optional)
  * returns List
  **/
-export async function getResults (crawls?: string[], query?: string, from?: number, size?: number) {
-  return getResultsFromDb(crawls, query, from, size)
+export async function getResults (crawls?: string[], query?: string, from?: number, size?: number, onlyCrawlLanguages = false) {
+  return getResultsFromDb({ crawls, query, from, size, onlyCrawlLanguages })
 }
 
 export async function classifyResults (urls: string[], label: string) {

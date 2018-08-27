@@ -37,11 +37,12 @@ module.exports.getResultCount = function getResultCount (req, res, next) {
 module.exports.getResults = function getResults (req, res, next) {
   var crawls = req.swagger.params['crawls'].value
   var query = req.swagger.params['query'].value
+  var crawlLangs = req.swagger.params['onlyCrawlLanguages'].value
   var size = req.swagger.params['size'].value
   var from = req.swagger.params['from'].value
   var format = req.swagger.params['format'].value
   var download = req.swagger.params['download'].value
-  Results.getResults(crawls, query, from, size)
+  Results.getResults(crawls, query, from, size, crawlLangs)
     .then(function (response) {
       log.info({ req, res, count: response.total }, 'getResults()')
 

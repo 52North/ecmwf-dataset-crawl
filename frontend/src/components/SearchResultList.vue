@@ -51,6 +51,13 @@
           <!-- query help -->
           <v-flex v-if="helpExpanded">
             <v-container class="query-help">
+              <v-container>
+                <v-checkbox
+                  label="Only Return results in the crawl's original languages"
+                  v-model="onlyCrawlLanguages"
+                ></v-checkbox>
+              </v-container>
+
               <v-subheader>Query Syntax</v-subheader>
               <v-container>
                 By entering keywords you can search for terms within any field.
@@ -75,18 +82,18 @@
                 <v-btn round small @click="query += ' extracted.data_api:*'">extracted.data_api</v-btn>
               </v-container>
               <v-subheader>Example Queries</v-subheader>
-                <v-container>
-              <v-layout column>
+              <v-container>
+                <v-layout column>
                   <v-flex>
                     Only results in german, classified as data
                     <v-btn round small @click="query = 'classification.auto:dataset AND language:de'">classification.auto:dataset AND language:de</v-btn>
                   </v-flex>
                   <v-flex>
-                    Manual Result classification:
+                    Filter for manual result classification:
                     <v-btn round small @click="query = 'classification.auto:* -classification.manual:*'">classification.auto:* -classification.manual:*</v-btn>
                   </v-flex>
                   <v-flex>
-                    Manual Result classification (focussed):
+                    Filter for manual result classification (focussed):
                     <v-btn round small @click="query = 'classification.confidence:[-0.5 TO 0.5] -classification.manual:*'">classification.confidence:[-0.5 TO 0.5] -classification.manual:*</v-btn>
                   </v-flex>
                 </v-layout>
@@ -276,6 +283,7 @@ export default {
       manualLabelPending: false,
       allCrawls: [],
       pagination: {}, // set through data table
+      onlyCrawlLanguages: false,
       totalResults: 0,
       queryTime: 0,
       resultTable: [
@@ -304,6 +312,7 @@ export default {
           query: this.query,
           size: rowsPerPage,
           from: rowsPerPage * (page - 1) || 0,
+          onlyCrawlLanguages: this.onlyCrawlLanguages,
         }
 
         this.updateUrl()
@@ -317,6 +326,7 @@ export default {
       watchClosely: function () {
         this.crawls = this.crawls
         this.pagination = this.pagination
+        this.onlyCrawlLanguages = this.onlyCrawlLanguages
       },
       default: [],
     }

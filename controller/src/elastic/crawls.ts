@@ -60,6 +60,12 @@ export async function deleteCrawl (crawl: Crawl): Promise<Crawl> {
 export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
   await ensureIndex(crawlStatusMapping(crawl))
 
+  // get all languages from crawl, (eg when crawlOptions.searchUntranslated is set)
+  // @ts-ignore because definedness of processedKeywords is checked in Crawl.ts beforehand
+  const crawlLangs = crawl.processedKeywords
+    .map(k => k.language)
+    .filter((v, i, arr) => arr.indexOf(v) === i) // unique filter
+
   const _index = getCrawlStatusId(crawl)
   const docs = urls.map(url => ([
     { index: { _index, _type: 'status' } },
@@ -70,9 +76,9 @@ export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
       // TODO: see how we can provide domain white / blacklist to crawl
       // seems to be impossible as long as https://github.com/DigitalPebble/storm-crawler/issues/399 is open
       metadata: {
-        'n52%2Ecrawl%2Eid': crawl.id,               // used to identify the crawl this was fetched by
-        'n52%2Ecrawl%2Elanguages': crawl.languages, // passed all the way through the crawler, to allow checking if results have one of the languages queried originally (as replacement for a join ;))
-        'hostname': urlParse(url).hostname, // required by stormcrawler's CollapsingSpout for polite fetching
+        'n52%2Ecrawl%2Eid': crawl.id,          // used to identify the crawl this was fetched by
+        'n52%2Ecrawl%2Elanguages': crawlLangs, // passed all the way through the crawler, to allow checking if results have one of the languages queried originally (as replacement for a join ;))
+        'hostname': urlParse(url).hostname,    // required by stormcrawler's CollapsingSpout for polite fetching
         'max%2Edepth': `${crawl.crawlOptions.recursion}`, // https://github.com/DigitalPebble/storm-crawler/issues/399#issuecomment-270874934
       },
     }

@@ -159,6 +159,12 @@ paths:
         description: "Elastic Search query term to filter results"
         required: false
         type: "string"
+      - name: "onlyCrawlLanguages"
+        in: "query"
+        description: "Only return results in the original languages of the associated crawl"
+        required: false
+        type: "boolean"
+        default: false
       - name: "size"
         in: "query"
         description: "The amount of results to return"
