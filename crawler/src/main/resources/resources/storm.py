@@ -41,7 +41,7 @@ def readMsg():
         if line[0:-1] == "end":
             break
         msg = msg + line
-    #logging.debug(msg)
+    logging.debug(msg)
     return json_decode(msg[0:-1])
 
 MODE = None

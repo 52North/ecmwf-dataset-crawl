@@ -34,6 +34,8 @@ import org.apache.storm.tuple.Values;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DocumentFragment;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
@@ -76,15 +78,22 @@ public class ParseFilterBolt extends StatusEmitterBolt {
 
     @Override
     public void execute(Tuple tuple) {
+        // extract all the data from the tuple..
         String url = tuple.getStringByField("url");
-        ParseResult parse = (ParseResult) tuple.getValueByField("parsedata");
+        Metadata metadata = (Metadata) tuple.getValueByField("metadata");
+        String text = tuple.getStringByField("text");
+        byte[] content = tuple.getBinaryByField("content");
         DocumentFragment fragment = (DocumentFragment) tuple.getValueByField("docfragment");
+        List<Outlink> outlinks = (List<Outlink>) tuple.getValueByField("outlinks");
 
         LOG.info("Applying URL filters for {}", url);
 
-        ParseData parent = parse.get(url);
-        byte[] content = parent.getContent();
-        Metadata metadata = parent.getMetadata();
+        // ..and construct a ParseData object from it
+        ParseData parent = new ParseData(text, metadata);
+        parent.setContent(content);
+        Map<String, ParseData> parentMap = new HashMap<>();
+        parentMap.put(url, parent);
+        ParseResult parse = new ParseResult(parentMap, outlinks);
 
         // apply the parse filters if any
         try {

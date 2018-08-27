@@ -66,7 +66,7 @@ import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
 
 /**
  * This bolt parses fetched HTML content via JSoup, and passes on the DocumentFragment
- * as well as Outlinks and text.
+ * as well as Metadata, Outlinks and text.
  *
  * It is extracted from JSoupParserBolt from com.digitalpebble.stormcrawler v1.9.
  * Splitting this component into two bolts enables to plug in additional bolts that
@@ -319,18 +319,10 @@ public class ParserBolt extends StatusEmitterBolt {
 
         List<Outlink> outlinks = toOutlinks(url, metadata, slinks);
 
-        ParseResult parse = new ParseResult(outlinks);
-
-        // parse data of the parent URL
-        ParseData parseData = parse.get(url);
-        parseData.setMetadata(metadata);
-        parseData.setText(text);
-        parseData.setContent(content);
-
         DocumentFragment fragment = JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
 
-        // emit the whole ParseResult including all outlinks for the parent URL
-        collector.emit(tuple, new Values(url, parse, fragment));
+        // emit the whole extracted data ParseResult including all outlinks for the parent URL
+        collector.emit(tuple, new Values(url, metadata, text, content, fragment, outlinks));
         collector.ack(tuple);
         eventCounter.scope("tuple_success").incr();
     }
@@ -356,10 +348,8 @@ public class ParserBolt extends StatusEmitterBolt {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         super.declareOutputFields(declarer);
 
-        // this bolt outputs the fetched URL, and for a map of URLs (outlinks),
-        // each with their own metadata and extracted text content.
-        // to access the original fetched URL, use parsedata.get(URL).getMetadata()
-        declarer.declare(new Fields("url", "parsedata", "docfragment"));
+        // this bolt outputs the fetched URL with metadata and text, html, bytecontent, and a list of URLs (outlinks)
+        declarer.declare(new Fields("url", "metadata", "text", "content", "docfragment", "outlinks"));
     }
 
     public String guessMimeType(String URL, String httpCT, byte[] content) {

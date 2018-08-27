@@ -1,5 +1,6 @@
 package org.n52.webcrawl;
 
+import java.io.StringWriter;
 import java.util.*;
 
 import com.digitalpebble.stormcrawler.Metadata;
@@ -8,6 +9,15 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Node;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * Prepares tuples to be emitted to eg python bolts through the multilang protocol
@@ -38,6 +48,14 @@ public class MultilangPreprocessBolt extends BaseBasicBolt {
                 value = m2;
             }
 
+            else if (value instanceof byte[]) {
+                value = value.toString();
+            }
+
+            else if (value instanceof DocumentFragment) {
+                value = nodeToString((DocumentFragment) value);
+            }
+
             output.add(value);
         }
         collector.emit(output);
@@ -47,5 +65,19 @@ public class MultilangPreprocessBolt extends BaseBasicBolt {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields(fields));
     }
+
+    private static String nodeToString(Node node) {
+        StringWriter sw = new StringWriter();
+        try {
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+            t.transform(new DOMSource(node), new StreamResult(sw));
+        } catch (TransformerException te) {
+            System.out.println("could not stringify XMLNode for JSON serialization");
+        }
+        return sw.toString();
+    }
+
 }
 
