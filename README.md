@@ -21,15 +21,8 @@ docker-compose stop
 docker-compose down --volumes
 ```
 
-To configure Kibana visualizations, visit<http://localhost/kibana/app/kibana#/management/indices>
-and create three index patterns:
-
-- `crawlstatus-*`: no time filter
-- `results`: no time filter
-- `metrics`: time filter on `timestamp`
-
-Then visit <http://localhost/kibana/app/kibana#/management/objects>
-and import saved objects located in `kibana/saved_objects.json`.
+To configure Kibana visualizations, visit <http://localhost/kibana/app/kibana#/management/objects>
+and click "Import". Select `saved_objects.json` from this project's `kibana` directory.
 
 ---
 
