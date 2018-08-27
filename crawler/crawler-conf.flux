@@ -39,13 +39,11 @@ config:
   # these are not transfered to the outlinks
   # only values with unchanged names are listed here, remaining in indexer.md.mapping
   metadata.persist:
-   - "parse.title"
    - _redirTo
    - error.cause
    - error.source
    - isSitemap
    - isFeed
-   - host
 
   http.agent.name: "ECMWF Dataset Crawler"
   http.agent.version: "0.1-alpha"
@@ -99,6 +97,7 @@ config:
   # storm crawler default filters
   - parse.title=title
   - parse.description=description
+  - host=host
 
   - n52.crawl.id=crawl.id
   - n52.crawl.languages=crawl.languages
