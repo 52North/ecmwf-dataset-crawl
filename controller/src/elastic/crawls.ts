@@ -80,6 +80,7 @@ export async function addToStatusIndex (crawl: Crawl, urls: string[]) {
         'n52%2Ecrawl%2Elanguages': crawlLangs, // passed all the way through the crawler, to allow checking if results have one of the languages queried originally (as replacement for a join ;))
         'hostname': urlParse(url).hostname,    // required by stormcrawler's CollapsingSpout for polite fetching
         'max%2Edepth': `${crawl.crawlOptions.recursion}`, // https://github.com/DigitalPebble/storm-crawler/issues/399#issuecomment-270874934
+        'depth': '0',
       },
     }
   ]))

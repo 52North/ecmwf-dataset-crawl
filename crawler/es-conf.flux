@@ -47,9 +47,9 @@ config:
   # field to group the URLs into buckets
   es.status.bucket.field: "metadata.hostname"
   # field to sort the URLs within a bucket
-  es.status.bucket.sort.field: "nextFetchDate"
+  es.status.bucket.sort.field: "metadata.depth"
   # field to sort the buckets
-  es.status.global.sort.field: "nextFetchDate"
+  es.status.global.sort.field: "metadata.depth"
 
   # Delay since previous query date (in secs) after which the nextFetchDate value will be reset
   #es.status.reset.fetchdate.after: 180
