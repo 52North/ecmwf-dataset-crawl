@@ -5,5 +5,21 @@
 # if you want to crawl images or videos or archives then you should comment out this line
 -(?i)\.(gif|jpg|png|ico|css|sit|eps|wmf|zip|gz|rpm|tgz|mov|exe|jpeg|bmp|js|mpg|mp3|mp4|ogv)(\?|&|$)
 
+# skip common or spammy unrelated hosts. curated after discovery through crawler
+-youtube\.com
+-twitter\.com
+-google\.com
+-sourceforge\.net
+-apache\.org
+-elsevier\.com
+-pingpdf\.com
+-eldoradoweather\.com
+-independent\.co\.uk
+-informatica\.com
+-propertylawuk\.net
+-notebookcheck\.net
+-amazon\.com
+-chicagotribune\.com
+
 # accept anything else
 +.
