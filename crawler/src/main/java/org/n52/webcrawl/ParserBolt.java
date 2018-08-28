@@ -57,10 +57,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
 
@@ -76,6 +73,7 @@ import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
  * Some minor changes in behaviour:
  * - extracted text is added to metadata
  * - non-html content types are always errors
+ * - does not track anchors of outlinks. outlink datastructure is created in ParseFilterBolt later on
  */
 @SuppressWarnings("serial")
 public class ParserBolt extends StatusEmitterBolt {
@@ -92,15 +90,7 @@ public class ParserBolt extends StatusEmitterBolt {
 
     private boolean detectMimeType = true;
 
-    private boolean trackAnchors = true;
-
     private boolean robots_noFollow_strict = true;
-
-    /**
-     * If a Tuple is not HTML whether to send it to the status stream as an
-     * error or pass it on the default stream
-     **/
-    private boolean treat_non_html_as_error = true;
 
     /**
      * Length of content to use for detecting the charset. Set to -1 to use the
@@ -119,13 +109,8 @@ public class ParserBolt extends StatusEmitterBolt {
         eventCounter = context.registerMetric(this.getClass().getSimpleName(),
                 new MultiCountMetric(), 10);
 
-        trackAnchors = ConfUtils.getBoolean(conf, "track.anchors", true);
-
         robots_noFollow_strict = ConfUtils.getBoolean(conf,
                 RobotsTags.ROBOTS_NO_FOLLOW_STRICT, true);
-
-        treat_non_html_as_error = ConfUtils.getBoolean(conf,
-                "jsoup.treat.non.html.as.error", true);
 
         detectMimeType = ConfUtils.getBoolean(conf, "detect.mimetype", true);
 
@@ -174,17 +159,11 @@ public class ParserBolt extends StatusEmitterBolt {
 
         if (!CT_OK) {
             // always raise an error when non html (as such content is not used by us anyway, and it complicates all further bolts)
-//            if (this.treat_non_html_as_error) {
-                String errorMessage = "Exception content-type " + mimeType
-                        + " for " + url;
-                RuntimeException e = new RuntimeException(errorMessage);
-                handleException(url, e, metadata, tuple,
-                        "content-type checking", errorMessage);
-//            } else {
-//                LOG.info("Incorrect mimetype - passing on : {}", url);
-////                collector.emit(tuple, new Values(url, content, metadata, ""));
-//                collector.ack(tuple);
-//            }
+            String errorMessage = "Exception content-type " + mimeType
+                    + " for " + url;
+            RuntimeException e = new RuntimeException(errorMessage);
+            handleException(url, e, metadata, tuple,
+                    "content-type checking", errorMessage);
             return;
         }
 
@@ -196,7 +175,7 @@ public class ParserBolt extends StatusEmitterBolt {
         // get the robots tags from the fetch metadata
         RobotsTags robotsTags = new RobotsTags(metadata);
 
-        Map<String, List<String>> slinks;
+        Set<String> outlinks;
         String text = "";
         final org.jsoup.nodes.Document jsoupDoc;
 
@@ -220,10 +199,10 @@ public class ParserBolt extends StatusEmitterBolt {
             // do not extract the links if no follow has been set
             // and we are in strict mode
             if (robotsTags.isNoFollow() && robots_noFollow_strict) {
-                slinks = new HashMap<>(0);
+                outlinks = new HashSet<>(0);
             } else {
                 Elements links = jsoupDoc.select("a[href]");
-                slinks = new HashMap<>(links.size());
+                outlinks = new HashSet<>(links.size());
                 for (Element link : links) {
                     // abs:href tells jsoup to return fully qualified domains
                     // for
@@ -239,24 +218,8 @@ public class ParserBolt extends StatusEmitterBolt {
                         continue;
                     }
 
-                    // link not specifically marked as no follow
-                    // but whole page is
-                    if (!noFollow && robotsTags.isNoFollow()) {
-                        noFollow = true;
-                    }
-
-                    String anchor = link.text();
                     if (StringUtils.isNotBlank(targetURL)) {
-                        // any existing anchors for the same target?
-                        List<String> anchors = slinks.get(targetURL);
-                        if (anchors == null) {
-                            anchors = new LinkedList<>();
-                            slinks.put(targetURL, anchors);
-                        }
-                        // track the anchors only if no follow is false
-                        if (!noFollow && StringUtils.isNotBlank(anchor)) {
-                            anchors.add(anchor);
-                        }
+                        outlinks.add(targetURL);
                     }
                 }
             }
@@ -317,7 +280,6 @@ public class ParserBolt extends StatusEmitterBolt {
             LOG.error("MalformedURLException on {}", url);
         }
 
-        List<Outlink> outlinks = toOutlinks(url, metadata, slinks);
 
         DocumentFragment fragment = JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
 
@@ -378,47 +340,4 @@ public class ParserBolt extends StatusEmitterBolt {
         }
     }
 
-    private List<Outlink> toOutlinks(String url, Metadata metadata,
-            Map<String, List<String>> slinks) {
-        Map<String, Outlink> outlinks = new HashMap<>();
-        URL sourceUrl;
-        try {
-            sourceUrl = new URL(url);
-        } catch (MalformedURLException e) {
-            // we would have known by now as previous components check whether
-            // the URL is valid
-            LOG.error("MalformedURLException on {}", url);
-            eventCounter.scope("error_invalid_source_url").incrBy(1);
-            return new LinkedList<Outlink>();
-        }
-
-        for (Map.Entry<String, List<String>> linkEntry : slinks.entrySet()) {
-            String targetURL = linkEntry.getKey();
-
-            Outlink ol = filterOutlink(sourceUrl, targetURL, metadata);
-            if (ol == null) {
-                eventCounter.scope("outlink_filtered").incr();
-                continue;
-            }
-
-            // the same link could already be there post-normalisation
-            Outlink old = outlinks.get(ol.getTargetURL());
-            if (old != null) {
-                ol = old;
-            }
-
-            List<String> anchors = linkEntry.getValue();
-            if (trackAnchors && anchors.size() > 0) {
-                ol.getMetadata().addValues(ANCHORS_KEY_NAME, anchors);
-                // sets the first anchor
-                ol.setAnchor(anchors.get(0));
-            }
-            if (old == null) {
-                outlinks.put(ol.getTargetURL(), ol);
-                eventCounter.scope("outlink_kept").incr();
-            }
-        }
-
-        return new LinkedList<Outlink>(outlinks.values());
-    }
 }

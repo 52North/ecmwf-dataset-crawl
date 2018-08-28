@@ -34,9 +34,9 @@ import org.apache.storm.tuple.Values;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DocumentFragment;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
 
@@ -84,7 +84,7 @@ public class ParseFilterBolt extends StatusEmitterBolt {
         String text = tuple.getStringByField("text");
         byte[] content = tuple.getBinaryByField("content");
         DocumentFragment fragment = (DocumentFragment) tuple.getValueByField("docfragment");
-        List<Outlink> outlinks = (List<Outlink>) tuple.getValueByField("outlinks");
+        List<String> outlinks = (List<String>) tuple.getValueByField("outlinks");
 
         LOG.info("Applying URL filters for {}", url);
 
@@ -93,7 +93,7 @@ public class ParseFilterBolt extends StatusEmitterBolt {
         parent.setContent(content);
         Map<String, ParseData> parentMap = new HashMap<>();
         parentMap.put(url, parent);
-        ParseResult parse = new ParseResult(parentMap, outlinks);
+        ParseResult parse = new ParseResult(parentMap, toOutlinks(url, metadata, outlinks));
 
         // apply the parse filters if any
         try {
@@ -146,6 +146,42 @@ public class ParseFilterBolt extends StatusEmitterBolt {
         eventCounter.scope(s + e.getClass().getSimpleName()).incrBy(1);
         // Increment general metric
         eventCounter.scope("parsefilter_exception").incrBy(1);
+    }
+
+    private List<Outlink> toOutlinks(String url, Metadata metadata,
+                                     Iterable<String> slinks) {
+        Map<String, Outlink> outlinks = new HashMap<>();
+        URL sourceUrl;
+        try {
+            sourceUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            // we would have known by now as previous components check whether
+            // the URL is valid
+            LOG.error("MalformedURLException on {}", url);
+            eventCounter.scope("error_invalid_source_url").incrBy(1);
+            return new LinkedList<Outlink>();
+        }
+
+        for (String targetURL : slinks) {
+            Outlink ol = filterOutlink(sourceUrl, targetURL, metadata);
+            if (ol == null) {
+                eventCounter.scope("outlink_filtered").incr();
+                continue;
+            }
+
+            // the same link could already be there post-normalisation
+            Outlink old = outlinks.get(ol.getTargetURL());
+            if (old != null) {
+                ol = old;
+            }
+
+            if (old == null) {
+                outlinks.put(ol.getTargetURL(), ol);
+                eventCounter.scope("outlink_kept").incr();
+            }
+        }
+
+        return new LinkedList<>(outlinks.values());
     }
 
     @Override

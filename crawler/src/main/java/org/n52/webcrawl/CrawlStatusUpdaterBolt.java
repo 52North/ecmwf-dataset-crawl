@@ -354,7 +354,7 @@ public class CrawlStatusUpdaterBolt extends AbstractStatusUpdaterBolt implements
     }
 
     protected String getIndexName(Metadata md) {
-        String crawlId = md.getFirstValue("crawl");
+        String crawlId = md.getFirstValue("n52.crawl.id");
         return indexName.replace("*", crawlId.toLowerCase());
     }
 }

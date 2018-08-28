@@ -61,13 +61,13 @@ bolts:
       - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
     parallelism: 1
 
-  - id: "unrelated_filter"
-    className: "org.n52.webcrawl.ClassificationThresholdBolt"
-    constructorArgs:
-      - "parentWasRelated"
-      - "classify.confidence"
-      - -0.7
-    parallelism: 1
+#  - id: "unrelated_filter"
+#    className: "org.n52.webcrawl.ClassificationThresholdBolt"
+#    constructorArgs:
+#      - "parentWasRelated"
+#      - "classify.confidence"
+#      - -0.7
+#    parallelism: 1
 
   - id: "scoring"
     className: "org.n52.webcrawl.ScoringBolt"
