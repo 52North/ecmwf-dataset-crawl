@@ -126,9 +126,16 @@ export default {
       type: 'accent',
       status: !!this.$route.params.info,
     }
+
+    // refetch crawls every 20s
+    this.crawlInterval = setInterval(this.crawls$refresh, 20000)
+  },
+  beforeDestroy () {
+    clearInterval(this.crawlInterval)
   },
   data () {
     return {
+      crawlInterval: null,
       crawls: [],
       snackbar: {
         text: '',

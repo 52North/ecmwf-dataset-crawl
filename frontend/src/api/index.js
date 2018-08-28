@@ -11,7 +11,7 @@ const store = {
   countries: null,
 }
 
-export async function getCrawls (cache = true) {
+export async function getCrawls (cache = false) {
   if (store.crawls === null || !cache) {
     const res = await axios.get('/crawls')
     store.crawls = res.data
@@ -61,8 +61,13 @@ export async function exportResults (parameters) {
   }, parameters)
 
   if (params.download) {
-    const { download, format, size, query, crawls } = params
-    const paramString = `size=${size}&format=${format}&download=${download}&query=${query}&crawls[]=${crawls}`
+    const { download, format, size, query, crawls, onlyCrawlLanguages } = params
+
+    let paramString = `size=${size}&format=${format}&download=${download}&query=${query}&onlyCrawlLanguages=${onlyCrawlLanguages}`
+    if (crawls && crawls.length) {
+      paramString += `&crawls[]=${crawls}`
+    }
+
     triggerDownload(`${axios.defaults.baseURL}/results?${paramString}`)
   } else {
     const res = await axios.get('/results', { params })

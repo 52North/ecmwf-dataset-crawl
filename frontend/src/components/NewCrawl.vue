@@ -127,7 +127,7 @@
                 item-text="name"
                 item-value="iso3166_a2"
                 v-model="countries"
-                @change="searchUntranslated = !!countries.length"
+                @change="onCountryChange"
               />
               <h4 class="headline">Languages</h4>
               <v-select
@@ -356,6 +356,9 @@ export default {
       if (this.keywordGroups.length > 1) {
         this.keywordGroups.splice(i, 1)
       }
+    },
+    onCountryChange (countries) {
+      this.searchUntranslated = !countries.length
     },
     currentStepValid () {
       return this.stepValidators[this.stepper].every(x => x() === true)

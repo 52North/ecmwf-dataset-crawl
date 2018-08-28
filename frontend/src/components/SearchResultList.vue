@@ -28,43 +28,61 @@
               </v-btn>
               Query Syntax Help
             </v-tooltip>
+
+            <v-tooltip bottom :disabled="optsExpanded">
+              <v-btn slot="activator" :style="!optsExpanded || { 'background-color': 'rgba(1,1,1,0.1)' }" icon @click.stop="optsExpanded = !optsExpanded">
+                <v-icon v-html="optsExpanded ? 'expand_less' : 'expand_more'"/>
+              </v-btn>
+              Advanced Search Options
+            </v-tooltip>
           </v-toolbar>
 
-          <!-- crawl selector -->
-          <v-toolbar card>
-            <v-select
-              chips
-              deletable-chips
-              multiple
-              autocomplete
-              v-model="crawls"
-              :items="allCrawls"
-              item-text="name"
-              item-value="id"
-              @blur="updateUrl"
-              label="Filter by Crawl"
-              placeholder="all"
-            />
-            <export-dialog :crawls="crawls" :query="query"/>
+          <!-- advanced search options -->
+          <v-divider v-if="optsExpanded"></v-divider>
+          <v-toolbar class="extended" card v-if="optsExpanded">
+            <v-layout column>
+              <!-- crawl selector -->
+              <v-select
+                chips
+                deletable-chips
+                multiple
+                autocomplete
+                v-model="crawls"
+                :items="allCrawls"
+                item-text="name"
+                item-value="id"
+                @blur="updateUrl"
+                label="Filter by Crawl"
+                placeholder="all"
+              />
+
+              <v-layout row>
+                <v-switch
+                  label="Only return results in the crawl's original languages"
+                  v-model="onlyCrawlLanguages"
+                />
+
+                <export-dialog
+                  v-if="results.length"
+                  :crawls="crawls"
+                  :query="query"
+                  :onlyCrawlLanguages="onlyCrawlLanguages"
+                />
+              </v-layout>
+            </v-layout>
           </v-toolbar>
 
           <!-- query help -->
           <v-flex v-if="helpExpanded">
+            <v-divider ></v-divider>
             <v-container class="query-help">
-              <v-container>
-                <v-checkbox
-                  label="Only Return results in the crawl's original languages"
-                  v-model="onlyCrawlLanguages"
-                ></v-checkbox>
-              </v-container>
-
               <v-subheader>Query Syntax</v-subheader>
               <v-container>
                 By entering keywords you can search for terms within any field.
                 You can subset the results to specific crawls through the select bar above.
                 <br/>
                 The search bar also supports advanced queries using
-                <a target="_blank" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.x/query-dsl-query-string-query.html#query-string-syntax">Lucene Query Syntax</a>.
+                <a target="_blank" href="http://www.lucenetutorial.com/lucene-query-syntax.html">Lucene Query Syntax</a>.
                 Fields you can query are:
               </v-container>
               <v-container>
@@ -83,20 +101,15 @@
               </v-container>
               <v-subheader>Example Queries</v-subheader>
               <v-container>
-                <v-layout column>
-                  <v-flex>
-                    Only results in german, classified as data
-                    <v-btn round small @click="query = 'classification.auto:dataset AND language:de'">classification.auto:dataset AND language:de</v-btn>
-                  </v-flex>
-                  <v-flex>
-                    Filter for manual result classification:
-                    <v-btn round small @click="query = 'classification.auto:* -classification.manual:*'">classification.auto:* -classification.manual:*</v-btn>
-                  </v-flex>
-                  <v-flex>
-                    Filter for manual result classification (focussed):
-                    <v-btn round small @click="query = 'classification.confidence:[-0.5 TO 0.5] -classification.manual:*'">classification.confidence:[-0.5 TO 0.5] -classification.manual:*</v-btn>
-                  </v-flex>
-                </v-layout>
+                <v-btn round small @click="query = 'classification.auto:dataset AND language:de'">
+                  Only results classified as data & in German
+                </v-btn>
+                <v-btn round small @click="query = 'classification.auto:* -classification.manual:*'">
+                  Filter for manual result classification
+                </v-btn>
+                <v-btn round small @click="query = 'classification.confidence:[-0.5 TO 0.5] -classification.manual:*'">
+                  Filter for manual result classification (focussed)
+                </v-btn>
               </v-container>
             </v-container>
           </v-flex>
@@ -282,7 +295,7 @@ export default {
     return {
       manualLabelPending: false,
       allCrawls: [],
-      pagination: {}, // set through data table
+      pagination: {},
       onlyCrawlLanguages: false,
       totalResults: 0,
       queryTime: 0,
@@ -293,6 +306,7 @@ export default {
         { text: 'Keywords', value: 'keywords', align: 'left', sortable: false },
       ],
       helpExpanded: false,
+      optsExpanded: false,
     }
   },
   asyncData: {
@@ -302,6 +316,7 @@ export default {
     results: {
       async get () {
         // catch retriggered requests (from this.updateUrl())
+        // FIXME: still submitting multiple requests on pageload due to refreshing props.
         if (this.results$pending || this.results$loading) {
           return
         }
@@ -379,8 +394,14 @@ export default {
   margin-top: -40px;
 }
 
-.card--flex-toolbar .input-group {
-  margin-right: 16px;
+.toolbar.extended {
+  padding-top: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.toolbar.extended >>> .toolbar__content {
+  height: auto !important;
 }
 
 .searchresult {

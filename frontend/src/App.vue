@@ -76,6 +76,7 @@ export default {
     return {
       drawer: true,
       drawerExpanded: true,
+      fetchCountsInterval: null,
       routes,
       title,
     }
@@ -89,6 +90,18 @@ export default {
       transform: res => res.length,
     },
     resultCount: getTotalResults,
+  },
+  methods: {
+    fetchCounts () {
+      this.crawlCount$refresh()
+      this.resultCount$refresh()
+    }
+  },
+  mounted () {
+    this.fetchCountsInterval = setInterval(this.fetchCounts, 20000)
+  },
+  beforeDestroy () {
+    this.clearInterval(this.fetchCountsInterval)
   },
   name: 'App'
 }

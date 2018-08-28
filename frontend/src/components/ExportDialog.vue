@@ -42,7 +42,7 @@
 import { exportResults } from '@/api'
 
 export default {
-  props: ['query', 'crawls', 'open'],
+  props: ['query', 'crawls', 'onlyCrawlLanguages', 'open'],
   data () {
     return {
       formats: ['csv'],
@@ -55,9 +55,11 @@ export default {
       const params = {
         crawls: this.crawls || null,
         query: this.query || null,
+        onlyCrawlLanguages: this.onlyCrawlLanguages,
         size: this.numResults || 10000,
         format: this.format,
       }
+
       await exportResults(params)
       this.open = false
     },
