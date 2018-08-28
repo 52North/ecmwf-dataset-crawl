@@ -5,7 +5,7 @@ export default {
       index: {
         number_of_shards: 5,
         number_of_replicas: 1,
-        refresh_interval: '60s',
+        refresh_interval: '20s',
       }
     },
     mappings: {
