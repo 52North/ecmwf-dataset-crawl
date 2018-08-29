@@ -55,8 +55,7 @@
       "class": "com.digitalpebble.stormcrawler.filtering.metadata.MetadataFilter",
       "name": "MetadataFilter",
       "params": {
-        "isSitemap": "false",
-        "parentWasRelated": "false"
+        "isSitemap": "false"
       }
     }
   ]
