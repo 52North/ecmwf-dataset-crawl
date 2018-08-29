@@ -6,7 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.n52.webcrawl.CrawlStatusUpdaterBolt" level="INFO"/>
+        <Logger name="org.apache.storm.flux" level="WARN"/>
+        <Logger name="org.n52.webcrawl.ParserBolt" level="WARN"/>
+        <Logger name="org.n52.webcrawl.CrawlStatusUpdaterBolt" level="WARN"/>
+        <Logger name="org.n52.webcrawl.MdThresholdOutlinkFilter" level="info"/>
         <Logger name="org.n52.webcrawl" level="DEBUG"/>
         <Root level="WARN">
             <AppenderRef ref="Console"/>

@@ -57,45 +57,40 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
 
 /**
- * Parser for HTML documents only which uses ICU4J to detect the charset
- * encoding. Kindly donated to storm-crawler by shopstyle.com.
+ * This bolt parses fetched HTML content via JSoup, and passes on the DocumentFragment
+ * as well as Metadata, Outlinks and text.
+ *
+ * It is extracted from JSoupParserBolt from com.digitalpebble.stormcrawler v1.9.
+ * Splitting this component into two bolts enables to plug in additional bolts that
+ * can't be implemented as ParseFilters between the parsing and ParseFilter stages
+ * (such as components called via Storm's MultiLang protocol).
+ *
+ * Some minor changes in behaviour:
+ * - extracted text is added to metadata
+ * - non-html content types are always errors
+ * - does not track anchors of outlinks. outlink datastructure is created in ParseFilterBolt later on
  */
 @SuppressWarnings("serial")
-public class N52JSoupParserBolt extends StatusEmitterBolt {
+public class ParserBolt extends StatusEmitterBolt {
 
     /** Metadata key name for tracking the anchors */
     public static final String ANCHORS_KEY_NAME = "anchors";
 
     private static final org.slf4j.Logger LOG = LoggerFactory
-            .getLogger(N52JSoupParserBolt.class);
+            .getLogger(ParserBolt.class);
 
     private MultiCountMetric eventCounter;
-
-    private ParseFilter parseFilters = null;
 
     private Detector detector = TikaConfig.getDefaultConfig().getDetector();
 
     private boolean detectMimeType = true;
 
-    private boolean trackAnchors = true;
-
-    private boolean emitOutlinks = true;
-
     private boolean robots_noFollow_strict = true;
-
-    /**
-     * If a Tuple is not HTML whether to send it to the status stream as an
-     * error or pass it on the default stream
-     **/
-    private boolean treat_non_html_as_error = true;
 
     /**
      * Length of content to use for detecting the charset. Set to -1 to use the
@@ -114,17 +109,8 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
         eventCounter = context.registerMetric(this.getClass().getSimpleName(),
                 new MultiCountMetric(), 10);
 
-        parseFilters = ParseFilters.fromConf(conf);
-
-        emitOutlinks = ConfUtils.getBoolean(conf, "parser.emitOutlinks", true);
-
-        trackAnchors = ConfUtils.getBoolean(conf, "track.anchors", true);
-
         robots_noFollow_strict = ConfUtils.getBoolean(conf,
                 RobotsTags.ROBOTS_NO_FOLLOW_STRICT, true);
-
-        treat_non_html_as_error = ConfUtils.getBoolean(conf,
-                "jsoup.treat.non.html.as.error", true);
 
         detectMimeType = ConfUtils.getBoolean(conf, "detect.mimetype", true);
 
@@ -172,17 +158,12 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
         }
 
         if (!CT_OK) {
-            if (this.treat_non_html_as_error) {
-                String errorMessage = "Exception content-type " + mimeType
-                        + " for " + url;
-                RuntimeException e = new RuntimeException(errorMessage);
-                handleException(url, e, metadata, tuple,
-                        "content-type checking", errorMessage);
-            } else {
-                LOG.info("Incorrect mimetype - passing on : {}", url);
-                collector.emit(tuple, new Values(url, content, metadata, ""));
-                collector.ack(tuple);
-            }
+            // always raise an error when non html (as such content is not used by us anyway, and it complicates all further bolts)
+            String errorMessage = "Exception content-type " + mimeType
+                    + " for " + url;
+            RuntimeException e = new RuntimeException(errorMessage);
+            handleException(url, e, metadata, tuple,
+                    "content-type checking", errorMessage);
             return;
         }
 
@@ -194,7 +175,7 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
         // get the robots tags from the fetch metadata
         RobotsTags robotsTags = new RobotsTags(metadata);
 
-        Map<String, List<String>> slinks;
+        Set<String> outlinks;
         String text = "";
         final org.jsoup.nodes.Document jsoupDoc;
 
@@ -218,10 +199,10 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
             // do not extract the links if no follow has been set
             // and we are in strict mode
             if (robotsTags.isNoFollow() && robots_noFollow_strict) {
-                slinks = new HashMap<>(0);
+                outlinks = new HashSet<>(0);
             } else {
                 Elements links = jsoupDoc.select("a[href]");
-                slinks = new HashMap<>(links.size());
+                outlinks = new HashSet<>(links.size());
                 for (Element link : links) {
                     // abs:href tells jsoup to return fully qualified domains
                     // for
@@ -237,24 +218,8 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
                         continue;
                     }
 
-                    // link not specifically marked as no follow
-                    // but whole page is
-                    if (!noFollow && robotsTags.isNoFollow()) {
-                        noFollow = true;
-                    }
-
-                    String anchor = link.text();
                     if (StringUtils.isNotBlank(targetURL)) {
-                        // any existing anchors for the same target?
-                        List<String> anchors = slinks.get(targetURL);
-                        if (anchors == null) {
-                            anchors = new LinkedList<>();
-                            slinks.put(targetURL, anchors);
-                        }
-                        // track the anchors only if no follow is false
-                        if (!noFollow && StringUtils.isNotBlank(anchor)) {
-                            anchors.add(anchor);
-                        }
+                        outlinks.add(targetURL);
                     }
                 }
             }
@@ -302,10 +267,11 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
                 }
 
                 // Mark URL as redirected
-                collector
-                        .emit(Constants.StatusStreamName,
-                                tuple, new Values(url, metadata,
-                                        Status.REDIRECTION));
+                collector.emit(
+                    Constants.StatusStreamName,
+                    tuple,
+                    new Values(url, metadata, Status.REDIRECTION)
+                );
                 collector.ack(tuple);
                 eventCounter.scope("tuple_success").incr();
                 return;
@@ -314,53 +280,11 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
             LOG.error("MalformedURLException on {}", url);
         }
 
-        List<Outlink> outlinks = toOutlinks(url, metadata, slinks);
 
-        ParseResult parse = new ParseResult(outlinks);
+        DocumentFragment fragment = JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
 
-        // parse data of the parent URL
-        ParseData parseData = parse.get(url);
-        parseData.setMetadata(metadata);
-        parseData.setText(text);
-        parseData.setContent(content);
-
-        // apply the parse filters if any
-        try {
-            DocumentFragment fragment = null;
-            // lazy building of fragment
-            if (parseFilters.needsDOM()) {
-                fragment = JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
-            }
-            parseFilters.filter(url, content, fragment, parse);
-        } catch (RuntimeException e) {
-            String errorMessage = "Exception while running parse filters on "
-                    + url + ": " + e;
-            handleException(url, e, metadata, tuple, "content filtering",
-                    errorMessage);
-            return;
-        }
-
-        if (emitOutlinks) {
-            for (Outlink outlink : parse.getOutlinks()) {
-                collector.emit(
-                        StatusStreamName,
-                        tuple,
-                        new Values(outlink.getTargetURL(), outlink
-                                .getMetadata(), Status.DISCOVERED));
-            }
-        }
-
-        // emit each document/subdocument in the ParseResult object
-        // there should be at least one ParseData item for the "parent" URL
-
-        for (Map.Entry<String, ParseData> doc : parse) {
-            ParseData parseDoc = doc.getValue();
-            collector.emit(
-                    tuple,
-                    new Values(doc.getKey(), parseDoc.getContent(), parseDoc
-                            .getMetadata(), parseDoc.getText()));
-        }
-
+        // emit the whole extracted data ParseResult including all outlinks for the parent URL
+        collector.emit(tuple, new Values(url, metadata, text, content, fragment, outlinks));
         collector.ack(tuple);
         eventCounter.scope("tuple_success").incr();
     }
@@ -385,9 +309,9 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         super.declareOutputFields(declarer);
-        // output of this module is the list of fields to index
-        // with at least the URL, text content
-        declarer.declare(new Fields("url", "content", "metadata", "text"));
+
+        // this bolt outputs the fetched URL with metadata and text, html, bytecontent, and a list of URLs (outlinks)
+        declarer.declare(new Fields("url", "metadata", "text", "content", "docfragment", "outlinks"));
     }
 
     public String guessMimeType(String URL, String httpCT, byte[] content) {
@@ -416,47 +340,4 @@ public class N52JSoupParserBolt extends StatusEmitterBolt {
         }
     }
 
-    private List<Outlink> toOutlinks(String url, Metadata metadata,
-            Map<String, List<String>> slinks) {
-        Map<String, Outlink> outlinks = new HashMap<>();
-        URL sourceUrl;
-        try {
-            sourceUrl = new URL(url);
-        } catch (MalformedURLException e) {
-            // we would have known by now as previous components check whether
-            // the URL is valid
-            LOG.error("MalformedURLException on {}", url);
-            eventCounter.scope("error_invalid_source_url").incrBy(1);
-            return new LinkedList<Outlink>();
-        }
-
-        for (Map.Entry<String, List<String>> linkEntry : slinks.entrySet()) {
-            String targetURL = linkEntry.getKey();
-
-            Outlink ol = filterOutlink(sourceUrl, targetURL, metadata);
-            if (ol == null) {
-                eventCounter.scope("outlink_filtered").incr();
-                continue;
-            }
-
-            // the same link could already be there post-normalisation
-            Outlink old = outlinks.get(ol.getTargetURL());
-            if (old != null) {
-                ol = old;
-            }
-
-            List<String> anchors = linkEntry.getValue();
-            if (trackAnchors && anchors.size() > 0) {
-                ol.getMetadata().addValues(ANCHORS_KEY_NAME, anchors);
-                // sets the first anchor
-                ol.setAnchor(anchors.get(0));
-            }
-            if (old == null) {
-                outlinks.put(ol.getTargetURL(), ol);
-                eventCounter.scope("outlink_kept").incr();
-            }
-        }
-
-        return new LinkedList<Outlink>(outlinks.values());
-    }
 }

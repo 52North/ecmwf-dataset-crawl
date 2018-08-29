@@ -1,6 +1,14 @@
 {
   "com.digitalpebble.stormcrawler.parse.ParseFilters": [
     {
+      "class": "org.n52.webcrawl.MdThresholdOutlinkFilter",
+      "name": "UnrelatedClassificationOutlinks",
+      "params": {
+        "metadataField": "n52.classify.confidence",
+        "threshold": -0.5
+      }
+    },
+    {
       "class": "org.n52.webcrawl.XPath3Filter",
       "name": "XPath3Filter",
       "params": {
@@ -66,11 +74,6 @@
         "key": "host",
         "byHost": true
        }
-    },
-    {
-      "class": "org.n52.webcrawl.LanguageDetectionFilter",
-      "name": "LanguageDetectionFilter",
-      "params": {}
     }
   ]
 }

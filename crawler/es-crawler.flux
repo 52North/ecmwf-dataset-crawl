@@ -29,7 +29,10 @@ bolts:
     className: "com.digitalpebble.stormcrawler.bolt.SiteMapParserBolt"
     parallelism: 1
   - id: "parse"
-    className: "org.n52.webcrawl.N52JSoupParserBolt"
+    className: "org.n52.webcrawl.ParserBolt"
+    parallelism: 5
+  - id: "parsefilter"
+    className: "org.n52.webcrawl.ParseFilterBolt"
     parallelism: 5
   - id: "index"
     className: "com.digitalpebble.stormcrawler.elasticsearch.bolt.IndexerBolt"
@@ -41,21 +44,25 @@ bolts:
     className: "com.digitalpebble.stormcrawler.elasticsearch.metrics.StatusMetricsBolt"
     parallelism: 1
 
+  - id: "languagedetect"
+    className: "org.n52.webcrawl.LanguageDetectionBolt"
+    parallelism: 5
+
   - id: "classifier_pre"
     className: "org.n52.webcrawl.MultilangPreprocessBolt"
     constructorArgs:
-      - ["url", "metadata", "text"]
+      - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
     parallelism: 1
   - id: "classifier"
     className: "org.apache.storm.flux.wrappers.bolts.FluxShellBolt"
     constructorArgs:
       - ["python3", "dataset_classifier_bolt.py"]
-      - ["url", "metadata", "text"]
+      - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
     parallelism: 5
   - id: "classifier_post"
     className: "org.n52.webcrawl.MultilangPostprocessBolt"
     constructorArgs:
-      - ["url", "metadata", "text"]
+      - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
     parallelism: 1
 
   - id: "scoring"
@@ -90,6 +97,11 @@ streams:
       type: LOCAL_OR_SHUFFLE
 
   - from: "parse"
+    to: "languagedetect"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "languagedetect"
     to: "classifier_pre"
     grouping:
       type: LOCAL_OR_SHUFFLE
@@ -105,6 +117,11 @@ streams:
       type: LOCAL_OR_SHUFFLE
 
   - from: "classifier_post"
+    to: "parsefilter"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  - from: "parsefilter"
     to: "scoring"
     grouping:
       type: LOCAL_OR_SHUFFLE
@@ -129,6 +146,13 @@ streams:
       streamId: "status"
 
   - from: "parse"
+    to: "status"
+    grouping:
+      type: FIELDS
+      args: ["url"]
+      streamId: "status"
+
+  - from: "parsefilter"
     to: "status"
     grouping:
       type: FIELDS

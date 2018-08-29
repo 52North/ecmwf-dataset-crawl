@@ -9,8 +9,8 @@ scriptdir = os.path.join(scriptdir, '..')
 sys.path.append(scriptdir)
 #os.environ['SKLEARN_SITE_JOBLIB'] = 'true'
 
-
-############# END BOOTSTRAP ################
+import storm
+from sklearn.externals import joblib
 
 class Metadata(dict):
     # metadata only supports lists of strings
@@ -20,16 +20,15 @@ class Metadata(dict):
         x = list(map(str, value))
         super(Metadata, self).__setitem__(key, x)
 
-import storm
-from sklearn.externals import joblib
+############# END BOOTSTRAP ################
 
 class DatasetClassifierBolt(storm.BasicBolt):
     '''
     Classifies ENGLISH language website text using a LinearSVC into
     "contains/references a dataset" or "unrelated"
-    
-    input:  [ url: string, metadata: dict, text: string ]
-    output: [ url: string, metadata: dict, text: string ]
+
+    input:  ["url", "metadata", "text", "content", "docfragment", "outlinks"]
+    output: ["url", "metadata", "text", "content", "docfragment", "outlinks"]
     '''
 
     clf = None
@@ -47,8 +46,10 @@ class DatasetClassifierBolt(storm.BasicBolt):
         # IDEA: keep classifiers for several languages in a map
         # IDEA: batch N classifications (of the same language) for speed?
 
-        url, metadata, text = tup.values
-        metadata = Metadata(metadata)
+        url, meta, text, content, docfragment, outlinks = tup.values
+        metadata = Metadata(meta)
+        out = [url, metadata, text, content, docfragment, outlinks]
+
         try:
             lang = metadata['n52.language'][0]
         except KeyError:
@@ -58,18 +59,13 @@ class DatasetClassifierBolt(storm.BasicBolt):
             msg = 'ignoring tuple, as document language {} is not supported'.format(lang)
             logging.debug(msg)
             storm.logDebug(msg)
-            return storm.emit([url, metadata, text], anchors=[tup])
+        else:
+            confidence, clazz = self.classify([text])[0]
+            metadata["n52.classify.class"] = clazz
+            metadata["n52.classify.confidence"] = confidence
+            logging.debug([confidence, clazz, text[100:200], url])
 
-
-        #metadata = json.loads(metadata);
-        logging.debug(metadata)
-
-        confidence, clazz = self.classify([text])[0]
-        metadata["n52.classify.class"] = clazz
-        metadata["n52.classify.confidence"] = confidence
-
-        logging.debug([text[100:200], confidence, clazz])
-        storm.emit([url, metadata, text], anchors=[tup])
+        storm.emit(out, anchors=[tup])
 
     def classify(self, documents):
         tuples = []
