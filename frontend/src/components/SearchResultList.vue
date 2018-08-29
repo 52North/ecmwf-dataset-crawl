@@ -58,7 +58,7 @@
 
               <v-layout row>
                 <v-switch
-                  label="Only return results in the crawl's original languages"
+                  label="Only show results in the crawl's original languages"
                   v-model="onlyCrawlLanguages"
                 />
 

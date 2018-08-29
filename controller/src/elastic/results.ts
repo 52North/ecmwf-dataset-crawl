@@ -88,8 +88,11 @@ function buildQueryBody (crawls?: string[], query?: string, sort?: (string | obj
       script: {
         script: `
           def langs = doc['crawl.languages'];
+          def l = doc['language'];
           if (langs.length == 0) return true;
-          return langs.contains(doc['language'][0]);`
+          if (!(l instanceof List)) l = [l];
+          if (l.length == 0) return false;
+          return langs.contains(l[0]);`
       }
     })
   }
