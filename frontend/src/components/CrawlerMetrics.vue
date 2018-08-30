@@ -6,7 +6,7 @@
       outline
       icon="info"
     >
-      For metrics to be shown here, you have to first set up Kibana. Please check out the project readme for a how-to.
+      For metrics to be shown here, you have to first set up <a :href="kibanaHost" target="_blank">Kibana</a>. Please check out the project readme for a how-to.
     </v-alert>
 
     <v-layout column>

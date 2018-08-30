@@ -13,13 +13,14 @@
             <v-text-field
               autofocus
               v-model="query"
-              placeholder="Filter Results"
+              placeholder="Filter results by keyword or metadata"
               append-icon="search"
               :loading="results$loading || results$pending"
               :append-icon-cb="results$resolver"
               hide-details
               single-line
               clearable
+              @change="resetPagination()"
             ></v-text-field>
 
             <v-tooltip bottom :disabled="helpExpanded">
@@ -29,7 +30,7 @@
               Query Syntax Help
             </v-tooltip>
 
-            <v-tooltip bottom :disabled="optsExpanded">
+            <v-tooltip bottom :disabled="optsExpanded" :value="true">
               <v-btn slot="activator" :style="!optsExpanded || { 'background-color': 'rgba(1,1,1,0.1)' }" icon @click.stop="optsExpanded = !optsExpanded">
                 <v-icon v-html="optsExpanded ? 'expand_less' : 'expand_more'"/>
               </v-btn>
@@ -51,7 +52,7 @@
                 :items="allCrawls"
                 item-text="name"
                 item-value="id"
-                @blur="updateUrl"
+                @blur="resetPagination(); updateUrl();"
                 label="Filter by Crawl"
                 placeholder="all"
               />
@@ -355,6 +356,9 @@ export default {
       this.$router.replace({
         query: { crawls: this.crawls.join(','), q: this.query },
       })
+    },
+    resetPagination () {
+      this.pagination.page = 1
     },
     openTranslationUrl (resultItem) {
       const { url, language } = resultItem

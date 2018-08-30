@@ -57,6 +57,13 @@
                 <b v-if="j === 0">Keywords:</b>
               </v-flex>
 
+              <v-tooltip right>
+                <v-btn slot="activator" small fab @click="searchKeywords(keywordgroup)">
+                  <v-icon>search</v-icon>
+                </v-btn>
+                open a Google Search with these keywords
+              </v-tooltip>
+
               <v-flex xs2 sm1>
                 <v-chip label color="accent">{{ keywordgroup.language }}</v-chip>
               </v-flex>
@@ -168,6 +175,19 @@ export default {
           status: true,
         }
       }
+    },
+    searchKeywords({ keywords, language, country = '' }) {
+      // open a google search, with customized language / country options
+      // see https://developers.google.com/custom-search/json-api/v1/reference/cse/list
+      const params = {
+        q: keywords.join('+'),
+        cr: `country${country.toUpperCase()}`,
+        lr: `lang_${language}`,
+        pws: 0, // disable personalized search (undocumented?)
+      }
+
+      const paramString = Object.keys(params).map(k => `${k}=${params[k]}`).join('&')
+      window.open(`https://google.com/search?${paramString}`)
     },
     async deleteResults (crawl) {
       try {
