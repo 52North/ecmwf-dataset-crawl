@@ -77,12 +77,11 @@ export async function classifyUrls (urls: string[], label: 'dataset' | 'related'
 }
 
 function buildQueryBody (crawls?: string[], query?: string, langFilter = false) {
-  const q: { must: any[], filter: any[]} = { must: [], filter: [] }
+  const must: any[] = []
   const body = {
     query: {
       function_score: {
-        query: { bool: q },
-        // boost_mode: 'replace',
+        query: { bool: { must } },
         score_mode: 'sum',
         functions: [{
           // score by manual classification
@@ -144,13 +143,13 @@ function buildQueryBody (crawls?: string[], query?: string, langFilter = false) 
   } as any
 
   if (query)
-    q.must.push({ query_string: { query } })
+    must.push({ query_string: { query } })
 
   if (crawls && crawls.length)
-    q.filter.push({ terms: { 'crawl.id': crawls } })
+    must.push({ terms: { 'crawl.id': crawls } })
 
   if (langFilter) {
-    q.filter.push({
+    must.push({
       script: {
         script: `
           def langs = doc['crawl.languages'];
