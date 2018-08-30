@@ -15,7 +15,7 @@ export default {
           extracted: {
             path_match: 'extracted.*',
             mapping: {
-              type: 'text',
+              type: 'keyword',
               index: false,
               store: true,
             },

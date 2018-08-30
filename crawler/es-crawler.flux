@@ -65,8 +65,8 @@ bolts:
       - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
     parallelism: 1
 
-  - id: "scoring"
-    className: "org.n52.webcrawl.ScoringBolt"
+  - id: "tagging"
+    className: "org.n52.webcrawl.TaggingBolt"
     parallelism: 1
 
 streams:
@@ -126,7 +126,7 @@ streams:
     grouping:
       type: LOCAL_OR_SHUFFLE
 
-  - from: "scoring"
+  - from: "tagging"
     to: "index"
     grouping:
       type: LOCAL_OR_SHUFFLE

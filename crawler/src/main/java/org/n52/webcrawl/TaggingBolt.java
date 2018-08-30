@@ -12,27 +12,13 @@ import java.util.*;
 
 /**
  * Postprocessing bolt finalizing the metadata pipeline before indexing.
- * - calculates a result score
- * - compiles a list of keywords for the result
+ * - compiles a list of tags for the result based on previously extracted content
  * - TODO: cleans extracted text?
- * - TODO: indexes numbers as numbers?
  */
-public class ScoringBolt extends BaseBasicBolt {
-    // TODO: allow configuration of scoring via weights?
-    Float weightClassify = 4.0f;
-
-    Float weightHistoric = 0.5f;
-    Float weightRealtime = 0.5f;
-    Float weightDataset = 0.5f;
-
-    Float weightExtract = 0.333f;
-
+public class TaggingBolt extends BaseBasicBolt {
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
         Metadata m = (Metadata) input.getValueByField("metadata");
-
-        float score = calcScore(m);
-        m.setValue("n52.score", Float.toString(score));
 
         List<String> keywords = generateKeywords(m);
         m.setValues("n52.keywords", keywords.toArray(new String[keywords.size()]));
@@ -68,39 +54,6 @@ public class ScoringBolt extends BaseBasicBolt {
         }
 
         return keywords;
-    }
-
-    private float calcScore (Metadata m) {
-        Float score = 0.0f;
-
-        // class from DatasetClassificationBolt (python)
-        String clazz = m.getFirstValue("n52.classify.class");
-        String confidence = m.getFirstValue("n52.classify.confidence");
-        if ("dataset".equals(clazz)) score += weightClassify;
-        if (clazz == null) score += 0.5f * weightClassify; // boost unclassified results so they don't get lost
-        if (confidence != null) score += Float.parseFloat(confidence); // not normalized! negative scoring for "unrelated"
-
-        // from LuceneScoreFilter
-        String keyword;
-        keyword = m.getFirstValue("n52.keywords.historic");
-        if (keyword != null) score += weightHistoric * Float.parseFloat(keyword);
-        keyword = m.getFirstValue("n52.keywords.realtime");
-        if (keyword != null) score += weightRealtime * Float.parseFloat(keyword);
-        keyword = m.getFirstValue("n52.keywords.dataset");
-        if (keyword != null) score += weightDataset * Float.parseFloat(keyword);
-
-        // from XPath3Filter
-        String[] extractlist;
-        extractlist = m.getValues("n52.extracted.data_api");
-        if (extractlist != null) score += weightExtract * Math.max(extractlist.length, 2);
-        extractlist = m.getValues("n52.extracted.data_link");
-        if (extractlist != null) score += weightExtract * Math.max(extractlist.length, 2);
-        extractlist = m.getValues("n52.extracted.data_portal");
-        if (extractlist != null) score += weightExtract * Math.max(extractlist.length, 2);
-        extractlist = m.getValues("n52.extracted.license");
-        if (extractlist != null) score += weightExtract * Math.max(extractlist.length, 2);
-
-        return score;
     }
 
     @Override

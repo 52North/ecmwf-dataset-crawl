@@ -113,9 +113,11 @@ config:
   - n52.extracted.data_pdf=extracted.data_pdf
   - n52.extracted.license=extracted.license
   - n52.extracted.contact=extracted.contact
+  - n52.keywords.dataset=extracted.dataset
+  - n52.keywords.realtime=extracted.realtime
+  - n52.keywords.historic=extracted.historic
 
-  - n52.keywords=keywords # merged keyword list from ScoringBolt
-  - n52.score=score # from ScoringBolt
+  - n52.keywords=keywords # merged keyword list from TaggingBolt
 
   status.updater.cache.spec: "maximumSize=500000,expireAfterAccess=1h"
 
