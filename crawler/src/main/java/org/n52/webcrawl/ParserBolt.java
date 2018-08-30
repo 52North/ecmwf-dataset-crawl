@@ -281,9 +281,8 @@ public class ParserBolt extends StatusEmitterBolt {
         }
 
 
-        DocumentFragment fragment = JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
-
         // emit the whole extracted data ParseResult including all outlinks for the parent URL
+        String fragment = jsoupDoc.html();
         collector.emit(tuple, new Values(url, metadata, text, content, fragment, outlinks));
         collector.ack(tuple);
         eventCounter.scope("tuple_success").incr();

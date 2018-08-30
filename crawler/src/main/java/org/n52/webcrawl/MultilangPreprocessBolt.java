@@ -9,7 +9,6 @@ import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DocumentFragment;
 
 /**
  * Prepares tuples to be emitted through the multilang protocol to eg python bolts
@@ -56,14 +55,6 @@ public class MultilangPreprocessBolt extends BaseBasicBolt {
                 List<String> l = new ArrayList<>();
                 l.addAll((Set<String>) value);
                 value = l;
-            }
-
-            // docfragment
-            else if (value instanceof DocumentFragment) {
-                // encode XML representation as base64 for safe transport via JSON
-                // yeah, i know. FIXME: more compact serialization (or avoid it in the first place)
-                byte[] xml = value.toString().getBytes();
-                value =  Base64.encodeBase64String(xml);
             }
 
             output.add(value);

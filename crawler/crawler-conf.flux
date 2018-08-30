@@ -37,7 +37,6 @@ config:
 
   # lists the metadata to persist to storage
   # these are not transfered to the outlinks
-  # only values with unchanged names are listed here, remaining in indexer.md.mapping
   metadata.persist:
    - _redirTo
    - error.cause

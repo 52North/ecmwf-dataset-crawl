@@ -51,18 +51,18 @@ bolts:
   - id: "classifier_pre"
     className: "org.n52.webcrawl.MultilangPreprocessBolt"
     constructorArgs:
-      - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
+      - ["url", "metadata", "text", "content", "outlinks"]
     parallelism: 1
   - id: "classifier"
     className: "org.apache.storm.flux.wrappers.bolts.FluxShellBolt"
     constructorArgs:
       - ["python3", "dataset_classifier_bolt.py"]
-      - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
+      - ["url", "metadata", "text", "content", "outlinks"]
     parallelism: 5
   - id: "classifier_post"
     className: "org.n52.webcrawl.MultilangPostprocessBolt"
     constructorArgs:
-      - ["url", "metadata", "text", "content", "docfragment", "outlinks"]
+      - ["url", "metadata", "text", "content", "outlinks"]
     parallelism: 1
 
   - id: "tagging"
@@ -122,7 +122,7 @@ streams:
       type: LOCAL_OR_SHUFFLE
 
   - from: "parsefilter"
-    to: "scoring"
+    to: "tagging"
     grouping:
       type: LOCAL_OR_SHUFFLE
 

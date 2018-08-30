@@ -13,7 +13,7 @@
       "name": "XPath3Filter",
       "params": {
         "parse.title": [
-            "/HTML/HEAD/TITLE"
+          "/HTML/HEAD/TITLE"
         ],
         "parse.keywords": [
           "/HTML/HEAD/META[@name='keywords']/@content"

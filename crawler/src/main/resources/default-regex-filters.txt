@@ -6,20 +6,21 @@
 -(?i)\.(gif|jpg|png|ico|css|sit|eps|wmf|zip|gz|rpm|tgz|mov|exe|jpeg|bmp|js|mpg|mp3|mp4|ogv)(\?|&|$)
 
 # skip common or spammy unrelated hosts. curated after discovery through crawler
--youtube\.com
--twitter\.com
--google\.com
--sourceforge\.net
+-amazon\.com
 -apache\.org
--elsevier\.com
--pingpdf\.com
+-chicagotribune\.com
 -eldoradoweather\.com
+-elsevier\.com
+-google\.com
 -independent\.co\.uk
 -informatica\.com
--propertylawuk\.net
 -notebookcheck\.net
--amazon\.com
--chicagotribune\.com
+-pingpdf\.com
+-propertylawuk\.net
+-sourceforge\.net
+-twitter\.com
+-wetter\.de
+-youtube\.com
 
 # accept anything else
 +.

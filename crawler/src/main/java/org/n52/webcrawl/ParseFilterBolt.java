@@ -31,11 +31,14 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import org.jsoup.parser.Parser;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DocumentFragment;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.*;
 
 import static com.digitalpebble.stormcrawler.Constants.StatusStreamName;
@@ -83,8 +86,9 @@ public class ParseFilterBolt extends StatusEmitterBolt {
         Metadata metadata = (Metadata) tuple.getValueByField("metadata");
         String text = tuple.getStringByField("text");
         byte[] content = tuple.getBinaryByField("content");
-        DocumentFragment fragment = (DocumentFragment) tuple.getValueByField("docfragment");
         List<String> outlinks = (List<String>) tuple.getValueByField("outlinks");
+
+        DocumentFragment fragment = buildDom(metadata, url, content);
 
         LOG.info("Applying URL filters for {}", url);
 
@@ -129,6 +133,14 @@ public class ParseFilterBolt extends StatusEmitterBolt {
 
         collector.ack(tuple);
         eventCounter.scope("tuple_success").incr();
+    }
+
+    private DocumentFragment buildDom(Metadata m, String url, byte[] content) {
+        String charset = m.getFirstValue("parse.Content-Encoding");
+        String html = Charset.forName(charset).decode(ByteBuffer.wrap(content)).toString();
+        final org.jsoup.nodes.Document jsoupDoc;
+        jsoupDoc = Parser.htmlParser().parseInput(html, url);
+        return JSoupDOMBuilder.jsoup2HTML(jsoupDoc);
     }
 
     private void handleException(String url, Throwable e, Metadata metadata,

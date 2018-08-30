@@ -27,8 +27,8 @@ class DatasetClassifierBolt(storm.BasicBolt):
     Classifies ENGLISH language website text using a LinearSVC into
     "contains/references a dataset" or "unrelated"
 
-    input:  ["url", "metadata", "text", "content", "docfragment", "outlinks"]
-    output: ["url", "metadata", "text", "content", "docfragment", "outlinks"]
+    input:  ["url", "metadata", "text", "content", "outlinks"]
+    output: ["url", "metadata", "text", "content", "outlinks"]
     '''
 
     clf = None
@@ -46,9 +46,9 @@ class DatasetClassifierBolt(storm.BasicBolt):
         # IDEA: keep classifiers for several languages in a map
         # IDEA: batch N classifications (of the same language) for speed?
 
-        url, meta, text, content, docfragment, outlinks = tup.values
+        url, meta, text, content, outlinks = tup.values
         metadata = Metadata(meta)
-        out = [url, metadata, text, content, docfragment, outlinks]
+        out = [url, metadata, text, content, outlinks]
 
         try:
             lang = metadata['n52.language'][0]

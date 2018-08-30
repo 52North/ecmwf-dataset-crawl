@@ -61,6 +61,7 @@ public class XPath3Filter extends ParseFilter {
         try {
             // instead of reparsing the content to XDM we wrap the DOM so that saxon can use it.
             // XDM parser is very strict and thus not suitable for webcrawling tagsoup.
+            // System.out.println(doc.toString());
             DOMSource wrapped = new DOMSource(doc);
             xdm = processor.newDocumentBuilder().build(wrapped);
         } catch (SaxonApiException e) {
