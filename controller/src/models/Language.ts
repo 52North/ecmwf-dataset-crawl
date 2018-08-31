@@ -39,7 +39,7 @@ type Country = {
  * @param langs list of iso639_1 language (two-letter) codes
  * @returns Country[]
  */
-export function countriesFromLanguages (langs: string[]): Country[] {
+export function countriesFromLanguages (langs: string[], filterCountryLangs = true): Country[] {
   const codes = Object.keys(countries)
   const res = []
   for (const c of codes) {
@@ -51,6 +51,8 @@ export function countriesFromLanguages (langs: string[]): Country[] {
         name: country.name,
         iso3166_a2: c.toLowerCase(),
         languages: languagesFromCountry({ iso3166_a2: c })
+          // only return languages that were requested
+          .filter(l => !filterCountryLangs || langs.indexOf(l.iso639_1) > -1)
       })
     }
   }
