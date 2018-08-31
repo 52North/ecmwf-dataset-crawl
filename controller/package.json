@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/index.js | bunyan -o short",
     "start:dev": "env $(cat .env | grep -v ^# | xargs) nodemon -e js,ts,yaml --inspect | bunyan -o short",
+    "start:dev:raw": "env $(cat .env | grep -v ^# | xargs) nodemon -e js,ts,yaml --inspect",
     "build": "npm run build:types && rimraf dist && tsc -p . || true",
     "build:watch": "npm run build:types && rimraf dist && tsc -p . -w || true",
     "build:types": "typescript-json-schema tsconfig.json '*' --required --include src/models/* --out ./schema.json",

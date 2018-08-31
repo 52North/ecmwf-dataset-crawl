@@ -34,12 +34,8 @@ export class SearchApiGoogle implements SearchApi {
     // - for the language codes ISO 639-1,
     // - the country codes are mostly ISO3166-1 alpha-2, except UK, ghana?
     // https://developers.google.com/custom-search/docs/xml_results_appendices#countryCollections
-    let cr = undefined
-    let lr = undefined
-    if (restrictCountry) {
-      cr = country ? `country${country.toUpperCase()}` : undefined
-      lr = `lang_${language || languagesFromCountry({ iso3166_a2: country })[0]}`
-    }
+    const lr = `lang_${language || languagesFromCountry({ iso3166_a2: country })[0]}`
+    const cr = restrictCountry && country ? `country${country.toUpperCase()}` : undefined
 
     const params: GcsReqParams = {
       q: terms.map(encodeURIComponent).join('+'),
@@ -73,19 +69,20 @@ export class SearchApiGoogle implements SearchApi {
     const params = Object.assign({ cx, key }, parameters)
 
     // filter unwanted formats, most notably PDFs
-    params.orTerms = 'filetype:html filtetype:xml'
+    params.orTerms = 'filetype:html filetype:xml'
 
     try {
       const res = await axios.get(endpoint, { params })
+      this.log.debug({ url: res.request.res.responseUrl, parameters }, 'Requested Google Search')
       return res.data
     } catch (err) {
       // catch rate limit: just return nothing
       if (err.response.data.error.errors[0].reason === 'dailyLimitExceeded') {
         this.log.warn('Daily Rate Limit Exceeded, returning without results')
         return { items: [] }
-      } else {
-        throw new Error(err.response.data.error.errors[0].reason)
       }
+
+      throw new Error(err.response.data.error.errors[0].reason)
     }
   }
 

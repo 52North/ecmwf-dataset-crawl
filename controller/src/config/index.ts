@@ -13,6 +13,7 @@ const cfg = {
     host: e.ELASTIC_HOST || 'localhost:9200',
   },
   search: {
+    restrictToCountry: !!e.SEARCH_RESTRICT_COUNTRY || true,
     google: {
       searchEngineId: e.GCS_SEARCHID,
       apiKey: e.GCS_APIKEY,

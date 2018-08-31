@@ -13,6 +13,7 @@ import {
 import { searcher, SearchResult } from '../search'
 import { translator } from '../translation'
 import createLogger from '../logging'
+import cfg from '../config';
 
 export default class Crawl implements CrawlResponse {
   static log = createLogger('crawl')
@@ -162,6 +163,7 @@ export default class Crawl implements CrawlResponse {
         const { country, language, keywords } = group
         const results = await searcher.search(keywords, {
           numResults: this.crawlOptions.seedUrlsPerKeywordGroup,
+          restrictCountry: cfg.search.restrictToCountry,
           country,
           language,
         })

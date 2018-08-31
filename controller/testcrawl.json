@@ -1,0 +1,77 @@
+  {
+        "name": "testing2",
+          "countries": [
+                  "be"
+                ],
+          "languages": [
+                  "nl",
+                  "fr",
+                  "de"
+                ],
+          "commonKeywords": {
+                  "keywords": [],
+                  "translate": true
+                },
+          "keywordGroups": [
+                  {
+                            "keywords": [
+                                        "precipitation",
+                                        "forecast",
+                                        "data"
+                                      ],
+                            "translate": true
+                          }
+                ],
+          "crawlOptions": {
+                  "searchUntranslated": true,
+                  "recursion": 1,
+                  "seedUrlsPerKeywordGroup": 10,
+                  "domainWhitelist": [
+                            ""
+                          ],
+                  "domainBlacklist": [
+                            ""
+                          ],
+                  "terminationCondition": {
+                            "duration": 598,
+                            "resultCount": 3000
+                          }
+                },
+          "processedKeywords": [
+                  {
+                            "language": "en",
+                            "keywords": [
+                                        "precipitation",
+                                        "forecast",
+                                        "data"
+                                      ]
+                          },
+                  {
+                            "language": "nl",
+                            "country": "be",
+                            "keywords": [
+                                        "Neerslag",
+                                        "verwachting",
+                                        "Gegevens"
+                                      ]
+                          },
+                  {
+                            "language": "fr",
+                            "country": "be",
+                            "keywords": [
+                                        "Précipitations",
+                                        "Prévision",
+                                        "Données"
+                                      ]
+                          },
+                  {
+                            "language": "de",
+                            "country": "be",
+                            "keywords": [
+                                        "Niederschlag",
+                                        "Prognose",
+                                        "Daten"
+                                      ]
+                          }
+                ]
+  }
