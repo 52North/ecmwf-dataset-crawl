@@ -44,6 +44,16 @@
 }
 
 {$WEB_DOMAIN}/kibana {
+  # block kibana write access endpoints
+  rewrite /api/console/proxy /BLOCKED
+  rewrite /api/logstash/.* /BLOCKED
+  rewrite /api/security/.* /BLOCKED
+  rewrite /api/saved_objects {
+    if {method} not GET
+    if {path} not_match /api/saved_objects/_bulk_get
+    to /BLOCKED
+  }
+
   header / {
     X-XSS-Protection "1; mode=block"
     X-Content-Type-Options "nosniff"
