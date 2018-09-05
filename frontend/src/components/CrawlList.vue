@@ -176,7 +176,7 @@ export default {
         }
       }
     },
-    searchKeywords({ keywords, language, country = '' }) {
+    searchKeywords ({ keywords, language, country = '' }) {
       // open a google search, with customized language / country options
       // see https://developers.google.com/custom-search/json-api/v1/reference/cse/list
       const params = {

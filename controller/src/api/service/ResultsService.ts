@@ -45,7 +45,7 @@ export async function getResults (crawls?: string[], query?: string, from?: numb
   return getResultsFromDb({ crawls, query, from, size, onlyCrawlLanguages })
 }
 
-export async function classifyResults (urls: string[], label: string) {
+export async function classifyResults (urls: string[], label: 'dataset' | 'related' | 'unrelated') {
   return classifyUrls(urls, label)
 }
 
