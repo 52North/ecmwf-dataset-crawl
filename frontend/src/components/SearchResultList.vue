@@ -203,7 +203,18 @@
           <template slot="expand" slot-scope="props">
             <v-card color="secondary" class="result-details">
               <v-card-text>
-                <v-layout justify-space-around wrap>
+                <v-layout wrap>
+                  <v-flex xs-6 lg-3>
+                    <v-subheader>Crawl</v-subheader>
+                    <v-container>{{ allCrawls.find(c => c.id === props.item.crawl.id).name }}</v-container>
+                  </v-flex>
+                  <v-flex>
+                    <v-subheader>Query Score</v-subheader>
+                    <v-container>{{ props.item.score | round }}</v-container>
+                  </v-flex>
+                </v-layout>
+
+                <v-layout wrap>
                   <v-flex v-if="props.item.language">
                     <v-subheader>Language</v-subheader>
                     <v-container>
@@ -304,7 +315,7 @@ export default {
         { width: '222px', sortable: false }, // placeholder for the buttons in each row
         { text: 'Title', value: 'title', align: 'left', sortable: false },
         { text: 'Host', value: 'host', align: 'left', sortable: false },
-        { text: 'Keywords', value: 'keywords', align: 'left', sortable: false },
+        { text: 'Tags', value: 'keywords', align: 'left', sortable: false },
       ],
       helpExpanded: false,
       optsExpanded: false,
@@ -410,6 +421,13 @@ export default {
 
 .searchresult {
   cursor: pointer;
+}
+
+.result-details .subheader {
+  display: inline;
+}
+.result-details .subheader+.container {
+  padding-top: 0;
 }
 
 .result-details li {
