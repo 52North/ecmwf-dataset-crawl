@@ -8,6 +8,7 @@
 # skip common or spammy unrelated hosts. curated after discovery through crawler
 -amazon\.com
 -apache\.org
+-bmw\.be
 -chicagotribune\.com
 -eldoradoweather\.com
 -elsevier\.com
@@ -15,12 +16,15 @@
 -independent\.co\.uk
 -informatica\.com
 -notebookcheck\.net
--pingpdf\.com
 -propertylawuk\.net
 -sourceforge\.net
 -twitter\.com
 -wetter\.de
 -youtube\.com
+-anzdoc\.com
+-mafiadoc\.com
+-orca\.cf\.ac\.uk
+-pingpdf\.com
 
 # accept anything else
 +.
