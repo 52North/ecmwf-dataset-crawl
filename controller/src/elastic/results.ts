@@ -39,7 +39,10 @@ export async function getResults (queryOpts: ResultQuery): Promise<ResultRespons
   return {
     total: res.hits.total,
     took: res.took,
-    hits: res.hits.hits.map(d => Result.fromElastic(d._source)),
+    hits: res.hits.hits.map(d => {
+      const r = Object.assign(d._source, { score: d._score })
+      return Result.fromElastic(r)
+    })
   }
 }
 

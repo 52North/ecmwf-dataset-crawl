@@ -103,18 +103,24 @@
 		<dependency>
 			<groupId>com.digitalpebble.stormcrawler</groupId>
 			<artifactId>storm-crawler-core</artifactId>
-			<version>1.9</version>
+			<version>1.10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.digitalpebble.stormcrawler</groupId>
 			<artifactId>storm-crawler-elasticsearch</artifactId>
-			<version>1.9</version>
+			<version>1.10</version>
 		</dependency>
 
 		<dependency>
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
 			<version>9.8.0-12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.optimaize.languagedetector</groupId>
+			<artifactId>language-detector</artifactId>
+			<version>0.6</version>
 		</dependency>
 
 		<!-- https://stackoverflow.com/a/43574427/9792629 -->

@@ -24,5 +24,5 @@ The resources for this classifier are located in `src/main/resources/resources`
 To reinstall these sources, run
 
 ```sh
-target=src/main/resources/resources pip install -r $target/requirements.txt --target $target
+export target=src/main/resources/resources; pip3 install -r $target/requirements.txt --target $target
 ```
